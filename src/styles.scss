@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'styles/tokens';
+
+body {
+  margin: 0;
+  padding: 2rem;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: system-ui, sans-serif;
+}
+
+h1, h2 {
+  color: var(--color-destacado);
+}

@@ -1,0 +1,18 @@
+<article>
+  <div class="poster">
+    <img [src]="pelicula().posterUrl" [alt]="'Póster de ' + pelicula().titulo" width="400" height="600" />
+
+    <span class="edad"
+        [ngClass]="{
+          'edad--atp': pelicula().restriccionEdad === 0,
+          'edad--13': pelicula().restriccionEdad === 13,
+          'edad--18': pelicula().restriccionEdad === 18
+        }"
+    >
+        {{ etiquetaEdad() }}
+    </span>
+  </div>
+
+  <h2>{{ pelicula().titulo }}</h2>
+  <p>{{ pelicula().generos.join(', ') }} — {{ pelicula().duracionMin }} min</p>
+</article>

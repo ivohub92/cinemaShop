@@ -1,0 +1,53 @@
+<h1>En cartel</h1>
+
+<input
+  type="search"
+  class="buscador"
+  placeholder="Buscar por título"
+  [value]="busqueda()"
+  (input)="buscar($event)"
+/>
+
+<div class="filtro-generos">
+  <button
+    type="button"
+    class="filtro-generos__titulo"
+    [attr.aria-expanded]="generosAbierto()"
+    (click)="alternarGeneros()"
+  >
+    Géneros
+    @if (generosActivos().length) {
+      <span class="contador">{{ generosActivos().length }}</span>
+    }
+  </button>
+
+  <div class="opciones" [class.opciones--abierto]="generosAbierto()">
+    <div class="opciones__interior">
+      @for (genero of generosDisponibles(); track genero) {
+        <label class="opcion">
+          <input
+            type="checkbox"
+            [checked]="generosActivos().includes(genero)"
+            (change)="filtrarPorGenero(genero)"
+          />
+          {{ genero }}
+        </label>
+      }
+    </div>
+  </div>
+</div>
+
+@if (peliculasFiltradas().length) {
+  <ul>
+    @for (pelicula of peliculasFiltradas(); track pelicula.id) {
+      <li>
+        <app-tarjeta-pelicula [pelicula]="pelicula" />
+      </li>
+    }
+  </ul>
+} @else {
+  <p class="sin-resultados">
+    Ninguna película en cartel coincide con los filtros aplicados.
+    <button type="button" (click)="limpiarFiltros()">Ver toda la cartelera</button>
+  </p>
+}

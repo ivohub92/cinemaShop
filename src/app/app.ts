@@ -1,12 +1,23 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { SupabaseService } from './core/supabase/supabase.service';
 
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.css',
+  imports: [RouterOutlet],
   templateUrl: './app.html',
+  styleUrl: './app.scss'
 })
-export class App {
-  protected readonly title = signal('tp-final-programacion');
+export class App implements OnInit {
+  protected readonly title = signal('cine');
+
+
+  //prueba--------------------------
+  private supabase = inject(SupabaseService);
+
+  ngOnInit() {
+    this.supabase.client.from('salas').select('id, nombre')
+      .then(({ data, error }) => console.log({ data, error }));
+  }
+  //---------------------------
 }
