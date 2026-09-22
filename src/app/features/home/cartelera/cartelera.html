@@ -37,7 +37,11 @@
   </div>
 </div>
 
-@if (peliculasFiltradas().length) {
+@if (cargando()) {
+  <p class="aviso">Cargando la cartelera…</p>
+} @else if (error()) {
+  <p class="aviso">No pudimos cargar la cartelera. Revisá tu conexión y volvé a intentar.</p>
+} @else if (peliculasFiltradas().length) {
   <ul>
     @for (pelicula of peliculasFiltradas(); track pelicula.id) {
       <li>
