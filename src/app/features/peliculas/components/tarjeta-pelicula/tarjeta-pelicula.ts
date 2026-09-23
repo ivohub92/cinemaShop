@@ -1,10 +1,11 @@
 import { Component, input } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { Pelicula } from '../../../../core/models/pelicula';
+import { PosterHover } from '../../../../shared/directives/poster-hover';
 
 @Component({
   selector: 'app-tarjeta-pelicula',
-  imports: [NgClass],
+  imports: [NgClass, PosterHover],
   templateUrl: './tarjeta-pelicula.html',
   styleUrl: './tarjeta-pelicula.scss',
 })
