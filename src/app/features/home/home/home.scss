@@ -1,0 +1,37 @@
+.pestanias {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.pestania {
+  position: relative;
+  padding-bottom: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-decoration: none;
+  transition: color 150ms ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 3px;
+    background-color: var(--color-destacado);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 250ms ease;
+  }
+}
+
+.pestania--activa {
+  color: var(--color-destacado);
+
+  &::after {
+    transform: scaleX(1);
+  }
+}
