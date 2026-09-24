@@ -13,7 +13,8 @@ import { AuthService } from '../../core/auth/auth.service';
 export class PublicLayout {
   readonly anio = new Date().getFullYear();
   readonly panel = viewChild.required(PanelLateral);
-    private readonly auth = inject(AuthService);
+  private readonly auth = inject(AuthService);
+  readonly perfil = this.auth.perfil;
   readonly usuario = this.auth.usuario;
 
   async salir(): Promise<void> {

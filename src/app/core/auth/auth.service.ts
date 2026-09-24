@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { User } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase/supabase.service';
+import { Perfil } from '../models/perfil';
 
 export interface DatosRegistro {
   email: string;
@@ -16,19 +17,47 @@ export interface DatosRegistro {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly supabase = inject(SupabaseService);
-
+  readonly perfil = signal<Perfil | null>(null);
   readonly usuario = signal<User | null>(null);
 
-  constructor() {
-    
+   constructor() {
     this.supabase.client.auth.getSession().then(({ data }) => {
       this.usuario.set(data.session?.user ?? null);
+      this.cargarPerfil();
     });
 
-    
     this.supabase.client.auth.onAuthStateChange((_evento, sesion) => {
       this.usuario.set(sesion?.user ?? null);
+      this.cargarPerfil();
     });
+  }
+
+  private async cargarPerfil(): Promise<void> {
+    const id = this.usuario()?.id;
+
+    if (!id) {
+      this.perfil.set(null);
+      return;
+    }
+
+    const { data } = await this.supabase.client
+      .from('perfiles')
+      .select('id, email, nombre, apellido, fecha_nacimiento, rol')
+      .eq('id', id)
+      .single();
+
+    this.perfil.set(
+      data
+        ? {
+            id: data.id,
+            email: data.email,
+            nombre: data.nombre,
+            apellido: data.apellido,
+            fechaNacimiento: data.fecha_nacimiento,
+            rol: data.rol,
+          }
+        : null,
+    );
   }
 
   async registrar(datos: DatosRegistro): Promise<void> {

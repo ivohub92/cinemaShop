@@ -3,7 +3,7 @@
     <a class="marca" routerLink="/">cineShop</a>
     <nav class="acceso">
   @if (usuario()) {
-    <span class="saludo">{{ usuario()!.email }}</span>
+    <span class="saludo">Hola, {{ perfil()?.nombre ?? 'invitado' }}</span>
     <button type="button" class="boton" (click)="salir()">Salir</button>
   } @else {
     <button type="button" class="boton" (click)="panel().abrir()">Ingresar</button>
