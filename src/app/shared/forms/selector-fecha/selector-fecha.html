@@ -1,0 +1,22 @@
+<div class="selector-fecha">
+  <select [value]="dia()" [disabled]="deshabilitado()" (change)="cambiar('dia', $event)" aria-label="Día">
+    <option value="">Día</option>
+    @for (d of dias(); track d) {
+      <option [value]="d">{{ d }}</option>
+    }
+  </select>
+
+  <select [value]="mes()" [disabled]="deshabilitado()" (change)="cambiar('mes', $event)" aria-label="Mes">
+    <option value="">Mes</option>
+    @for (m of meses; track m; let i = $index) {
+      <option [value]="i + 1">{{ m }}</option>
+    }
+  </select>
+
+  <select [value]="anio()" [disabled]="deshabilitado()" (change)="cambiar('anio', $event)" aria-label="Año">
+    <option value="">Año</option>
+    @for (a of anios; track a) {
+      <option [value]="a">{{ a }}</option>
+    }
+  </select>
+</div>

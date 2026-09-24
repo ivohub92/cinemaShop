@@ -1,8 +1,16 @@
 <header class="encabezado">
   <div class="encabezado__interior">
     <a class="marca" routerLink="/">cineShop</a>
-    <a class="boton" routerLink="/ingresar">Ingresar</a>
+    <nav class="acceso">
+  @if (usuario()) {
+    <span class="saludo">{{ usuario()!.email }}</span>
+    <button type="button" class="boton" (click)="salir()">Salir</button>
+  } @else {
+    <button type="button" class="boton" (click)="panel().abrir()">Ingresar</button>
+  }
+</nav>
   </div>
+  
 </header>
 
 <main class="contenido">
@@ -12,3 +20,6 @@
 <footer class="pie">
   <p>cineShop © {{ anio }}</p>
 </footer>
+<app-panel-lateral>
+  <app-ingreso (ingresado)="panel().cerrar()" />
+</app-panel-lateral>

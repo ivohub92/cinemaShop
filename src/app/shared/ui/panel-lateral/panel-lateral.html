@@ -1,0 +1,6 @@
+<dialog #dialogo class="panel" (close)="alCerrar()" (click)="alClickFondo($event)">
+  <div class="panel__contenido">
+    <button type="button" class="panel__cerrar" (click)="cerrar()" aria-label="Cerrar">×</button>
+    <ng-content />
+  </div>
+</dialog>

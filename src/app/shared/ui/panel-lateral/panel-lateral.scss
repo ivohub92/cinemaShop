@@ -1,0 +1,64 @@
+.panel {
+  margin: 0 0 0 auto;
+  height: 100%;
+  max-height: 100%;
+  width: min(26rem, 100%);
+  padding: 0;
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+  border: none;
+  border-left: 1px solid var(--color-borde);
+
+  transform: translateX(100%);
+  transition: transform 300ms ease, overlay 300ms allow-discrete, display 300ms allow-discrete;
+
+  &[open] {
+    transform: translateX(0);
+  }
+
+  // Estado inicial de la animación de entrada.
+  @starting-style {
+    &[open] {
+      transform: translateX(100%);
+    }
+  }
+
+  &::backdrop {
+    background-color: rgb(0 0 0 / 0.6);
+    opacity: 0;
+    transition: opacity 300ms ease, overlay 300ms allow-discrete, display 300ms allow-discrete;
+  }
+
+  &[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    &[open]::backdrop {
+      opacity: 0;
+    }
+  }
+}
+
+.panel__contenido {
+  position: relative;
+  padding: 3rem 1.75rem 2rem;
+}
+
+.panel__cerrar {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-texto-suave);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-destacado);
+  }}
