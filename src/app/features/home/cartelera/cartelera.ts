@@ -15,10 +15,11 @@ export class Cartelera implements OnInit {
   readonly peliculas = signal<Pelicula[]>([]);
   readonly cargando = signal(true);
   readonly error = signal(false);
+  
 
   async ngOnInit(): Promise<void> {
     try {
-      this.peliculas.set(await this.peliculasService.listar());
+      this.peliculas.set(await this.peliculasService.listar(true));
     } catch {
       this.error.set(true);
     } finally {
@@ -65,4 +66,5 @@ export class Cartelera implements OnInit {
   alternarGeneros(): void {
     this.generosAbierto.update((abierto) => !abierto);
   }
+  
 }

@@ -1,0 +1,66 @@
+.formulario {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 34rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+input,
+select,
+textarea {
+  padding: 0.7rem 1rem;
+  font: inherit;
+  color: var(--color-texto);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+}
+
+.generos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+}
+
+.genero {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-texto);
+}
+
+input[type='checkbox'] {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--color-destacado);
+}
+
+.error {
+  color: #e38b8b;
+}
+
+button {
+  justify-self: start;
+  padding: 0.8rem 1.5rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-fondo);
+  background-color: var(--color-destacado);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}

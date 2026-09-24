@@ -1,5 +1,6 @@
 export interface Pelicula {
-    id: string;
+  id: string;
+  fechaEstreno: string;
   titulo: string;
   duracionMin: number;
   generos: string[];

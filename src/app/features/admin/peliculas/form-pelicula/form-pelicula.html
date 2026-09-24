@@ -1,0 +1,59 @@
+<h1>Nueva película</h1>
+
+<form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario">
+  <label>
+    Título
+    <input type="text" formControlName="titulo" />
+  </label>
+
+  <label>
+    Sinopsis
+    <textarea formControlName="sinopsis" rows="4"></textarea>
+  </label>
+
+  <label>
+    Duración (minutos)
+    <input type="number" formControlName="duracionMin" min="1" max="400" />
+  </label>
+
+  <label>
+    URL del póster
+    <input type="url" formControlName="posterUrl" placeholder="https://…" />
+  </label>
+
+  <label>
+    Restricción de edad
+    <select formControlName="restriccionEdad">
+      <option [value]="0">Apta para todo público</option>
+      <option [value]="13">Mayores de 13 años</option>
+      <option [value]="18">Mayores de 18 años</option>
+    </select>
+  </label>
+
+  <label>
+    Fecha de estreno
+    <app-selector-fecha formControlName="fechaEstreno" />
+  </label>
+
+  <fieldset class="generos">
+    <legend>Géneros</legend>
+    @for (genero of generos(); track genero.id) {
+      <label class="genero">
+        <input
+          type="checkbox"
+          [checked]="generosElegidos().includes(genero.id)"
+          (change)="alternarGenero(genero.id)"
+        />
+        {{ genero.nombre }}
+      </label>
+    }
+  </fieldset>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <button type="submit" [disabled]="enviando()">
+    {{ enviando() ? 'Guardando…' : 'Guardar película' }}
+  </button>
+</form>

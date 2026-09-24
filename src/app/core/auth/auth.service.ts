@@ -17,8 +17,10 @@ export interface DatosRegistro {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly supabase = inject(SupabaseService);
+  private cargaInicial?: Promise<void>;
   readonly perfil = signal<Perfil | null>(null);
   readonly usuario = signal<User | null>(null);
+  
 
    constructor() {
     this.supabase.client.auth.getSession().then(({ data }) => {
@@ -29,6 +31,11 @@ export class AuthService {
     this.supabase.client.auth.onAuthStateChange((_evento, sesion) => {
       this.usuario.set(sesion?.user ?? null);
       this.cargarPerfil();
+    });
+
+    this.cargaInicial = this.supabase.client.auth.getSession().then(async ({ data }) => {
+      this.usuario.set(data.session?.user ?? null);
+      await this.cargarPerfil();
     });
   }
 
@@ -83,6 +90,11 @@ export class AuthService {
   async ingresar(email: string, password: string): Promise<void> {
     const { error } = await this.supabase.client.auth.signInWithPassword({ email, password });
     if (error) throw error;
+  }
+
+  async perfilListo(): Promise<Perfil | null> {
+    await this.cargaInicial;
+    return this.perfil();
   }
 
   async salir(): Promise<void> {

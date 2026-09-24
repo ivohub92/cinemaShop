@@ -1,0 +1,31 @@
+<header class="cabecera">
+  <h1>Películas</h1>
+  <a class="boton" routerLink="/admin/peliculas/nueva">Agregar película</a>
+</header>
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else if (peliculas().length) {
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Duración</th>
+        <th>Edad</th>
+        <th>Géneros</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (pelicula of peliculas(); track pelicula.id) {
+        <tr>
+          <td>{{ pelicula.titulo }}</td>
+          <td>{{ pelicula.duracionMin }} min</td>
+          <td>{{ pelicula.restriccionEdad === 0 ? 'ATP' : '+' + pelicula.restriccionEdad }}</td>
+          <td>{{ pelicula.generos.join(', ') }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+} @else {
+  <p>Todavía no hay películas cargadas.</p>
+}

@@ -1,0 +1,15 @@
+<div class="admin">
+  <aside class="barra">
+    <a class="marca" routerLink="/">cineShop</a>
+
+    <nav class="menu">
+      <a routerLink="/admin/peliculas" routerLinkActive="activo">Películas</a>
+    </nav>
+
+    <p class="usuario">{{ perfil()?.nombre }} · administración</p>
+  </aside>
+
+  <main class="panel">
+    <router-outlet />
+  </main>
+</div>
