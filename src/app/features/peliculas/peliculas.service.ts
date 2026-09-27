@@ -11,24 +11,27 @@ export class PeliculasService {
     async listar(soloEnCartel = false): Promise<Pelicula[]> {
     let consulta = this.supabase.client
       .from('peliculas')
-      .select('id, titulo, duracion_min, poster_url, restriccion_edad, fecha_estreno, generos(nombre)')
+      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, generos(id, nombre)')
       .order('titulo');
 
     if (soloEnCartel) {
-      consulta = consulta.lte('fecha_estreno', new Date().toISOString().slice(0, 10));
+      consulta = consulta
+        .eq('activa', true)
+        .lte('fecha_estreno', new Date().toISOString().slice(0, 10));
     }
 
     const { data, error } = await consulta;
 
     if (error) throw error;
 
-    return (data ?? []).map((fila: any) => ({
+       return (data ?? []).map((fila: any) => ({
       id: fila.id,
       titulo: fila.titulo,
       duracionMin: fila.duracion_min,
       posterUrl: fila.poster_url ?? '',
       restriccionEdad: fila.restriccion_edad,
       fechaEstreno: fila.fecha_estreno,
+      activa: fila.activa,
       generos: (fila.generos ?? []).map((g: any) => g.nombre),
     }));
   }
@@ -78,7 +81,7 @@ export class PeliculasService {
    async obtener(id: string): Promise<(Pelicula & { sinopsis: string; generosIds: string[] }) | null> {
     const { data, error } = await this.supabase.client
       .from('peliculas')
-      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, generos(id, nombre)')
+      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, generos(id, nombre)')
       .eq('id', id)
       .single();
 
@@ -93,6 +96,7 @@ export class PeliculasService {
       posterUrl: data.poster_url ?? '',
       restriccionEdad: data.restriccion_edad,
       fechaEstreno: data.fecha_estreno,
+      activa: data.activa,
       generos: (data.generos ?? []).map((g: any) => g.nombre),
       generosIds: (data.generos ?? []).map((g: any) => g.id),
     };
@@ -137,5 +141,23 @@ export class PeliculasService {
 
       if (errorGeneros) throw errorGeneros;
     }
+  }
+
+    async darDeBaja(id: string): Promise<void> {
+    const { error } = await this.supabase.client
+      .from('peliculas')
+      .update({ activa: false })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  async reactivar(id: string): Promise<void> {
+    const { error } = await this.supabase.client
+      .from('peliculas')
+      .update({ activa: true })
+      .eq('id', id);
+
+    if (error) throw error;
   }
 }

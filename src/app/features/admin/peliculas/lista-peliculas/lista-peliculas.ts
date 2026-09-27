@@ -19,4 +19,15 @@ export class ListaPeliculas implements OnInit {
     this.peliculas.set(await this.peliculasService.listar());
     this.cargando.set(false);
   }
+  async cambiarEstado(pelicula: Pelicula): Promise<void> {
+    if (pelicula.activa && !confirm(`¿Dar de baja "${pelicula.titulo}"?`)) return;
+
+    if (pelicula.activa) {
+      await this.peliculasService.darDeBaja(pelicula.id);
+    } else {
+      await this.peliculasService.reactivar(pelicula.id);
+    }
+
+    this.peliculas.set(await this.peliculasService.listar());
+  }
 }
