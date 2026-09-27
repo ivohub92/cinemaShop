@@ -1,0 +1,13 @@
+@if (cargando()) {
+  <p class="aviso">Cargando los próximos estrenos…</p>
+} @else if (peliculas().length) {
+  <ul class="grilla">
+    @for (pelicula of peliculas(); track pelicula.id) {
+      <li>
+        <app-tarjeta-pelicula [pelicula]="pelicula" />
+      </li>
+    }
+  </ul>
+} @else {
+  <p class="aviso">No hay estrenos anunciados por el momento.</p>
+}

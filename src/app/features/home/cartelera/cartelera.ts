@@ -19,7 +19,7 @@ export class Cartelera implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      this.peliculas.set(await this.peliculasService.listar(true));
+      this.peliculas.set(await this.peliculasService.listar('en-cartel'));
     } catch {
       this.error.set(true);
     } finally {

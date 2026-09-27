@@ -8,23 +8,36 @@ export class PeliculasService {
 
   
 
-    async listar(soloEnCartel = false): Promise<Pelicula[]> {
+    async listar(filtro?: 'en-cartel' | 'proximamente'): Promise<Pelicula[]> {
+    const { data: conFunciones } = await this.supabase.client
+      .from('peliculas_con_funciones')
+      .select('pelicula_id');
+
+    const ids = (conFunciones ?? []).map((f: any) => f.pelicula_id);
+
     let consulta = this.supabase.client
       .from('peliculas')
-      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, generos(id, nombre)')
+      .select('id, titulo, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, generos(nombre)')
       .order('titulo');
 
-    if (soloEnCartel) {
-      consulta = consulta
-        .eq('activa', true)
-        .lte('fecha_estreno', new Date().toISOString().slice(0, 10));
+    if (filtro) {
+      consulta = consulta.eq('activa', true);
+
+      if (filtro === 'en-cartel') {
+        // Sin funciones programadas no hay ninguna película en cartel.
+        if (!ids.length) return [];
+        consulta = consulta.in('id', ids);
+      } else {
+        // Próximamente: sin funciones todavía y con estreno por delante.
+        if (ids.length) consulta = consulta.not('id', 'in', `(${ids.join(',')})`);
+        consulta = consulta.gt('fecha_estreno', new Date().toISOString().slice(0, 10));
+      }
     }
 
     const { data, error } = await consulta;
-
     if (error) throw error;
 
-       return (data ?? []).map((fila: any) => ({
+    return (data ?? []).map((fila: any) => ({
       id: fila.id,
       titulo: fila.titulo,
       duracionMin: fila.duracion_min,
@@ -160,4 +173,6 @@ export class PeliculasService {
 
     if (error) throw error;
   }
+
+
 }
