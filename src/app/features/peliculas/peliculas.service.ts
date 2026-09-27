@@ -75,4 +75,67 @@ export class PeliculasService {
       if (errorGeneros) throw errorGeneros;
     }
   }
+   async obtener(id: string): Promise<(Pelicula & { sinopsis: string; generosIds: string[] }) | null> {
+    const { data, error } = await this.supabase.client
+      .from('peliculas')
+      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, generos(id, nombre)')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    if (!data) return null;
+
+    return {
+      id: data.id,
+      titulo: data.titulo,
+      sinopsis: data.sinopsis,
+      duracionMin: data.duracion_min,
+      posterUrl: data.poster_url ?? '',
+      restriccionEdad: data.restriccion_edad,
+      fechaEstreno: data.fecha_estreno,
+      generos: (data.generos ?? []).map((g: any) => g.nombre),
+      generosIds: (data.generos ?? []).map((g: any) => g.id),
+    };
+  }
+
+  async actualizar(id: string, pelicula: {
+    titulo: string;
+    sinopsis: string;
+    duracionMin: number;
+    posterUrl: string;
+    restriccionEdad: number;
+    fechaEstreno: string;
+    generosIds: string[];
+  }): Promise<void> {
+    const { error } = await this.supabase.client
+      .from('peliculas')
+      .update({
+        titulo: pelicula.titulo,
+        sinopsis: pelicula.sinopsis,
+        duracion_min: pelicula.duracionMin,
+        poster_url: pelicula.posterUrl,
+        restriccion_edad: pelicula.restriccionEdad,
+        fecha_estreno: pelicula.fechaEstreno,
+      })
+      .eq('id', id);
+
+    if (error) throw error;
+
+    // Los géneros se reemplazan: se borran los actuales y se cargan los nuevos.
+    // Es más simple que calcular cuáles se agregaron y cuáles se quitaron.
+    const { error: errorBorrar } = await this.supabase.client
+      .from('peliculas_generos')
+      .delete()
+      .eq('pelicula_id', id);
+
+    if (errorBorrar) throw errorBorrar;
+
+    if (pelicula.generosIds.length) {
+      const { error: errorGeneros } = await this.supabase.client
+        .from('peliculas_generos')
+        .insert(pelicula.generosIds.map((genero_id) => ({ pelicula_id: id, genero_id })));
+
+      if (errorGeneros) throw errorGeneros;
+    }
+  }
 }

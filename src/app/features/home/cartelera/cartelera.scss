@@ -41,27 +41,7 @@ app-tarjeta-pelicula {
 
 
 .sin-resultados {
-  color: var(--color-texto-suave);
-
-  button {
-    display: block;
-    margin-top: 1rem;
-    padding: 0.6rem 1.2rem;
-    font: inherit;
-    color: var(--color-fondo);
-    background-color: var(--color-destacado);
-    border: 1px solid var(--color-destacado);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 150ms ease, color 150ms ease;
-  }
-
-  @media (hover: hover) {
-    button:hover {
-      color: var(--color-destacado);
-      background-color: transparent;
-    }
-  }
+  color: var(--color-texto-suave); 
 }
 
 .filtro-generos__titulo {

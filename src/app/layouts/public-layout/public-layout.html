@@ -1,16 +1,19 @@
 <header class="encabezado">
   <div class="encabezado__interior">
     <a class="marca" routerLink="/">cineShop</a>
+
     <nav class="acceso">
-  @if (usuario()) {
-    <span class="saludo">Hola, {{ perfil()?.nombre ?? 'invitado' }}</span>
-    <button type="button" class="boton" (click)="salir()">Salir</button>
-  } @else {
-    <button type="button" class="boton" (click)="panel().abrir()">Ingresar</button>
-  }
-</nav>
+      @if (usuario()) {
+        <span class="saludo">Hola, {{ perfil()?.nombre ?? 'invitado' }}</span>
+        @if (perfil()?.rol === 'admin') {
+          <a class="boton boton--contorno" routerLink="/admin/peliculas">Administrar</a>
+        }
+        <button type="button" class="boton boton--contorno" (click)="salir()">Salir</button>
+      } @else {
+        <button type="button" class="boton boton--contorno" (click)="panel().abrir()">Ingresar</button>
+      }
+    </nav>
   </div>
-  
 </header>
 
 <main class="contenido">

@@ -35,22 +35,7 @@
   text-decoration: none;
 }
 
-.boton {
-  padding: 0.5rem 1.1rem;
-  color: var(--color-destacado);
-  background-color: transparent;
-  border: 1px solid var(--color-destacado);
-  border-radius: 6px;
-  text-decoration: none;
-  transition: background-color 150ms ease, color 150ms ease;
-}
 
-@media (hover: hover) {
-  .boton:hover {
-    color: var(--color-fondo);
-    background-color: var(--color-destacado);
-  }
-}
 
 .contenido {
   flex: 1;

@@ -13,6 +13,7 @@
         <th>Duración</th>
         <th>Edad</th>
         <th>Géneros</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -22,6 +23,7 @@
           <td>{{ pelicula.duracionMin }} min</td>
           <td>{{ pelicula.restriccionEdad === 0 ? 'ATP' : '+' + pelicula.restriccionEdad }}</td>
           <td>{{ pelicula.generos.join(', ') }}</td>
+          <td><a class="boton boton--discreto" [routerLink]="['/admin/peliculas', pelicula.id]">Editar</a></td>
         </tr>
       }
     </tbody>

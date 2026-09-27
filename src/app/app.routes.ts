@@ -48,6 +48,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/peliculas/form-pelicula/form-pelicula').then((m) => m.FormPelicula),
       },
+      {
+        path: 'peliculas/:id',
+        loadComponent: () =>
+          import('./features/admin/peliculas/form-pelicula/form-pelicula').then((m) => m.FormPelicula),
+      },
     ],
   },
 ];

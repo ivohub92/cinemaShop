@@ -48,19 +48,3 @@ input[type='checkbox'] {
 .error {
   color: #e38b8b;
 }
-
-button {
-  justify-self: start;
-  padding: 0.8rem 1.5rem;
-  font: inherit;
-  font-weight: 600;
-  color: var(--color-fondo);
-  background-color: var(--color-destacado);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-
-  &:disabled {
-    opacity: 0.5;
-  }
-}

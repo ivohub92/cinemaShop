@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PeliculasService } from '../../../peliculas/peliculas.service';
 import { SelectorFecha } from '../../../../shared/forms/selector-fecha/selector-fecha';
+
 
 @Component({
   selector: 'app-form-pelicula',
@@ -11,6 +12,9 @@ import { SelectorFecha } from '../../../../shared/forms/selector-fecha/selector-
   styleUrl: './form-pelicula.scss',
 })
 export class FormPelicula implements OnInit {
+  
+  readonly id = input<string>('');
+  readonly editando = signal(false);
   private readonly fb = inject(FormBuilder);
   private readonly peliculasService = inject(PeliculasService);
   private readonly router = inject(Router);
@@ -31,6 +35,23 @@ export class FormPelicula implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.generos.set(await this.peliculasService.listarGeneros());
+
+    const id = this.id();
+    if (!id) return;
+
+    const pelicula = await this.peliculasService.obtener(id);
+    if (!pelicula) return;
+
+    this.editando.set(true);
+    this.formulario.patchValue({
+      titulo: pelicula.titulo,
+      sinopsis: pelicula.sinopsis,
+      duracionMin: pelicula.duracionMin,
+      posterUrl: pelicula.posterUrl,
+      restriccionEdad: pelicula.restriccionEdad,
+      fechaEstreno: pelicula.fechaEstreno,
+    });
+    this.generosElegidos.set(pelicula.generosIds);
   }
 
   alternarGenero(id: string): void {
@@ -53,17 +74,25 @@ export class FormPelicula implements OnInit {
     this.enviando.set(true);
     this.error.set('');
 
-    try {
-      await this.peliculasService.crear({
+   try {
+      const datos = {
         ...this.formulario.getRawValue(),
         restriccionEdad: Number(this.formulario.getRawValue().restriccionEdad),
         generosIds: this.generosElegidos(),
-      });
+      };
+
+      if (this.editando()) {
+        await this.peliculasService.actualizar(this.id(), datos);
+      } else {
+        await this.peliculasService.crear(datos);
+      }
+
       this.router.navigate(['/admin/peliculas']);
     } catch (e: any) {
       this.error.set(e?.message ?? 'No pudimos guardar la película.');
     } finally {
       this.enviando.set(false);
     }
+  
   }
 }
