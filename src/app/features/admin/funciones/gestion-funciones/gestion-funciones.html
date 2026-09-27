@@ -1,0 +1,135 @@
+<h1>Funciones</h1>
+
+<section class="programar">
+  <h2>Programar funciones</h2>
+
+  <form [formGroup]="formulario" (ngSubmit)="programar()" class="formulario">
+    <label>
+      Película
+      <select formControlName="peliculaId">
+        <option value="">Elegí una película</option>
+        @for (pelicula of peliculas(); track pelicula.id) {
+          <option [value]="pelicula.id">{{ pelicula.titulo }} ({{ pelicula.duracionMin }} min)</option>
+        }
+      </select>
+    </label>
+
+    <fieldset class="dias">
+      <legend>Días de la semana</legend>
+      @for (dia of dias; track dia.valor) {
+        <label class="dia">
+          <input
+            type="checkbox"
+            [checked]="diasElegidos().includes(dia.valor)"
+            (change)="alternarDia(dia.valor)"
+          />
+          {{ dia.nombre }}
+        </label>
+      }
+    </fieldset>
+
+    <label>
+      Horario
+      <select formControlName="hora">
+        @for (hora of horas; track hora) {
+          <option [value]="hora">{{ hora }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Desde
+      <app-selector-fecha formControlName="desde" />
+    </label>
+
+    <label>
+      Hasta
+      <app-selector-fecha formControlName="hasta" />
+    </label>
+
+    <label>
+      Formato
+      <select formControlName="formato">
+        <option value="2D">2D</option>
+        <option value="3D">3D</option>
+        <option value="4D">4D</option>
+        <option value="5D">5D</option>
+      </select>
+    </label>
+
+    <label>
+      Idioma
+      <select formControlName="idioma">
+        <option value="castellano">Castellano</option>
+        <option value="subtitulada">Subtitulada</option>
+      </select>
+    </label>
+
+    <label>
+      Precio base
+      <input type="number" formControlName="precioBase" min="0" step="100" />
+    </label>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    @if (resultado()) {
+      <p class="resultado">{{ resultado() }}</p>
+    }
+
+    @if (conflictos().length) {
+      <div class="conflictos">
+        <p>Estas fechas no se pudieron programar:</p>
+        <ul>
+          @for (conflicto of conflictos(); track conflicto) {
+            <li>{{ conflicto }}</li>
+          }
+        </ul>
+      </div>
+    }
+
+    <button type="submit" class="boton" [disabled]="enviando()">
+      {{ enviando() ? 'Programando…' : 'Programar' }}
+    </button>
+  </form>
+</section>
+
+<section class="listado">
+  <h2>Funciones programadas</h2>
+
+  @if (funciones().length) {
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Película</th>
+          <th>Sala</th>
+          <th>Fecha y hora</th>
+          <th>Formato</th>
+          <th>Idioma</th>
+          <th>Precio</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (funcion of funciones(); track funcion.id) {
+          <tr>
+            <td>{{ funcion.peliculaTitulo }}</td>
+            <td>{{ funcion.salaNombre }}</td>
+            <td>{{ funcion.inicio | date: 'EEEE d/M HH:mm' }}</td>
+            <td>{{ funcion.formato }}</td>
+            <td>{{ funcion.idioma }}</td>
+            <td>{{ funcion.precioBase }}</td>
+            <td>
+              <button type="button" class="boton boton--discreto" (click)="eliminar(funcion)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p>Todavía no hay funciones programadas.</p>
+  }
+</section>

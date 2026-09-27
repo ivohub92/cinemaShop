@@ -1,0 +1,84 @@
+h1 {
+  margin-bottom: 2rem;
+}
+
+.programar {
+  margin-bottom: 3rem;
+}
+
+.formulario {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 34rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+input,
+select {
+  padding: 0.7rem 1rem;
+  font: inherit;
+  color: var(--color-texto);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+}
+
+.dias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+}
+
+.dia {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-texto);
+}
+
+input[type='checkbox'] {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--color-destacado);
+}
+
+.error,
+.conflictos {
+  color: #e38b8b;
+}
+
+.resultado {
+  color: #9cc7a4;
+}
+
+.conflictos ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-borde);
+  }
+
+  th {
+    font-size: 0.85rem;
+    color: var(--color-texto-suave);
+  }
+}

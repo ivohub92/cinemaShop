@@ -53,6 +53,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/peliculas/form-pelicula/form-pelicula').then((m) => m.FormPelicula),
       },
+      {
+        path: 'funciones',
+        loadComponent: () =>
+          import('./features/admin/funciones/gestion-funciones/gestion-funciones').then(
+            (m) => m.GestionFunciones,
+          ),
+      },
     ],
   },
 ];
