@@ -1,0 +1,45 @@
+@if (cargando()) {
+  <p class="aviso">Generando tu entrada…</p>
+} @else if (orden(); as o) {
+  <div class="confirmacion">
+    <h2>¡Listo! Tu compra está confirmada</h2>
+    <p class="envio">Enviamos el comprobante a {{ o.email }}</p>
+
+    <div class="entrada">
+      <div class="datos">
+        <h3>{{ o.pelicula }}</h3>
+        <p class="funcion">
+          {{ o.inicio | date: 'EEEE d \'de\' MMMM, HH:mm' }}<br />
+          {{ o.sala }} · {{ o.formato }} · {{ o.idioma }}
+        </p>
+
+        <p class="butacas">
+          @for (butaca of o.butacas; track butaca.fila + butaca.numero) {
+            <span class="butaca">{{ butaca.fila }}{{ butaca.numero }}</span>
+          }
+        </p>
+
+        @if (o.restriccion_edad) {
+          <p class="restriccion">
+            Apta para mayores de {{ o.restriccion_edad }} años. Los menores deben
+            concurrir acompañados por un adulto.
+          </p>
+        }
+      </div>
+
+      <div class="qr">
+        <img [src]="qr()" alt="Código QR de la entrada" width="200" height="200" />
+        <p class="codigo">{{ o.codigo_qr }}</p>
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" class="boton" (click)="descargar()">Descargar entrada</button>
+      <a class="boton boton--contorno" routerLink="/cartelera">Volver a la cartelera</a>
+    </div>
+
+    <p class="nota">
+      Presentá el código en la entrada de la sala. Una vez utilizado pierde validez.
+    </p>
+  </div>
+}

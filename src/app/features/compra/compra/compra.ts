@@ -9,11 +9,11 @@ import { MapaButacas } from '../mapa-butacas/mapa-butacas';
 import { PasoIdentidad } from '../paso-identidad/paso-identidad';
 import { CompraStore } from './compra.store';
 import { PasoPago } from '../paso-pago/paso-pago';
-
+import { PasoConfirmacion } from '../paso-confirmacion/paso-confirmacion';
 @Component({
 
   selector: 'app-compra',
-  imports: [DatePipe, RouterLink, MapaButacas, PasoIdentidad, PasoPago],
+  imports: [DatePipe, RouterLink, MapaButacas, PasoIdentidad, PasoPago, PasoConfirmacion],
   templateUrl: './compra.html',
   styleUrl: './compra.scss',
   // El store se crea con esta pantalla y muere con ella: cada compra

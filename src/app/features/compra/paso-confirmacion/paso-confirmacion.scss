@@ -1,0 +1,88 @@
+h2 {
+  margin: 0 0 0.5rem;
+}
+
+.envio {
+  margin: 0 0 2rem;
+  color: var(--color-texto-suave);
+}
+
+.entrada {
+  display: grid;
+  gap: 2rem;
+  max-width: 38rem;
+  padding: 1.75rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+
+  @media (min-width: 34rem) {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+h3 {
+  margin: 0 0 0.5rem;
+}
+
+.funcion {
+  margin: 0 0 1.25rem;
+  color: var(--color-texto-suave);
+  text-transform: capitalize;
+}
+
+.butacas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.butaca {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 4px;
+}
+
+.restriccion {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.qr {
+  text-align: center;
+
+  img {
+    display: block;
+    padding: 0.5rem;
+    background-color: #fff;
+    border-radius: 6px;
+  }
+}
+
+.codigo {
+  margin: 0.5rem 0 0;
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.nota {
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.aviso {
+  color: var(--color-texto-suave);
+}

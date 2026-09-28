@@ -32,7 +32,7 @@
       </button>
     </div>
   } @else if (pagada()) {
-    <p class="aviso">¡Compra confirmada! El comprobante llega en el próximo paso.</p>
+    <app-paso-confirmacion [ordenId]="ordenId()!" />
   } @else if (ordenId(); as id) {
     <app-paso-pago [ordenId]="id" (pagado)="alPagar()" />
   } @else {
