@@ -1,0 +1,63 @@
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { AuthService } from '../../../core/auth/auth.service'; 
+
+export type PasoCompra = 'identidad' | 'butacas' | 'pago';
+
+export interface Comprador {
+  email: string;
+  fechaNacimiento: string;
+  usuarioId: string | null;
+}
+
+@Injectable()
+export class CompraStore {
+  private readonly auth = inject(AuthService);
+
+  readonly comprador = signal<Comprador | null>(null);
+  readonly butacas = signal<string[]>([]);
+
+  readonly paso = computed<PasoCompra>(() => {
+    if (!this.comprador()) return 'identidad';
+    if (!this.butacas().length) return 'butacas';
+    return 'butacas';
+  });
+
+  /** Edad del comprador al día de hoy, para la restricción por película. */
+  readonly edad = computed(() => {
+    const nacimiento = this.comprador()?.fechaNacimiento;
+    if (!nacimiento) return null;
+
+    const hoy = new Date();
+    const fecha = new Date(nacimiento);
+    let edad = hoy.getFullYear() - fecha.getFullYear();
+
+    const cumplioEsteAnio =
+      hoy.getMonth() > fecha.getMonth() ||
+      (hoy.getMonth() === fecha.getMonth() && hoy.getDate() >= fecha.getDate());
+
+    if (!cumplioEsteAnio) edad--;
+    return edad;
+  });
+
+  /** Si hay sesión, la identidad ya está resuelta. */
+  tomarDeLaSesion(): boolean {
+    const perfil = this.auth.perfil();
+    if (!perfil) return false;
+
+    this.comprador.set({
+      email: perfil.email,
+      fechaNacimiento: perfil.fechaNacimiento,
+      usuarioId: perfil.id,
+    });
+    return true;
+  }
+
+  continuarComoInvitado(email: string, fechaNacimiento: string): void {
+    this.comprador.set({ email, fechaNacimiento, usuarioId: null });
+  }
+
+  reiniciar(): void {
+    this.comprador.set(null);
+    this.butacas.set([]);
+  }
+}

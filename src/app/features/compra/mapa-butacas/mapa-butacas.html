@@ -1,0 +1,62 @@
+@if (cargando()) {
+  <p class="aviso">Cargando el mapa de la sala…</p>
+} @else {
+  <div class="sala">
+    <p class="pantalla">Pantalla</p>
+
+    <div class="filas">
+      @for (fila of filas(); track fila.fila) {
+        <div class="fila">
+          <span class="letra">{{ fila.fila }}</span>
+
+          @for (columna of fila.columnas; track $index) {
+            <div class="columna">
+              @for (butaca of columna; track butaca.id) {
+                <button
+                  type="button"
+                  class="butaca"
+                  [class.butaca--accesible]="butaca.tipo === 'accesible'"
+                  [class.butaca--vip]="butaca.tipo === 'vip'"
+                  [class.butaca--ocupada]="butaca.ocupada"
+                  [class.butaca--elegida]="estaSeleccionada(butaca)"
+                  [disabled]="butaca.ocupada"
+                  [attr.aria-label]="'Butaca ' + butaca.fila + butaca.numero"
+                  [attr.aria-pressed]="estaSeleccionada(butaca)"
+                  (click)="alternar(butaca)"
+                ></button>
+              }
+            </div>
+          }
+
+          <span class="letra">{{ fila.fila }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="referencias">
+    <span class="referencia"><i class="butaca"></i> Disponible</span>
+    <span class="referencia"><i class="butaca butaca--accesible"></i> Accesible</span>
+    <span class="referencia"><i class="butaca butaca--vip"></i> VIP</span>
+    <span class="referencia"><i class="butaca butaca--elegida"></i> Elegida</span>
+    <span class="referencia"><i class="butaca butaca--ocupada"></i> Ocupada</span>
+  </div>
+
+    @if (seleccionadas().length) {
+    <div class="resumen">
+      <p>
+        {{ seleccionadas().length }}
+        {{ seleccionadas().length === 1 ? 'butaca elegida' : 'butacas elegidas' }}:
+        {{ resumen() }}
+      </p>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <button type="button" class="boton" [disabled]="reservando()" (click)="continuar()">
+        {{ reservando() ? 'Reservando…' : 'Continuar' }}
+      </button>
+    </div>
+  }
+}

@@ -1,0 +1,56 @@
+h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.25rem;
+}
+
+.opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.nota {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+
+  a {
+    color: var(--color-destacado);
+  }
+}
+
+.formulario {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 26rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+input {
+  padding: 0.7rem 1rem;
+  font: inherit;
+  color: var(--color-texto);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+}
+
+.ayuda {
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.error {
+  color: #e38b8b;
+}
+
+.acciones {
+  display: flex;
+  gap: 0.75rem;
+}

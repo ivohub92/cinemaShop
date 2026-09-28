@@ -1,0 +1,42 @@
+@if (cargando()) {
+  <p class="aviso">Cargando…</p>
+} @else if (funcion(); as f) {
+  <header class="encabezado">
+    <a class="volver" [routerLink]="['/peliculas', f.peliculaId]">Volver a la película</a>
+
+    <h1>{{ f.peliculaTitulo }}</h1>
+
+    <p class="datos">
+      {{ f.inicio | date: 'EEEE d \'de\' MMMM, HH:mm' }} ·
+      {{ f.salaNombre }} · {{ f.formato }} · {{ f.idioma }}
+    </p>
+
+    @if (restriccionEdad()) {
+      <p class="restriccion">
+        Apta para mayores de {{ restriccionEdad() }} años. Los menores deben concurrir
+        acompañados por un adulto.
+      </p>
+    }
+  </header>
+
+  @if (!identidadResuelta()) {
+    <app-paso-identidad />
+  } @else if (edadInsuficiente()) {
+    <div class="bloqueo">
+      <h2>No podés comprar entradas para esta función</h2>
+      <p>
+        Esta película está clasificada para mayores de {{ restriccionEdad() }} años.
+      </p>
+      <button type="button" class="boton boton--contorno" (click)="volverAIdentidad()">
+        Usar otros datos
+      </button>
+    </div>
+  } @else {
+    <section class="butacas">
+      <h2>Elegí tus butacas</h2>
+        <app-mapa-butacas [funcionId]="f.id" (reservado)="alReservar($event)" />
+    </section>
+  }
+} @else {
+  <p class="aviso">No encontramos esa función. Puede que ya haya comenzado.</p>
+}

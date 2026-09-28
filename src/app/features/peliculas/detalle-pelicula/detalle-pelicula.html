@@ -1,0 +1,54 @@
+@if (cargando()) {
+  <p class="aviso">Cargando…</p>
+} @else if (pelicula(); as peli) {
+  <article class="detalle">
+    <img
+      class="poster"
+      [src]="peli.posterUrl"
+      [alt]="'Póster de ' + peli.titulo"
+      width="400"
+      height="600"
+      appImagenRespaldo
+    />
+
+    <div class="datos">
+      <h1>{{ peli.titulo }}</h1>
+
+      <p class="meta">
+        {{ peli.duracionMin }} min ·
+        {{ peli.restriccionEdad === 0 ? 'ATP' : '+' + peli.restriccionEdad }}
+      </p>
+
+      <p class="generos">{{ peli.generos.join(', ') }}</p>
+      <p class="sinopsis">{{ peli.sinopsis }}</p>
+    </div>
+  </article>
+
+  <section class="funciones">
+    <h2>Funciones</h2>
+
+    @if (porDia().length) {
+      @for (grupo of porDia(); track grupo.dia) {
+        <div class="dia">
+          <h3>{{ grupo.dia | date: 'EEEE d \'de\' MMMM' }}</h3>
+
+          <ul class="horarios">
+            @for (funcion of grupo.funciones; track funcion.id) {
+              <li>
+                <a class="horario" [routerLink]="['/compra', funcion.id]">
+                  <strong>{{ funcion.inicio | date: 'HH:mm' }}</strong>
+                  <span>{{ funcion.formato }} · {{ funcion.idioma }}</span>
+                  <span>{{ funcion.salaNombre }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    } @else {
+      <p class="aviso">Esta película todavía no tiene funciones programadas.</p>
+    }
+  </section>
+} @else {
+  <p class="aviso">No encontramos esa película.</p>
+}

@@ -1,0 +1,79 @@
+.detalle {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 3rem;
+
+  @media (min-width: 48rem) {
+    grid-template-columns: 18rem 1fr;
+  }
+}
+
+.poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+}
+
+.meta,
+.generos {
+  margin: 0 0 0.5rem;
+  color: var(--color-texto-suave);
+}
+
+.sinopsis {
+  margin-top: 1.5rem;
+  max-width: 55ch;
+}
+
+.dia {
+  margin-bottom: 2rem;
+
+  h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    color: var(--color-texto-suave);
+    text-transform: capitalize;
+  }
+}
+
+.horarios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.horario {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+  text-decoration: none;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+  transition: border-color 150ms ease;
+
+  strong {
+    font-size: 1.25rem;
+    color: var(--color-destacado);
+  }
+}
+
+@media (hover: hover) {
+  .horario:hover {
+    border-color: var(--color-destacado);
+  }
+}
+
+.aviso {
+  color: var(--color-texto-suave);
+}
