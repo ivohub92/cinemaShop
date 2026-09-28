@@ -1,0 +1,66 @@
+<h1>Validar entrada</h1>
+
+<form (ngSubmit)="consultar()" class="busqueda">
+  <label>
+    Código de la entrada
+    <input
+      type="text"
+      [ngModel]="codigo()"
+      (ngModelChange)="codigo.set($event)"
+      name="codigo"
+      placeholder="Ingresá o escaneá el código"
+      autocomplete="off"
+      autofocus
+    />
+  </label>
+
+  <button type="submit" class="boton" [disabled]="buscando()">
+    {{ buscando() ? 'Buscando…' : 'Buscar' }}
+  </button>
+</form>
+
+@if (error()) {
+  <div class="resultado resultado--error">
+    <p>{{ error() }}</p>
+    <button type="button" class="boton boton--discreto" (click)="limpiar()">Limpiar</button>
+  </div>
+}
+
+@if (exito()) {
+  <div class="resultado resultado--exito">
+    <p>Entrada validada. Puede pasar a la sala.</p>
+  </div>
+}
+
+@if (orden(); as o) {
+  <div class="entrada">
+    <h2>{{ o.pelicula }}</h2>
+
+    <p class="datos">
+      {{ o.inicio | date: 'EEEE d \'de\' MMMM, HH:mm' }} · {{ o.sala }} · {{ o.formato }}
+    </p>
+
+    <p class="butacas">
+      @for (butaca of o.butacas; track butaca.fila + butaca.numero) {
+        <span class="butaca">{{ butaca.fila }}{{ butaca.numero }}</span>
+      }
+    </p>
+
+    @if (o.restriccion_edad) {
+      <p class="restriccion">
+        Apta para mayores de {{ o.restriccion_edad }} años. Verificá que los menores
+        vayan acompañados.
+      </p>
+    }
+
+    @if (o.validado_en) {
+      <p class="usado">
+        Este código ya fue utilizado el {{ o.validado_en | date: 'd/M/yy HH:mm' }}.
+      </p>
+    } @else {
+      <button type="button" class="boton" [disabled]="validando()" (click)="validar()">
+        {{ validando() ? 'Validando…' : 'Validar ingreso' }}
+      </button>
+    }
+  </div>
+}

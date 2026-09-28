@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { PublicLayout } from './layouts/public-layout/public-layout';
 import { Home } from './features/home/home/home';
 import { adminGuard } from './core/auth/guards/admin-guard'; 
+import { empleadoGuard } from './core/guards/empleado-guard';
 
 export const routes: Routes = [
   {
@@ -41,7 +42,7 @@ export const routes: Routes = [
       
     ],
   },
-    {
+  {
     path: 'admin',
     canMatch: [adminGuard],
     loadComponent: () => import('./layouts/admin-layout/admin-layout').then((m) => m.AdminLayout),
@@ -70,5 +71,11 @@ export const routes: Routes = [
           ),
       },
     ],
+  },
+  {
+    path: 'validacion',
+    canMatch: [empleadoGuard],
+    loadComponent: () =>
+      import('./features/validacion/validar-entrada/validar-entrada').then((m) => m.ValidarEntrada),
   },
 ];
