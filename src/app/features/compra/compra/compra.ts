@@ -8,9 +8,12 @@ import { Funcion } from '../../../core/models/funcion';
 import { MapaButacas } from '../mapa-butacas/mapa-butacas';
 import { PasoIdentidad } from '../paso-identidad/paso-identidad';
 import { CompraStore } from './compra.store';
+import { PasoPago } from '../paso-pago/paso-pago';
+
 @Component({
+
   selector: 'app-compra',
-  imports: [DatePipe, RouterLink, MapaButacas, PasoIdentidad],
+  imports: [DatePipe, RouterLink, MapaButacas, PasoIdentidad, PasoPago],
   templateUrl: './compra.html',
   styleUrl: './compra.scss',
   // El store se crea con esta pantalla y muere con ella: cada compra
@@ -26,7 +29,12 @@ export class Compra implements OnInit {
   readonly funcion = signal<Funcion | null>(null);
   readonly restriccionEdad = signal(0);
   readonly cargando = signal(true);
-   readonly ordenId = signal<string | null>(null);
+  readonly ordenId = signal<string | null>(null);
+  readonly pagada = signal(false);
+
+  alPagar(): void {
+    this.pagada.set(true);
+  }
 
   alReservar(id: string): void {
     this.ordenId.set(id);

@@ -31,12 +31,14 @@
         Usar otros datos
       </button>
     </div>
+  } @else if (pagada()) {
+    <p class="aviso">¡Compra confirmada! El comprobante llega en el próximo paso.</p>
+  } @else if (ordenId(); as id) {
+    <app-paso-pago [ordenId]="id" (pagado)="alPagar()" />
   } @else {
     <section class="butacas">
       <h2>Elegí tus butacas</h2>
-        <app-mapa-butacas [funcionId]="f.id" (reservado)="alReservar($event)" />
+      <app-mapa-butacas [funcionId]="f.id" (reservado)="alReservar($event)" />
     </section>
   }
-} @else {
-  <p class="aviso">No encontramos esa función. Puede que ya haya comenzado.</p>
 }

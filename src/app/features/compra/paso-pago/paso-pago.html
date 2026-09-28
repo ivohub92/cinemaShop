@@ -1,0 +1,57 @@
+@if (cargando()) {
+  <p class="aviso">Cargando el resumen…</p>
+} @else if (orden(); as o) {
+  <h2>Confirmá tu compra</h2>
+
+  <p class="tiempo">
+    Tu reserva vence en <strong>{{ restante() }}</strong>
+  </p>
+
+  <div class="resumen">
+    <h3>{{ o.pelicula }}</h3>
+
+    <p class="datos">
+      {{ o.inicio | date: 'EEEE d \'de\' MMMM, HH:mm' }} · {{ o.sala }} ·
+      {{ o.formato }} · {{ o.idioma }}
+    </p>
+
+    <ul class="butacas">
+      @for (butaca of o.butacas; track butaca.fila + butaca.numero) {
+        <li>
+          <span>
+            Butaca {{ butaca.fila }}{{ butaca.numero }}
+            @if (butaca.tipo === 'vip') { <em>VIP</em> }
+            @if (butaca.tipo === 'accesible') { <em>accesible</em> }
+          </span>
+          <span>$ {{ butaca.precio }}</span>
+        </li>
+      }
+    </ul>
+
+    <p class="total">
+      <span>Total</span>
+      <strong>$ {{ o.total }}</strong>
+    </p>
+
+    @if (o.restriccion_edad) {
+      <p class="aviso-edad">
+        Función apta para mayores de {{ o.restriccion_edad }} años. Los menores deben
+        concurrir acompañados por un adulto.
+      </p>
+    }
+
+    <p class="envio">Enviamos las entradas a {{ o.email }}</p>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <button type="button" class="boton" [disabled]="pagando()" (click)="pagar()">
+    {{ pagando() ? 'Procesando…' : 'Pagar $ ' + o.total }}
+  </button>
+
+  <p class="nota">
+    El pago está simulado: este trabajo práctico no integra una pasarela real.
+  </p>
+}

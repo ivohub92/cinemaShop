@@ -7,6 +7,7 @@ export class ButacasService {
   private readonly supabase = inject(SupabaseService);
 
   async listarPorFuncion(funcionId: string): Promise<Butaca[]> {
+    await this.supabase.client.rpc('liberar_reservas_vencidas');
     const { data: funcion, error: errorFuncion } = await this.supabase.client
       .from('funciones')
       .select('sala_id')
@@ -58,5 +59,22 @@ export class ButacasService {
 
     if (error) throw error;
     return data as string;
+  }
+
+    async obtenerOrden(ordenId: string): Promise<any> {
+    const { data, error } = await this.supabase.client.rpc('obtener_orden', {
+      p_orden_id: ordenId,
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
+  async confirmarCompra(ordenId: string): Promise<void> {
+    const { error } = await this.supabase.client.rpc('confirmar_compra', {
+      p_orden_id: ordenId,
+    });
+
+    if (error) throw error;
   }
 }

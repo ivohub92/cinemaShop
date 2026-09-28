@@ -1,0 +1,86 @@
+h2 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.tiempo {
+  margin-bottom: 1.5rem;
+  color: var(--color-texto-suave);
+
+  strong {
+    color: var(--color-destacado);
+  }
+}
+
+.resumen {
+  max-width: 30rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+
+  h3 {
+    margin: 0 0 0.35rem;
+  }
+}
+
+.datos {
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+  text-transform: capitalize;
+}
+
+.butacas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-borde);
+  }
+
+  em {
+    font-style: normal;
+    font-size: 0.75rem;
+    color: var(--color-texto-suave);
+  }
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0 0;
+  font-size: 1.1rem;
+}
+
+.aviso-edad {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.envio {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.error {
+  color: #e38b8b;
+}
+
+.nota {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.aviso {
+  color: var(--color-texto-suave);
+}
