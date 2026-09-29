@@ -1,0 +1,77 @@
+<section class="resenias" id="resenias">
+  <header class="cabecera">
+    <h2>Reseñas</h2>
+
+    @if (puntaje().promedio !== null) {
+      <div class="promedio">
+        <app-selector-estrellas [soloLectura]="true" [ngModel]="puntaje().promedio" [ngModelOptions]="{ standalone: true }" />
+        <span>
+          {{ puntaje().promedio }} · {{ puntaje().cantidad }}
+          {{ puntaje().cantidad === 1 ? 'reseña' : 'reseñas' }}
+        </span>
+      </div>
+    }
+  </header>
+
+  @if (cargando()) {
+    <p class="aviso">Cargando reseñas…</p>
+  } @else {
+    @if (perfil()) {
+      <form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario">
+        <h3>{{ propia() ? 'Tu reseña' : 'Dejá tu reseña' }}</h3>
+
+        <app-selector-estrellas formControlName="puntaje" />
+
+        <textarea
+          formControlName="comentario"
+          rows="3"
+          maxlength="500"
+          placeholder="Contá qué te pareció (opcional)"
+        ></textarea>
+
+        @if (error()) {
+          <p class="error">{{ error() }}</p>
+        }
+
+        <div class="acciones">
+          <button type="submit" class="boton" [disabled]="enviando()">
+            {{ enviando() ? 'Guardando…' : (propia() ? 'Actualizar' : 'Publicar') }}
+          </button>
+
+          @if (propia()) {
+            <button type="button" class="boton boton--discreto" (click)="eliminar()">
+              Eliminar
+            </button>
+          }
+        </div>
+      </form>
+    } @else {
+      <p class="aviso">Ingresá a tu cuenta para dejar una reseña.</p>
+    }
+
+    @if (resenias().length) {
+      <ul class="lista">
+        @for (resenia of resenias(); track resenia.id) {
+          <li class="resenia">
+            <div class="resenia__cabecera">
+              <app-selector-estrellas [soloLectura]="true" [ngModel]="resenia.puntaje" [ngModelOptions]="{ standalone: true }" />
+              <span class="autor">{{ resenia.autor }}</span>
+
+              @if (resenia.verificada) {
+                <span class="verificada">Compra verificada</span>
+              }
+
+              <span class="fecha">{{ resenia.creadoEn | tiempoRelativo }}</span>
+            </div>
+
+            @if (resenia.comentario) {
+              <p class="comentario">{{ resenia.comentario }}</p>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="aviso">Todavía nadie dejó su opinión sobre esta película.</p>
+    }
+  }
+</section>

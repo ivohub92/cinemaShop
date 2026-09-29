@@ -4,10 +4,12 @@ import { Pelicula } from '../../../../core/models/pelicula';
 import { PosterHover } from '../../../../shared/directives/poster-hover';
 import { ImagenRespaldo } from '../../../../shared/directives/imagen-respaldo';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { SelectorEstrellas } from '../../../../shared/forms/selector-estrellas/selector-estrellas';
 
 @Component({
   selector: 'app-tarjeta-pelicula',
-  imports: [NgClass, PosterHover, ImagenRespaldo, RouterLink],
+  imports: [NgClass, PosterHover, ImagenRespaldo, RouterLink, FormsModule, SelectorEstrellas],
   templateUrl: './tarjeta-pelicula.html',
   styleUrl: './tarjeta-pelicula.scss',
 })

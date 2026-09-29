@@ -14,6 +14,24 @@
     <div class="datos">
       <h1>{{ peli.titulo }}</h1>
 
+      @if (puntaje().promedio !== null) {
+        <p class="puntaje">
+          <app-selector-estrellas
+            [soloLectura]="true"
+            [ngModel]="puntaje().promedio"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <strong>{{ puntaje().promedio }}</strong>
+            <a [routerLink]="[]" fragment="resenias">
+            {{ puntaje().cantidad }} {{ puntaje().cantidad === 1 ? 'reseña' : 'reseñas' }}
+          </a>
+        </p>
+      } @else {
+        <p class="puntaje sin-resenias">
+          <a href="#resenias">Todavía no tiene reseñas.</a>
+        </p>
+      }
+
       <p class="meta">
         {{ peli.duracionMin }} min ·
         {{ peli.restriccionEdad === 0 ? 'ATP' : '+' + peli.restriccionEdad }}
@@ -49,6 +67,8 @@
       <p class="aviso">Esta película todavía no tiene funciones programadas.</p>
     }
   </section>
+
+  <app-resenias-pelicula [peliculaId]="peli.id" />
 } @else {
   <p class="aviso">No encontramos esa película.</p>
 }

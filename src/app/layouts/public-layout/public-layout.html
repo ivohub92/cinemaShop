@@ -5,9 +5,17 @@
     <nav class="acceso">
       @if (usuario()) {
         <span class="saludo">Hola, {{ perfil()?.nombre ?? 'invitado' }}</span>
+
+        <a class="boton boton--contorno" routerLink="/mis-peliculas">Mis películas</a>
+
         @if (perfil()?.rol === 'admin') {
           <a class="boton boton--contorno" routerLink="/admin/peliculas">Administrar</a>
         }
+
+        @if (perfil()?.rol === 'empleado' || perfil()?.rol === 'admin') {
+          <a class="boton boton--contorno" routerLink="/validacion">Validar</a>
+        }
+
         <button type="button" class="boton boton--contorno" (click)="salir()">Salir</button>
       } @else {
         <button type="button" class="boton boton--contorno" (click)="panel().abrir()">Ingresar</button>
@@ -23,6 +31,7 @@
 <footer class="pie">
   <p>cineShop © {{ anio }}</p>
 </footer>
+
 <app-panel-lateral>
   <app-ingreso (ingresado)="panel().cerrar()" />
 </app-panel-lateral>

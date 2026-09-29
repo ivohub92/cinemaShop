@@ -4,7 +4,7 @@ import QRCode from 'qrcode';
 
 @Injectable({ providedIn: 'root' })
 export class ComprobanteService {
-  /** Genera el QR como imagen para mostrarlo en pantalla. */
+  
   async generarQr(codigo: string): Promise<string> {
     return QRCode.toDataURL(codigo, {
       width: 400,
@@ -13,7 +13,7 @@ export class ComprobanteService {
     });
   }
 
-  /** Arma el comprobante en PDF y lo descarga. */
+  
   async descargarPdf(orden: any): Promise<void> {
     const qr = await QRCode.toDataURL(orden.codigo_qr, { width: 300, margin: 1 });
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
@@ -65,8 +65,7 @@ export class ComprobanteService {
     doc.text('Presentá este código en la entrada', 130, 120);
     doc.text(orden.codigo_qr, 130, 126);
 
-    // El cliente pidió que la entrada aclare cuando la película tiene
-    // restricción de edad.
+    
     if (orden.restriccion_edad) {
       doc.setTextColor(180, 60, 60);
       doc.setFontSize(10);

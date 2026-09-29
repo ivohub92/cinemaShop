@@ -43,7 +43,6 @@ export class ButacasService {
     }));
   }
 
-  /** Reserva las butacas por unos minutos y devuelve el id de la orden. */
   async reservar(
     funcionId: string,
     butacas: string[],

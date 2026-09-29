@@ -3,6 +3,7 @@ import { PublicLayout } from './layouts/public-layout/public-layout';
 import { Home } from './features/home/home/home';
 import { adminGuard } from './core/auth/guards/admin-guard'; 
 import { empleadoGuard } from './core/guards/empleado-guard';
+import { sesionGuard } from './core/guards/session.guards';
 
 export const routes: Routes = [
   {
@@ -39,6 +40,12 @@ export const routes: Routes = [
         path: 'compra/:funcionId',
         loadComponent: () => import('./features/compra/compra/compra').then((m) => m.Compra),
       },
+      {
+     path: 'mis-peliculas',
+    canMatch: [sesionGuard],
+    loadComponent: () =>
+      import('./features/cuenta/mis-peliculas/mis-peliculas').then((m) => m.MisPeliculas),
+  },
       
     ],
   },
@@ -78,4 +85,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/validacion/validar-entrada/validar-entrada').then((m) => m.ValidarEntrada),
   },
+  
+  { path: '**', redirectTo: '' }
+
 ];

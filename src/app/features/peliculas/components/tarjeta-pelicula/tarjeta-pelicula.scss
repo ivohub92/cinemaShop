@@ -75,3 +75,15 @@ article {
   height: 100%;
 }
  
+.puntaje {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.15rem 0;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.puntaje app-selector-estrellas {
+  font-size: 0.65rem;
+}

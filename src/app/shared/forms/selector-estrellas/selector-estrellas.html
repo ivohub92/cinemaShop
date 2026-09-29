@@ -1,0 +1,22 @@
+<div
+  class="estrellas"
+  [class.estrellas--lectura]="soloLectura()"
+  (mouseleave)="limpiarPrevisualizacion()"
+  [attr.role]="soloLectura() ? 'img' : 'radiogroup'"
+  [attr.aria-label]="soloLectura() ? valor() + ' de 5 estrellas' : 'Calificación'"
+>
+  @for (estrella of estrellas; track estrella) {
+    <button
+      type="button"
+      class="estrella"
+      [class.estrella--activa]="estrella <= activas()"
+      [disabled]="soloLectura() || deshabilitado()"
+      [attr.aria-label]="estrella + (estrella === 1 ? ' estrella' : ' estrellas')"
+      [attr.aria-pressed]="estrella === valor()"
+      (click)="elegir(estrella)"
+      (mouseenter)="previsualizar(estrella)"
+    >
+      ★
+    </button>
+  }
+</div>

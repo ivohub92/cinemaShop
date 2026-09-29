@@ -77,3 +77,26 @@ h1 {
 .aviso {
   color: var(--color-texto-suave);
 }
+
+.puntaje {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+
+  a {
+    color: var(--color-texto-suave);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    color: var(--color-destacado);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}

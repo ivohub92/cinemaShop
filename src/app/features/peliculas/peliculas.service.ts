@@ -6,14 +6,24 @@ import { Pelicula } from '../../core/models/pelicula';
 export class PeliculasService {
   private readonly supabase = inject(SupabaseService);
 
-  
-
-    async listar(filtro?: 'en-cartel' | 'proximamente'): Promise<Pelicula[]> {
+  async listar(filtro?: 'en-cartel' | 'proximamente'): Promise<Pelicula[]> {
     const { data: conFunciones } = await this.supabase.client
       .from('peliculas_con_funciones')
       .select('pelicula_id');
 
     const ids = (conFunciones ?? []).map((f: any) => f.pelicula_id);
+
+    const { data: puntajes } = await this.supabase.client
+      .from('puntajes_peliculas')
+      .select('pelicula_id, promedio, cantidad');
+
+    // Mapa para cruzar sin recorrer el arreglo en cada película.
+    const porPelicula = new Map<string, { promedio: number | null; cantidad: number }>(
+      (puntajes ?? []).map((p: any) => [
+        p.pelicula_id,
+        { promedio: p.promedio !== null ? Number(p.promedio) : null, cantidad: Number(p.cantidad) },
+      ]),
+    );
 
     let consulta = this.supabase.client
       .from('peliculas')
@@ -37,19 +47,25 @@ export class PeliculasService {
     const { data, error } = await consulta;
     if (error) throw error;
 
-    return (data ?? []).map((fila: any) => ({
-      id: fila.id,
-      titulo: fila.titulo,
-      duracionMin: fila.duracion_min,
-      posterUrl: fila.poster_url ?? '',
-      restriccionEdad: fila.restriccion_edad,
-      fechaEstreno: fila.fecha_estreno,
-      activa: fila.activa,
-      generos: (fila.generos ?? []).map((g: any) => g.nombre),
-    }));
+    return (data ?? []).map((fila: any) => {
+      const puntaje = porPelicula.get(fila.id);
+
+      return {
+        id: fila.id,
+        titulo: fila.titulo,
+        duracionMin: fila.duracion_min,
+        posterUrl: fila.poster_url ?? '',
+        restriccionEdad: fila.restriccion_edad,
+        fechaEstreno: fila.fecha_estreno,
+        activa: fila.activa,
+        generos: (fila.generos ?? []).map((g: any) => g.nombre),
+        promedio: puntaje?.promedio ?? null,
+        cantidadResenias: puntaje?.cantidad ?? 0,
+      };
+    });
   }
 
-    async listarGeneros(): Promise<{ id: string; nombre: string }[]> {
+  async listarGeneros(): Promise<{ id: string; nombre: string }[]> {
     const { data, error } = await this.supabase.client
       .from('generos')
       .select('id, nombre')
@@ -57,6 +73,33 @@ export class PeliculasService {
 
     if (error) throw error;
     return data ?? [];
+  }
+
+  async obtener(id: string): Promise<(Pelicula & { sinopsis: string; generosIds: string[] }) | null> {
+    const { data, error } = await this.supabase.client
+      .from('peliculas')
+      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, generos(id, nombre)')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    if (!data) return null;
+
+    return {
+      id: data.id,
+      titulo: data.titulo,
+      sinopsis: data.sinopsis,
+      duracionMin: data.duracion_min,
+      posterUrl: data.poster_url ?? '',
+      restriccionEdad: data.restriccion_edad,
+      fechaEstreno: data.fecha_estreno,
+      activa: data.activa,
+      generos: (data.generos ?? []).map((g: any) => g.nombre),
+      generosIds: (data.generos ?? []).map((g: any) => g.id),
+      // El detalle consulta el puntaje por separado con el servicio de reseñas.
+      promedio: null,
+      cantidadResenias: 0,
+    };
   }
 
   async crear(pelicula: {
@@ -90,29 +133,6 @@ export class PeliculasService {
 
       if (errorGeneros) throw errorGeneros;
     }
-  }
-   async obtener(id: string): Promise<(Pelicula & { sinopsis: string; generosIds: string[] }) | null> {
-    const { data, error } = await this.supabase.client
-      .from('peliculas')
-      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, generos(id, nombre)')
-      .eq('id', id)
-      .single();
-
-    if (error) throw error;
-    if (!data) return null;
-
-    return {
-      id: data.id,
-      titulo: data.titulo,
-      sinopsis: data.sinopsis,
-      duracionMin: data.duracion_min,
-      posterUrl: data.poster_url ?? '',
-      restriccionEdad: data.restriccion_edad,
-      fechaEstreno: data.fecha_estreno,
-      activa: data.activa,
-      generos: (data.generos ?? []).map((g: any) => g.nombre),
-      generosIds: (data.generos ?? []).map((g: any) => g.id),
-    };
   }
 
   async actualizar(id: string, pelicula: {
@@ -156,7 +176,7 @@ export class PeliculasService {
     }
   }
 
-    async darDeBaja(id: string): Promise<void> {
+  async darDeBaja(id: string): Promise<void> {
     const { error } = await this.supabase.client
       .from('peliculas')
       .update({ activa: false })
@@ -173,6 +193,4 @@ export class PeliculasService {
 
     if (error) throw error;
   }
-
-
 }

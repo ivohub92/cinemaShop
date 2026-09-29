@@ -1,23 +1,22 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SupabaseService } from './core/supabase/supabase.service';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
-export class App implements OnInit {
-  protected readonly title = signal('cine');
+export class App {
+  private readonly actualizaciones = inject(SwUpdate);
 
-
-  //prueba--------------------------
-  private supabase = inject(SupabaseService);
-
-  ngOnInit() {
-    this.supabase.client.from('salas').select('id, nombre')
-      .then(({ data, error }) => console.log({ data, error }));
+  constructor() {
+    
+    this.actualizaciones.versionUpdates.subscribe((evento) => {
+      if (evento.type === 'VERSION_READY' && confirm('Hay una versión nueva. ¿Actualizar?')) {
+        document.location.reload();
+      }
+    });
   }
-  //---------------------------
 }

@@ -1,0 +1,104 @@
+<h1>Mis películas</h1>
+
+@if (cargando()) {
+  <p class="aviso">Cargando tu historial…</p>
+} @else if (historial().length) {
+  @if (sinCalificar()) {
+    <p class="pendientes">
+      Tenés {{ sinCalificar() }}
+      {{ sinCalificar() === 1 ? 'película sin calificar' : 'películas sin calificar' }}.
+    </p>
+  }
+
+  <ul class="historial">
+    @for (item of historial(); track item.peliculaId) {
+      <li class="item">
+        <img
+          class="poster"
+          [src]="item.posterUrl"
+          [alt]="'Póster de ' + item.titulo"
+          width="400"
+          height="600"
+          loading="lazy"
+          appImagenRespaldo
+        />
+
+        <div class="datos">
+          <h2>
+            <a [routerLink]="['/peliculas', item.peliculaId]">{{ item.titulo }}</a>
+          </h2>
+
+          <p class="funcion">
+            La viste el {{ item.vistaEn | date: 'd/M/yy' }} · {{ item.sala }} · {{ item.formato }}
+          </p>
+
+          @if (calificando() === item.peliculaId) {
+            <div class="formulario">
+              <app-selector-estrellas
+                [ngModel]="puntaje()"
+                (ngModelChange)="puntaje.set($event)"
+                name="puntaje"
+              />
+
+              <textarea
+                rows="3"
+                maxlength="500"
+                placeholder="Contá qué te pareció (opcional)"
+                [ngModel]="comentario()"
+                (ngModelChange)="comentario.set($event)"
+                name="comentario"
+              ></textarea>
+
+              <div class="acciones">
+                <button
+                  type="button"
+                  class="boton"
+                  [disabled]="guardando() || !puntaje()"
+                  (click)="guardar(item.peliculaId)"
+                >
+                  {{ guardando() ? 'Guardando…' : 'Guardar' }}
+                </button>
+
+                <button type="button" class="boton boton--discreto" (click)="cerrarFormulario()">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          } @else if (item.resenia) {
+            <div class="calificacion">
+              <app-selector-estrellas
+                [soloLectura]="true"
+                [ngModel]="item.resenia.puntaje"
+                [ngModelOptions]="{ standalone: true }"
+              />
+
+              @if (item.resenia.comentario) {
+                <p class="comentario">{{ item.resenia.comentario }}</p>
+              }
+
+              <button
+                type="button"
+                class="boton boton--discreto"
+                (click)="abrirFormulario(item.peliculaId, item.resenia)"
+              >
+                Editar mi reseña
+              </button>
+            </div>
+          } @else {
+            <button
+              type="button"
+              class="boton boton--contorno"
+              (click)="abrirFormulario(item.peliculaId, null)"
+            >
+              Calificar
+            </button>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+} @else {
+  <p class="aviso">
+    Todavía no fuiste a ninguna función. Cuando uses una entrada, la película aparece acá.
+  </p>
+}

@@ -6,10 +6,16 @@ import { FuncionesService } from '../../funciones/funciones.service';
 import { Pelicula } from '../../../core/models/pelicula';
 import { Funcion } from '../../../core/models/funcion';
 import { ImagenRespaldo } from '../../../shared/directives/imagen-respaldo';
+import { ReseniasPelicula } from '../resenias-pelicula/resenias-pelicula';
+import { ReseniasService } from '../resenias.service';
+import { PuntajePelicula } from '../../../core/models/resenia';
+import { SelectorEstrellas } from '../../../shared/forms/selector-estrellas/selector-estrellas';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-detalle-pelicula',
-  imports: [DatePipe, RouterLink, ImagenRespaldo],
+  imports: [DatePipe, RouterLink, ImagenRespaldo, FormsModule, SelectorEstrellas, ReseniasPelicula],
   templateUrl: './detalle-pelicula.html',
   styleUrl: './detalle-pelicula.scss',
 })
@@ -22,6 +28,10 @@ export class DetallePelicula implements OnInit {
   readonly pelicula = signal<(Pelicula & { sinopsis: string }) | null>(null);
   readonly funciones = signal<Funcion[]>([]);
   readonly cargando = signal(true);
+
+    private readonly reseniasService = inject(ReseniasService);
+
+  readonly puntaje = signal<PuntajePelicula>({ promedio: null, cantidad: 0 });
 
   /** Funciones agrupadas por día, para no listar 30 horarios seguidos. */
   readonly porDia = computed(() => {
@@ -36,13 +46,15 @@ export class DetallePelicula implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    const [pelicula, funciones] = await Promise.all([
+    const [pelicula, funciones, puntaje] = await Promise.all([
       this.peliculasService.obtener(this.id()),
       this.funcionesService.listar(this.id()),
+      this.reseniasService.obtenerPuntaje(this.id()),
     ]);
 
     this.pelicula.set(pelicula);
     this.funciones.set(funciones);
+    this.puntaje.set(puntaje);
     this.cargando.set(false);
   }
 }

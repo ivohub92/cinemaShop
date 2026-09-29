@@ -14,7 +14,19 @@
       </span>
     </div>
 
-    <h2>{{ pelicula().titulo }}</h2>
-    <p>{{ pelicula().generos.join(', ') }} — {{ pelicula().duracionMin }} min</p>
+      <h2>{{ pelicula().titulo }}</h2>
+
+  @if (pelicula().promedio !== null) {
+    <p class="puntaje">
+      <app-selector-estrellas
+        [soloLectura]="true"
+        [ngModel]="pelicula().promedio"
+        [ngModelOptions]="{ standalone: true }"
+      />
+      <span>{{ pelicula().promedio }} ({{ pelicula().cantidadResenias }})</span>
+    </p>
+  }
+
+  <p>{{ pelicula().generos.join(', ') }} — {{ pelicula().duracionMin }} min</p>
   </article>
 </a>

@@ -10,15 +10,11 @@ import { Butaca } from '../../../core/models/butaca';
 })
 export class MapaButacas implements OnInit {
   private readonly butacasService = inject(ButacasService);
-
   readonly funcionId = input.required<string>();
-
   readonly butacas = signal<Butaca[]>([]);
   readonly seleccionadas = signal<string[]>([]);
   readonly cargando = signal(true);
-
-    private readonly store = inject(CompraStore);
-
+  private readonly store = inject(CompraStore);
   readonly reservado = output<string>();
 
   readonly reservando = signal(false);
