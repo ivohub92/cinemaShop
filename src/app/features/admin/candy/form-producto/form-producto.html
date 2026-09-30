@@ -1,0 +1,47 @@
+<h1>{{ editando() ? 'Editar producto' : 'Nuevo producto' }}</h1>
+
+@if (!categorias().length) {
+  <p class="error">
+    Primero creá al menos una categoría en <a routerLink="/admin/candy">la lista del candy bar</a>.
+  </p>
+}
+
+<form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario">
+  <label>
+    Nombre
+    <input type="text" formControlName="nombre" />
+  </label>
+
+  <label>
+    Categoría
+    <select formControlName="categoriaId">
+      <option value="" disabled>Elegí una categoría</option>
+      @for (categoria of categorias(); track categoria.id) {
+        <option [value]="categoria.id">{{ categoria.nombre }}</option>
+      }
+    </select>
+  </label>
+
+  <label>
+    Descripción
+    <textarea formControlName="descripcion" rows="3"></textarea>
+  </label>
+
+  <label>
+    Precio
+    <input type="number" formControlName="precio" min="0" step="50" />
+  </label>
+
+  <label>
+    URL de la imagen
+    <input type="url" formControlName="imagenUrl" placeholder="https://…" />
+  </label>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <button type="submit" [disabled]="enviando()">
+    {{ enviando() ? 'Guardando…' : 'Guardar producto' }}
+  </button>
+</form>

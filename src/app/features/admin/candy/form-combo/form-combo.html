@@ -1,0 +1,66 @@
+<h1>{{ editando() ? 'Editar combo' : 'Nuevo combo' }}</h1>
+
+<p class="nota">
+  Cada combo incluye <strong>una entrada</strong> más los productos que elijas. El precio del combo
+  reemplaza el precio base de esa entrada (las butacas VIP mantienen su recargo).
+</p>
+
+<form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario">
+  <label>
+    Nombre
+    <input type="text" formControlName="nombre" placeholder="Combo Clásico" />
+  </label>
+
+  <label>
+    Descripción
+    <textarea formControlName="descripcion" rows="2"></textarea>
+  </label>
+
+  <fieldset class="items">
+    <legend>Productos incluidos</legend>
+
+    @for (producto of productos(); track producto.id) {
+      <label class="item">
+        <span>
+          {{ producto.nombre }}
+          <small>({{ producto.precio | currency: 'ARS' : 'symbol-narrow' }})</small>
+        </span>
+        <input
+          type="number"
+          min="0"
+          max="10"
+          [value]="cantidadDe(producto.id)"
+          (input)="cambiarCantidad(producto.id, $any($event.target).value)"
+        />
+      </label>
+    } @empty {
+      <p>No hay productos activos. Cargá productos primero.</p>
+    }
+  </fieldset>
+
+  <label>
+    Precio del combo
+    <input type="number" formControlName="precio" min="0" step="50" />
+    @if (valorSuelto()) {
+      <small>Entrada aparte, los productos sueltos suman {{ valorSuelto() | currency: 'ARS' : 'symbol-narrow' }}.</small>
+    }
+  </label>
+
+  <label>
+    URL de la imagen
+    <input type="url" formControlName="imagenUrl" placeholder="https://…" />
+  </label>
+
+  <label class="check">
+    <input type="checkbox" formControlName="destacado" />
+    Destacar en la página de compra
+  </label>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <button type="submit" [disabled]="enviando()">
+    {{ enviando() ? 'Guardando…' : 'Guardar combo' }}
+  </button>
+</form>

@@ -1,0 +1,141 @@
+<header class="cabecera">
+  <h1>Candy bar</h1>
+  <a class="boton" routerLink="/admin/candy/nuevo">Agregar producto</a>
+</header>
+
+<section class="categorias">
+  <h2>Categorías</h2>
+
+    <ul class="lista-categorias">
+    @for (categoria of categorias(); track categoria.id) {
+      <li class="chip">
+        @if (editandoCategoria() === categoria.id) {
+          <input
+            #campoNombre
+            class="chip__campo"
+            type="text"
+            [value]="categoria.nombre"
+            aria-label="Nuevo nombre de la categoría"
+            (keydown.enter)="renombrarCategoria(categoria, campoNombre)"
+            (keydown.escape)="editandoCategoria.set(null)"
+          />
+          <button type="button" class="chip__accion" aria-label="Guardar" (click)="renombrarCategoria(categoria, campoNombre)">✓</button>
+          <button type="button" class="chip__accion" aria-label="Cancelar" (click)="editandoCategoria.set(null)">✕</button>
+        } @else {
+          <span>{{ categoria.nombre }}</span>
+          <small class="chip__cantidad">{{ productosEn(categoria) }}</small>
+          <button
+            type="button"
+            class="chip__accion"
+            [attr.aria-label]="'Renombrar ' + categoria.nombre"
+            (click)="editandoCategoria.set(categoria.id)"
+          >✎</button>
+          <button
+            type="button"
+            class="chip__accion"
+            [attr.aria-label]="'Borrar ' + categoria.nombre"
+            [disabled]="productosEn(categoria) > 0"
+            [title]="productosEn(categoria) > 0 ? 'Tiene productos: pasalos a otra categoría para poder borrarla' : 'Borrar'"
+            (click)="borrarCategoria(categoria)"
+          >🗑</button>
+        }
+      </li>
+    } @empty {
+      <li class="vacio">Todavía no hay categorías.</li>
+    }
+  </ul>
+
+  <div class="nueva-categoria">
+    <input
+      #campoCategoria
+      type="text"
+      placeholder="Nueva categoría (ej.: Bebidas)"
+      (keydown.enter)="agregarCategoria(campoCategoria)"
+    />
+    <button type="button" class="boton boton--contorno" (click)="agregarCategoria(campoCategoria)">
+      Agregar
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+</section>
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else {
+  @if (productos().length) {
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (producto of productos(); track producto.id) {
+          <tr>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.categoria }}</td>
+            <td>{{ producto.precio | currency: 'ARS' : 'symbol-narrow' }}</td>
+            <td>{{ producto.activo ? 'A la venta' : 'Dado de baja' }}</td>
+            <td class="acciones">
+              <a class="boton boton--discreto" [routerLink]="['/admin/candy', producto.id]">Editar</a>
+              <button type="button" class="boton boton--discreto" (click)="cambiarEstado(producto)">
+                {{ producto.activo ? 'Dar de baja' : 'Reactivar' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p>Todavía no hay productos cargados.</p>
+  }
+
+  <header class="cabecera cabecera--seccion">
+    <h2>Combos</h2>
+    <a class="boton" routerLink="/admin/candy/combos/nuevo">Agregar combo</a>
+  </header>
+
+  @if (combos().length) {
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Combo</th>
+          <th>Incluye</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (combo of combos(); track combo.id) {
+          <tr>
+            <td>
+              {{ combo.nombre }}
+              @if (combo.destacado) {
+                <span class="chip">Destacado</span>
+              }
+            </td>
+            <td>1 entrada + {{ detalle(combo) }}</td>
+            <td>{{ combo.precio | currency: 'ARS' : 'symbol-narrow' }}</td>
+            <td>{{ combo.activo ? 'A la venta' : 'Dado de baja' }}</td>
+            <td class="acciones">
+              <a class="boton boton--discreto" [routerLink]="['/admin/candy/combos', combo.id]">Editar</a>
+              <button type="button" class="boton boton--discreto" (click)="cambiarEstadoCombo(combo)">
+                {{ combo.activo ? 'Dar de baja' : 'Reactivar' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p>Todavía no hay combos.</p>
+  }
+}

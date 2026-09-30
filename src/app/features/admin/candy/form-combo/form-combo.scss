@@ -1,0 +1,77 @@
+.formulario {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 34rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+input,
+select,
+textarea {
+  padding: 0.7rem 1rem;
+  font: inherit;
+  color: var(--color-texto);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+}
+
+// Texto explicativo arriba del formulario.
+.nota {
+  max-width: 34rem;
+  color: var(--color-texto-suave);
+  line-height: 1.5;
+}
+
+// Recuadro con la lista de productos del combo.
+.items {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+}
+
+// Cada fila: nombre del producto a la izquierda, cantidad a la derecha.
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--color-texto);
+
+  input {
+    width: 5rem;
+    padding: 0.4rem 0.6rem;
+    text-align: center;
+  }
+}
+
+// El checkbox "Destacar": en línea con su texto, no en grilla como los demás labels.
+.check {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-texto);
+}
+
+input[type='checkbox'] {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--color-destacado);
+}
+
+small {
+  color: var(--color-texto-suave);
+}
+
+.error {
+  color: #e38b8b;
+}

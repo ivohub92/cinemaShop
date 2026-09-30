@@ -1,0 +1,125 @@
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+// Separa la sección "Combos" de la tabla de productos.
+.cabecera--seccion {
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+h1,
+h2 {
+  margin: 0;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-borde);
+  }
+
+  th {
+    font-size: 0.85rem;
+    color: var(--color-texto-suave);
+  }
+}
+
+// Bloque de categorías, arriba de la tabla.
+.categorias {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.lista-categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.4rem 0.2rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-texto);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+}
+
+.chip__cantidad {
+  color: var(--color-texto-suave);
+}
+
+.chip__accion {
+  padding: 0.1rem 0.35rem;
+  font: inherit;
+  color: var(--color-texto-suave);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    color: var(--color-texto);
+    background-color: var(--color-borde);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.chip__campo {
+  width: 9rem;
+  padding: 0.15rem 0.5rem;
+  font: inherit;
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 4px;
+}
+
+.vacio {
+  color: var(--color-texto-suave);
+}
+
+td .chip {
+  margin-left: 0.5rem;
+}
+
+.nueva-categoria {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 28rem;
+
+  input {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    font: inherit;
+    color: var(--color-texto);
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+  }
+}
+
+.error {
+  color: #e38b8b;
+}

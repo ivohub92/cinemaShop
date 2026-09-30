@@ -70,6 +70,31 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/peliculas/form-pelicula/form-pelicula').then((m) => m.FormPelicula),
       },
+            {
+        path: 'candy',
+        loadComponent: () =>
+          import('./features/admin/candy/lista-productos/lista-productos').then((m) => m.ListaProductos),
+      },
+      {
+        path: 'candy/nuevo',
+        loadComponent: () =>
+          import('./features/admin/candy/form-producto/form-producto').then((m) => m.FormProducto),
+      },
+      {
+        path: 'candy/:id',
+        loadComponent: () =>
+          import('./features/admin/candy/form-producto/form-producto').then((m) => m.FormProducto),
+      },
+      {
+        path: 'candy/combos/nuevo',
+        loadComponent: () =>
+          import('./features/admin/candy/form-combo/form-combo').then((m) => m.FormCombo),
+      },
+      {
+        path: 'candy/combos/:id',
+        loadComponent: () =>
+          import('./features/admin/candy/form-combo/form-combo').then((m) => m.FormCombo),
+      },
       {
         path: 'funciones',
         loadComponent: () =>
