@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { AuthService } from '../../../core/auth/auth.service'; 
+import { ItemCarrito } from '../../../core/models/producto';
 
 export type PasoCompra = 'identidad' | 'butacas' | 'pago';
 
@@ -59,5 +60,19 @@ export class CompraStore {
   reiniciar(): void {
     this.comprador.set(null);
     this.butacas.set([]);
+    this.productos.set([]);
+  }
+
+  readonly productos = signal<ItemCarrito[]>([]);
+
+  cantidadDe(productoId: string): number {
+    return this.productos().find((p) => p.productoId === productoId)?.cantidad ?? 0;
+  }
+
+  cambiarCantidad(productoId: string, cantidad: number): void {
+    this.productos.update((actuales) => {
+      const otros = actuales.filter((p) => p.productoId !== productoId);
+      return cantidad > 0 ? [...otros, { productoId, cantidad }] : otros;
+    });
   }
 }

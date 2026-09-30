@@ -42,17 +42,22 @@
     <span class="referencia"><i class="butaca butaca--ocupada"></i> Ocupada</span>
   </div>
 
+  
+  @if (aviso()) {
+    <p class="aviso-cambio" role="status">{{ aviso() }}</p>
+  }
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
     @if (seleccionadas().length) {
     <div class="resumen">
       <p>
         {{ seleccionadas().length }}
         {{ seleccionadas().length === 1 ? 'butaca elegida' : 'butacas elegidas' }}:
         {{ resumen() }}
-      </p>
-
-      @if (error()) {
-        <p class="error">{{ error() }}</p>
-      }
+      </p>     
 
       <button type="button" class="boton" [disabled]="reservando()" (click)="continuar()">
         {{ reservando() ? 'Reservando…' : 'Continuar' }}

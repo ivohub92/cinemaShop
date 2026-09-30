@@ -1,6 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { SupabaseService } from '../../core/supabase/supabase.service';
 import { Butaca } from '../../core/models/butaca';
+import { RealtimeChannel } from '@supabase/supabase-js';
+import { ItemCarrito } from '../../core/models/producto';
 
 @Injectable({ providedIn: 'root' })
 export class ButacasService {
@@ -48,12 +50,15 @@ export class ButacasService {
     butacas: string[],
     email: string,
     fechaNacimiento: string,
+    productos: ItemCarrito[] = [],
   ): Promise<string> {
     const { data, error } = await this.supabase.client.rpc('reservar_butacas', {
       p_funcion_id: funcionId,
       p_butacas: butacas,
       p_email: email,
       p_fecha_nacimiento: fechaNacimiento,
+      // El SQL lee "id" y "cantidad" de cada ítem.
+      p_productos: productos.map((p) => ({ id: p.productoId, cantidad: p.cantidad })),
     });
 
     if (error) throw error;
@@ -75,5 +80,21 @@ export class ButacasService {
     });
 
     if (error) throw error;
+  }
+
+   escucharCambios(
+    funcionId: string,
+    alCambiar: (butacaId: string, ocupada: boolean) => void,
+  ): RealtimeChannel {
+    return this.supabase.client
+      .channel(`funcion:${funcionId}`)
+      .on('broadcast', { event: 'butaca' }, ({ payload }) =>
+        alCambiar(payload.butaca_id, payload.ocupada),
+      )
+      .subscribe();
+  }
+
+  dejarDeEscuchar(canal: RealtimeChannel): void {
+    this.supabase.client.removeChannel(canal);
   }
 }
