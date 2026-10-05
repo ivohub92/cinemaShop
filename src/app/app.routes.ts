@@ -41,6 +41,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/compra/compra/compra').then((m) => m.Compra),
       },
       {
+        path: 'mis-compras',
+        canMatch: [sesionGuard],
+        loadComponent: () =>
+          import('./features/cuenta/mis-compras/mis-compras').then((m) => m.MisCompras),
+      },
+      {
      path: 'mis-peliculas',
     canMatch: [sesionGuard],
     loadComponent: () =>

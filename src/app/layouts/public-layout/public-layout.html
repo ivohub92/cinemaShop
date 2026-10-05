@@ -6,6 +6,7 @@
       @if (usuario()) {
         <span class="saludo">Hola, {{ perfil()?.nombre ?? 'invitado' }}</span>
 
+        <a class="boton boton--contorno" routerLink="/mis-compras">Mis compras</a>
         <a class="boton boton--contorno" routerLink="/mis-peliculas">Mis películas</a>
 
         @if (perfil()?.rol === 'admin') {

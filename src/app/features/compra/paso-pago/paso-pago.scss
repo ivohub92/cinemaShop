@@ -84,6 +84,28 @@ h2 {
   font-size: 1.1rem;
 }
 
+.usar-credito {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+
+  input {
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--color-destacado);
+  }
+}
+
+.desglose {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.75rem 0 0;
+  color: var(--color-texto-suave);
+}
+
 .aviso-edad {
   margin: 1.25rem 0 0;
   font-size: 0.85rem;

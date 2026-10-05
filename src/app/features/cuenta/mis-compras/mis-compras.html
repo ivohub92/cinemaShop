@@ -1,0 +1,67 @@
+<h1>Mis compras</h1>
+
+<p class="credito">
+  Crédito disponible: <strong>{{ credito() | currency: 'ARS' : 'symbol-narrow' }}</strong>
+  <small>Se usa como medio de pago en tu próxima compra.</small>
+</p>
+
+@if (aviso()) {
+  <p class="aviso-ok" role="status">{{ aviso() }}</p>
+}
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+
+@if (cargando()) {
+  <p class="vacio">Cargando tus compras…</p>
+} @else if (compras().length) {
+  <ul class="compras">
+    @for (compra of compras(); track compra.id) {
+      <li class="compra" [class.compra--cancelada]="compra.estado === 'cancelada'">
+        <div class="datos">
+          <h2>{{ compra.pelicula }}</h2>
+          <p class="funcion">
+            {{ compra.inicio | date: 'EEEE d \'de\' MMMM, HH:mm' }} · {{ compra.sala }} ·
+            {{ compra.entradas }} {{ compra.entradas === 1 ? 'entrada' : 'entradas' }}
+            @if (compra.tieneCandy) { · con candy }
+          </p>
+          <p class="importe">
+            {{ compra.total | currency: 'ARS' : 'symbol-narrow' }}
+            @if (compra.creditoUsado) {
+              <small>({{ compra.creditoUsado | currency: 'ARS' : 'symbol-narrow' }} con crédito)</small>
+            }
+          </p>
+          <p class="codigo">Código {{ compra.codigoQr }}</p>
+        </div>
+
+        <div class="estado">
+          @if (compra.estado === 'cancelada') {
+            <span class="etiqueta">Cancelada el {{ compra.canceladaEn | date: 'd/M/yy' }}</span>
+            <button
+              type="button"
+              class="boton boton--discreto"
+              [disabled]="quitando() === compra.id"
+              (click)="quitar(compra)"
+            >
+              {{ quitando() === compra.id ? 'Quitando…' : 'Quitar del listado' }}
+            </button>
+          } @else if (sePuedeCancelar(compra)) {
+            <button
+              type="button"
+              class="boton boton--contorno"
+              [disabled]="cancelando() === compra.id"
+              (click)="cancelar(compra)"
+            >
+              {{ cancelando() === compra.id ? 'Cancelando…' : 'Cancelar compra' }}
+            </button>
+          } @else {
+            <span class="etiqueta">{{ motivoSinCancelacion(compra) }}</span>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+} @else {
+  <p class="vacio">Todavía no hiciste ninguna compra.</p>
+}
