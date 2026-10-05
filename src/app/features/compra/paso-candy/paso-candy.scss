@@ -1,0 +1,150 @@
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
+  }
+}
+
+h3 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.sub,
+.nota,
+.detalle,
+.aviso {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+.nota {
+  margin-bottom: 1rem;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Combos: tarjetas en grilla.
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+.tarjeta {
+  position: relative;
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+
+  h4 {
+    margin: 0;
+  }
+}
+
+.tarjeta--destacada {
+  border-color: #d9a441;
+}
+
+.insignia {
+  justify-self: start;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  color: #1c1233;
+  background-color: #d9a441;
+  border-radius: 999px;
+}
+
+// Productos sueltos: filas.
+.lista {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.producto {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+}
+
+.nombre,
+.precio {
+  margin: 0;
+}
+
+.precio {
+  font-weight: 600;
+}
+
+// Botones − cantidad +
+.contador {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  button {
+    width: 2rem;
+    height: 2rem;
+    font: inherit;
+    font-size: 1.1rem;
+    color: var(--color-texto);
+    background: transparent;
+    border: 1px solid var(--color-borde);
+    border-radius: 50%;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+  }
+
+  span {
+    min-width: 1.5rem;
+    text-align: center;
+  }
+}
+
+.resumen {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.error {
+  margin-top: 1.5rem;
+  color: #e38b8b;
+}

@@ -43,3 +43,8 @@ export interface Combo {
 export type DatosCombo = Omit<Combo, 'id' | 'activo' | 'items'> & {
   items: { productoId: string; cantidad: number }[];
 };
+/** Un combo elegido en la compra y cuántas veces. */
+export interface ComboElegido {
+  comboId: string;
+  cantidad: number;
+}

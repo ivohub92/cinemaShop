@@ -1,0 +1,113 @@
+<section class="candy">
+  <header class="cabecera">
+    <div>
+      <h2>¿Algo para acompañar?</h2>
+      <p class="sub">Lo retirás en el candy bar con el mismo QR de tu entrada.</p>
+    </div>
+    <button type="button" class="boton boton--contorno" (click)="volver.emit()" [disabled]="reservando()">
+      Cambiar butacas
+    </button>
+  </header>
+
+  @if (cargando()) {
+    <p class="aviso">Cargando el candy bar…</p>
+  } @else {
+    @if (combos().length) {
+      <h3>Combos</h3>
+      <p class="nota">
+        Cada combo incluye una entrada. Podés elegir hasta {{ maxCombos() }}
+        {{ maxCombos() === 1 ? 'combo' : 'combos' }}, uno por butaca.
+      </p>
+
+      <ul class="tarjetas">
+        @for (combo of combosOrdenados(); track combo.id) {
+          <li class="tarjeta" [class.tarjeta--destacada]="combo.destacado">
+            @if (combo.destacado) {
+              <span class="insignia">Destacado</span>
+            }
+            <h4>{{ combo.nombre }}</h4>
+            <p class="detalle">1 entrada + {{ detalle(combo) }}</p>
+            <p class="precio">{{ combo.precio | currency: 'ARS' : 'symbol-narrow' }}</p>
+
+            <div class="contador">
+              <button
+                type="button"
+                aria-label="Quitar uno"
+                [disabled]="!store.cantidadCombo(combo.id)"
+                (click)="restarCombo(combo)"
+              >−</button>
+              <span>{{ store.cantidadCombo(combo.id) }}</span>
+              <button
+                type="button"
+                aria-label="Agregar uno"
+                [disabled]="!quedanCombos()"
+                (click)="sumarCombo(combo)"
+              >+</button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    @for (grupo of grupos(); track grupo.categoria) {
+      <h3>{{ grupo.categoria }}</h3>
+
+      <ul class="lista">
+        @for (producto of grupo.productos; track producto.id) {
+          <li class="producto">
+            <div>
+              <p class="nombre">{{ producto.nombre }}</p>
+              @if (producto.descripcion) {
+                <p class="detalle">{{ producto.descripcion }}</p>
+              }
+            </div>
+
+            <p class="precio">{{ producto.precio | currency: 'ARS' : 'symbol-narrow' }}</p>
+
+            <div class="contador">
+              <button
+                type="button"
+                aria-label="Quitar uno"
+                [disabled]="!store.cantidadDe(producto.id)"
+                (click)="restarProducto(producto)"
+              >−</button>
+              <span>{{ store.cantidadDe(producto.id) }}</span>
+              <button type="button" aria-label="Agregar uno" (click)="sumarProducto(producto)">+</button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  }
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="resumen">
+    <div>
+      @if (store.totalCombos()) {
+        <p>
+          {{ store.totalCombos() }} {{ store.totalCombos() === 1 ? 'combo' : 'combos' }}:
+          {{ subtotalCombos() | currency: 'ARS' : 'symbol-narrow' }}
+        </p>
+      }
+      @if (subtotalProductos()) {
+        <p>Productos: {{ subtotalProductos() | currency: 'ARS' : 'symbol-narrow' }}</p>
+      }
+      <p class="sub">El total final, con tus entradas, lo ves en el pago.</p>
+    </div>
+
+    <div class="acciones">
+      @if (!eligioAlgo()) {
+        <button type="button" class="boton boton--contorno" [disabled]="reservando()" (click)="omitir()">
+          Seguir sin candy
+        </button>
+      } @else {
+        <button type="button" class="boton" [disabled]="reservando()" (click)="confirmar()">
+          {{ reservando() ? 'Reservando…' : 'Continuar al pago' }}
+        </button>
+      }
+    </div>
+  </div>
+</section>

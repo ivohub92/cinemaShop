@@ -47,10 +47,6 @@
     <p class="aviso-cambio" role="status">{{ aviso() }}</p>
   }
 
-  @if (error()) {
-    <p class="error" role="alert">{{ error() }}</p>
-  }
-
     @if (seleccionadas().length) {
     <div class="resumen">
       <p>
@@ -59,9 +55,7 @@
         {{ resumen() }}
       </p>     
 
-      <button type="button" class="boton" [disabled]="reservando()" (click)="continuar()">
-        {{ reservando() ? 'Reservando…' : 'Continuar' }}
-      </button>
+      <button type="button" class="boton" (click)="continuar()">Continuar</button>
     </div>
   }
 }

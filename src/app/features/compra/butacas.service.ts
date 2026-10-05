@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { SupabaseService } from '../../core/supabase/supabase.service';
 import { Butaca } from '../../core/models/butaca';
 import { RealtimeChannel } from '@supabase/supabase-js';
-import { ItemCarrito } from '../../core/models/producto';
+import { ComboElegido, ItemCarrito } from '../../core/models/producto';
 
 @Injectable({ providedIn: 'root' })
 export class ButacasService {
@@ -51,6 +51,7 @@ export class ButacasService {
     email: string,
     fechaNacimiento: string,
     productos: ItemCarrito[] = [],
+    combos: ComboElegido[] = [],
   ): Promise<string> {
     const { data, error } = await this.supabase.client.rpc('reservar_butacas', {
       p_funcion_id: funcionId,
@@ -59,6 +60,7 @@ export class ButacasService {
       p_fecha_nacimiento: fechaNacimiento,
       // El SQL lee "id" y "cantidad" de cada ítem.
       p_productos: productos.map((p) => ({ id: p.productoId, cantidad: p.cantidad })),
+      p_combos: combos.map((c) => ({ id: c.comboId, cantidad: c.cantidad })),
     });
 
     if (error) throw error;

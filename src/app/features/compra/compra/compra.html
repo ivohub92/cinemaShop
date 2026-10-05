@@ -35,10 +35,12 @@
     <app-paso-confirmacion [ordenId]="ordenId()!" />
   } @else if (ordenId(); as id) {
     <app-paso-pago [ordenId]="id" (pagado)="alPagar()" />
+  } @else if (eligiendoCandy()) {
+    <app-paso-candy [funcionId]="f.id" (reservado)="alReservar($event)" (volver)="alVolverAButacas()" />
   } @else {
     <section class="butacas">
       <h2>Elegí tus butacas</h2>
-      <app-mapa-butacas [funcionId]="f.id" (reservado)="alReservar($event)" />
+      <app-mapa-butacas [funcionId]="f.id" (listo)="alElegirButacas()" />
     </section>
   }
 }

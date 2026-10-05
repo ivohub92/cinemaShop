@@ -21,9 +21,8 @@ export class MapaButacas implements OnInit, OnDestroy{
   readonly cargando = signal(true);
   private readonly store = inject(CompraStore);
 
-  readonly reservado = output<string>();
-  readonly reservando = signal(false);
-  readonly error = signal('');
+  /** Avisa que el usuario terminó de elegir: las butacas quedan en el store. */
+  readonly listo = output<void>();
 
   readonly total = computed(() =>
     this.butacas()
@@ -31,33 +30,13 @@ export class MapaButacas implements OnInit, OnDestroy{
       .reduce((suma, b) => suma + (b.tipo === 'vip' ? 8000 : 6500), 0),
   );
 
-   async continuar(): Promise<void> {
-    const comprador = this.store.comprador();
-    if (!comprador || !this.seleccionadas().length) return;
+  /** Guarda la elección y pasa al candy. La reserva se hace al final de ese paso. */
+  continuar(): void {
+    if (!this.seleccionadas().length) return;
 
-    this.reservando.set(true);
-    this.error.set('');
-
-    try {
-      const ordenId = await this.butacasService.reservar(
-        this.funcionId(),
-        this.seleccionadas(),
-        comprador.email,
-        comprador.fechaNacimiento,
-        this.store.productos(),       // ← nuevo
-      );
-
-      this.store.butacas.set(this.seleccionadas());
-      this.dejarDeEscuchar();
-      this.reservado.emit(ordenId);
-    } catch (e: any) {
-      this.error.set(e?.message ?? 'No pudimos reservar las butacas.');
-
-      this.butacas.set(await this.butacasService.listarPorFuncion(this.funcionId()));
-      this.seleccionadas.set([]);
-    } finally {
-      this.reservando.set(false);
-    }
+    this.store.butacas.set(this.seleccionadas());
+    this.dejarDeEscuchar();
+    this.listo.emit();
   }
 
   readonly filas = computed(() => {
@@ -90,7 +69,24 @@ export class MapaButacas implements OnInit, OnDestroy{
     );
 
     this.butacas.set(await this.butacasService.listarPorFuncion(this.funcionId()));
+    this.recuperarEleccion();
     this.cargando.set(false);
+  }
+
+  /**
+   * Si el usuario vuelve desde el candy, se marcan de nuevo sus butacas,
+   * salvo las que otra persona haya tomado mientras tanto.
+   */
+  private recuperarEleccion(): void {
+    const previas = this.store.butacas();
+    if (!previas.length) return;
+
+    const libres = previas.filter((id) => this.butacas().some((b) => b.id === id && !b.ocupada));
+    this.seleccionadas.set(libres);
+
+    if (libres.length < previas.length) {
+      this.aviso.set('Alguna de las butacas que habías elegido ya no está disponible.');
+    }
   }
 
   ngOnDestroy(): void {
@@ -111,8 +107,7 @@ export class MapaButacas implements OnInit, OnDestroy{
     );
 
     // Si alguien tomó una butaca que este usuario tenía elegida, se la quita.
-    // Mientras está reservando no se toca: puede ser su propia reserva llegando.
-    if (ocupada && !this.reservando() && this.seleccionadas().includes(butacaId)) {
+    if (ocupada && this.seleccionadas().includes(butacaId)) {
       this.seleccionadas.update((ids) => ids.filter((id) => id !== butacaId));
       this.aviso.set('Una de las butacas que elegiste acaba de ser reservada por otra persona.');
     }
