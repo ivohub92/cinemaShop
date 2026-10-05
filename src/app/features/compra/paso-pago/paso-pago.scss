@@ -52,6 +52,31 @@ h2 {
   }
 }
 
+.candy {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-borde);
+  }
+
+  small {
+    font-size: 0.8rem;
+    color: var(--color-texto-suave);
+  }
+}
+
+// El combo ya está cobrado en su entrada: se lista lo que incluye, sin precio.
+.candy__combo {
+  flex-direction: column;
+  gap: 0.2rem !important;
+}
+
 .total {
   display: flex;
   justify-content: space-between;

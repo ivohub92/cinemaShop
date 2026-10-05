@@ -46,6 +46,26 @@ h3 {
   border-radius: 4px;
 }
 
+.candy {
+  margin-top: 1.25rem;
+
+  h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.9rem;
+  }
+
+  ul ul {
+    margin: 0.2rem 0 0.4rem;
+    color: var(--color-texto-suave);
+  }
+}
+
 .restriccion {
   margin: 1.25rem 0 0;
   font-size: 0.85rem;

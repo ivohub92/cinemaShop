@@ -2,8 +2,43 @@ import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 
+ /** Candy de una orden, ordenado para mostrarlo: combos con su contenido y productos sueltos. */
+export interface ResumenCandy {
+  combos: { nombre: string; cantidad: number; items: { nombre: string; cantidad: number }[] }[];
+  sueltos: { nombre: string; cantidad: number; subtotal: number }[];
+}
+
+/** $ 31.000 — el formato de moneda argentino, para el PDF (en pantalla se usa CurrencyPipe). */
+const pesos = (valor: number | string) =>
+  Number(valor).toLocaleString('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+
 @Injectable({ providedIn: 'root' })
 export class ComprobanteService {
+  /**
+   * Agrupa los productos que devuelve obtener_orden(): los que traen "combo"
+   * van debajo de su combo (cuántos combos = cuántas butacas lo tienen);
+   * el resto son sueltos, con su subtotal.
+   */
+  resumirCandy(orden: any): ResumenCandy {
+    const productos: any[] = orden?.productos ?? [];
+    const butacas: any[] = orden?.butacas ?? [];
+
+    const nombresCombos = [...new Set(productos.filter((p) => p.combo).map((p) => p.combo as string))];
+
+    return {
+      combos: nombresCombos.map((nombre) => ({
+        nombre,
+        cantidad: butacas.filter((b) => b.combo === nombre).length,
+        items: productos
+          .filter((p) => p.combo === nombre)
+          .map((p) => ({ nombre: p.nombre, cantidad: p.cantidad })),
+      })),
+      sueltos: productos
+        .filter((p) => !p.combo)
+        .map((p) => ({ nombre: p.nombre, cantidad: p.cantidad, subtotal: p.cantidad * Number(p.precio) })),
+    };
+  }
+
   
   async generarQr(codigo: string): Promise<string> {
     return QRCode.toDataURL(codigo, {
@@ -49,21 +84,53 @@ export class ComprobanteService {
     let y = 96;
     doc.setFontSize(11);
     for (const butaca of orden.butacas ?? []) {
-      const etiqueta =
+      const tipo =
         butaca.tipo === 'vip' ? ' (VIP)' : butaca.tipo === 'accesible' ? ' (accesible)' : '';
-      doc.text(`${butaca.fila}${butaca.numero}${etiqueta}`, 20, y);
-      doc.text(`$ ${butaca.precio}`, 70, y, { align: 'right' });
+      const combo = butaca.combo ? ` · ${butaca.combo}` : '';
+      doc.text(`${butaca.fila}${butaca.numero}${tipo}${combo}`, 20, y);
+      doc.text(pesos(butaca.precio), 115, y, { align: 'right' });
       y += 7;
     }
 
+    // Candy bar: los combos con lo que incluyen y los productos sueltos con su precio.
+    const candy = this.resumirCandy(orden);
+    const hayCandy = candy.combos.length > 0 || candy.sueltos.length > 0;
+
+    if (hayCandy) {
+      y += 5;
+      doc.setFontSize(12);
+      doc.text('Candy bar', 20, y);
+      y += 8;
+      doc.setFontSize(11);
+
+      for (const combo of candy.combos) {
+        doc.text(`${combo.cantidad} × ${combo.nombre} (incluye 1 entrada c/u)`, 20, y);
+        y += 6;
+        doc.setTextColor(90, 90, 110);
+        for (const item of combo.items) {
+          doc.text(`${item.cantidad} × ${item.nombre}`, 26, y);
+          y += 6;
+        }
+        doc.setTextColor(28, 18, 51);
+        y += 1;
+      }
+
+      for (const suelto of candy.sueltos) {
+        doc.text(`${suelto.cantidad} × ${suelto.nombre}`, 20, y);
+        doc.text(pesos(suelto.subtotal), 115, y, { align: 'right' });
+        y += 7;
+      }
+    }
+
     doc.setFontSize(13);
-    doc.text(`Total: $ ${orden.total}`, 20, y + 6);
+    doc.text(`Total: ${pesos(orden.total)}`, 20, y + 6);
 
     doc.addImage(qr, 'PNG', 130, 55, 60, 60);
     doc.setFontSize(9);
     doc.setTextColor(90, 90, 110);
     doc.text('Presentá este código en la entrada', 130, 120);
-    doc.text(orden.codigo_qr, 130, 126);
+    if (hayCandy) doc.text('y en el candy bar para retirar tus productos', 130, 125);
+    doc.text(orden.codigo_qr, 130, hayCandy ? 131 : 126);
 
     
     if (orden.restriccion_edad) {

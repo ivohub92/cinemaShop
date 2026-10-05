@@ -1,15 +1,17 @@
-import { Component, inject, input, OnInit, output, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ButacasService } from '../butacas.service';
+import { ComprobanteService } from '../../../core/services/comprobante.service';
 
 @Component({
   selector: 'app-paso-pago',
-  imports: [DatePipe],
+  imports: [DatePipe, CurrencyPipe],
   templateUrl: './paso-pago.html',
   styleUrl: './paso-pago.scss',
 })
 export class PasoPago implements OnInit {
   private readonly butacasService = inject(ButacasService);
+  private readonly comprobante = inject(ComprobanteService);
 
   readonly ordenId = input.required<string>();
 
@@ -20,6 +22,9 @@ export class PasoPago implements OnInit {
   readonly pagando = signal(false);
   readonly error = signal('');
   readonly restante = signal('');
+
+  /** Combos y productos de la orden, agrupados para el resumen. */
+  readonly candy = computed(() => this.comprobante.resumirCandy(this.orden()));
 
   private intervalo?: number;
 

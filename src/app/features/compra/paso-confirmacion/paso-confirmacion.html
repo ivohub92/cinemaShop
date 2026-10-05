@@ -19,6 +19,27 @@
           }
         </p>
 
+        @if (hayCandy()) {
+          <div class="candy">
+            <h4>Candy bar</h4>
+            <ul>
+              @for (combo of candy().combos; track combo.nombre) {
+                <li>
+                  <strong>{{ combo.cantidad }} × {{ combo.nombre }}</strong>
+                  <ul>
+                    @for (item of combo.items; track item.nombre) {
+                      <li>{{ item.cantidad }} × {{ item.nombre }}</li>
+                    }
+                  </ul>
+                </li>
+              }
+              @for (suelto of candy().sueltos; track suelto.nombre) {
+                <li>{{ suelto.cantidad }} × {{ suelto.nombre }}</li>
+              }
+            </ul>
+          </div>
+        }
+
         @if (o.restriccion_edad) {
           <p class="restriccion">
             Apta para mayores de {{ o.restriccion_edad }} años. Los menores deben
@@ -40,6 +61,9 @@
 
     <p class="nota">
       Presentá el código en la entrada de la sala. Una vez utilizado pierde validez.
+      @if (hayCandy()) {
+        Con el mismo código retirás tus productos en el candy bar.
+      }
     </p>
   </div>
 }

@@ -22,15 +22,37 @@
             Butaca {{ butaca.fila }}{{ butaca.numero }}
             @if (butaca.tipo === 'vip') { <em>VIP</em> }
             @if (butaca.tipo === 'accesible') { <em>accesible</em> }
+            @if (butaca.combo) { <em>{{ butaca.combo }}</em> }
           </span>
-          <span>$ {{ butaca.precio }}</span>
+          <span>{{ butaca.precio | currency: 'ARS' : 'symbol-narrow' }}</span>
         </li>
       }
     </ul>
 
+    @if (candy().combos.length || candy().sueltos.length) {
+      <ul class="candy">
+        @for (combo of candy().combos; track combo.nombre) {
+          <li class="candy__combo">
+            <span>{{ combo.cantidad }} × {{ combo.nombre }}</span>
+            <small>
+              @for (item of combo.items; track item.nombre; let ultimo = $last) {
+                {{ item.cantidad }} × {{ item.nombre }}{{ ultimo ? '' : ', ' }}
+              }
+            </small>
+          </li>
+        }
+        @for (suelto of candy().sueltos; track suelto.nombre) {
+          <li>
+            <span>{{ suelto.cantidad }} × {{ suelto.nombre }}</span>
+            <span>{{ suelto.subtotal | currency: 'ARS' : 'symbol-narrow' }}</span>
+          </li>
+        }
+      </ul>
+    }
+
     <p class="total">
       <span>Total</span>
-      <strong>$ {{ o.total }}</strong>
+      <strong>{{ o.total | currency: 'ARS' : 'symbol-narrow' }}</strong>
     </p>
 
     @if (o.restriccion_edad) {

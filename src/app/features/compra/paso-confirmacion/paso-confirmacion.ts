@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButacasService } from '../butacas.service';
@@ -19,6 +19,10 @@ export class PasoConfirmacion implements OnInit {
   readonly orden = signal<any>(null);
   readonly qr = signal('');
   readonly cargando = signal(true);
+
+  /** Combos y productos de la orden, agrupados para mostrarlos. */
+  readonly candy = computed(() => this.comprobante.resumirCandy(this.orden()));
+  readonly hayCandy = computed(() => this.candy().combos.length > 0 || this.candy().sueltos.length > 0);
 
   async ngOnInit(): Promise<void> {
     const orden = await this.butacasService.obtenerOrden(this.ordenId());
