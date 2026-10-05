@@ -96,3 +96,32 @@ input {
   font-size: 0.9rem;
   color: #d9a441;
 }
+// Cada puesto (sala y candy) valida por separado sobre el mismo código.
+.puesto {
+  margin: 0 0 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-borde);
+
+  h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+  }
+}
+
+.candy {
+  margin: 0 0 1rem;
+  padding-left: 1.1rem;
+  font-size: 1.05rem;
+
+  ul {
+    margin: 0.2rem 0 0.5rem;
+    padding-left: 1.1rem;
+    color: var(--color-texto-suave);
+  }
+}
+
+.sin-candy {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}

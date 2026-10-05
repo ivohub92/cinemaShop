@@ -28,7 +28,7 @@
 
 @if (exito()) {
   <div class="resultado resultado--exito">
-    <p>Entrada validada. Puede pasar a la sala.</p>
+    <p>{{ exito() }}</p>
   </div>
 }
 
@@ -53,14 +53,50 @@
       </p>
     }
 
-    @if (o.validado_en) {
-      <p class="usado">
-        Este código ya fue utilizado el {{ o.validado_en | date: 'd/M/yy HH:mm' }}.
-      </p>
-    } @else {
-      <button type="button" class="boton" [disabled]="validando()" (click)="validar()">
-        {{ validando() ? 'Validando…' : 'Validar ingreso' }}
-      </button>
-    }
+    <section class="puesto">
+      <h3>Acceso a la sala</h3>
+
+      @if (o.validado_en) {
+        <p class="usado">Ingreso ya validado el {{ o.validado_en | date: 'd/M/yy HH:mm' }}.</p>
+      } @else {
+        <button type="button" class="boton" [disabled]="validando()" (click)="validar()">
+          {{ validando() ? 'Validando…' : 'Validar ingreso' }}
+        </button>
+      }
+    </section>
+
+    <section class="puesto">
+      <h3>Candy bar</h3>
+
+      @if (tieneCandy()) {
+        <ul class="candy">
+          @for (combo of candy().combos; track combo.nombre) {
+            <li>
+              <strong>{{ combo.nombre }}</strong>
+              <ul>
+                @for (item of combo.items; track item.nombre) {
+                  <li>{{ item.cantidad }} × {{ item.nombre }}</li>
+                }
+              </ul>
+            </li>
+          }
+          @for (item of candy().sueltos; track item.nombre) {
+            <li>{{ item.cantidad }} × {{ item.nombre }}</li>
+          }
+        </ul>
+
+        @if (o.candy_entregado_en) {
+          <p class="usado">Candy ya entregado el {{ o.candy_entregado_en | date: 'd/M/yy HH:mm' }}.</p>
+        } @else {
+          <button type="button" class="boton" [disabled]="entregando()" (click)="entregarCandy()">
+            {{ entregando() ? 'Registrando…' : 'Entregar candy' }}
+          </button>
+        }
+      } @else {
+        <p class="sin-candy">Esta compra no incluye productos del candy bar.</p>
+      }
+    </section>
+
+    <button type="button" class="boton boton--discreto" (click)="limpiar()">Nueva búsqueda</button>
   </div>
 }

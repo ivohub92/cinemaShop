@@ -1,7 +1,14 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ValidacionService } from '../validacion.service';
+
+/** Un producto de la orden tal como lo devuelve consultar_codigo(). */
+interface ItemOrden {
+  nombre: string;
+  cantidad: number;
+  combo: string | null;
+}
 
 @Component({
   selector: 'app-validar-entrada',
@@ -16,8 +23,25 @@ export class ValidarEntrada {
   readonly orden = signal<any>(null);
   readonly buscando = signal(false);
   readonly validando = signal(false);
+  readonly entregando = signal(false);
   readonly error = signal('');
-  readonly exito = signal(false);
+  readonly exito = signal('');
+
+  /** Productos de la orden, separados en combos (con su contenido) y sueltos. */
+  readonly candy = computed(() => {
+    const items: ItemOrden[] = this.orden()?.productos ?? [];
+    const nombresCombos = [...new Set(items.filter((i) => i.combo).map((i) => i.combo as string))];
+
+    return {
+      combos: nombresCombos.map((nombre) => ({
+        nombre,
+        items: items.filter((i) => i.combo === nombre),
+      })),
+      sueltos: items.filter((i) => !i.combo),
+    };
+  });
+
+  readonly tieneCandy = computed(() => (this.orden()?.productos ?? []).length > 0);
 
   async consultar(): Promise<void> {
     const codigo = this.codigo().trim();
@@ -25,7 +49,7 @@ export class ValidarEntrada {
 
     this.buscando.set(true);
     this.error.set('');
-    this.exito.set(false);
+    this.exito.set('');
     this.orden.set(null);
 
     try {
@@ -40,12 +64,12 @@ export class ValidarEntrada {
   async validar(): Promise<void> {
     this.validando.set(true);
     this.error.set('');
+    this.exito.set('');
 
     try {
       await this.validacion.validarAcceso(this.codigo().trim());
-      this.exito.set(true);
-      this.orden.set(null);
-      this.codigo.set('');
+      this.exito.set('Entrada validada. Puede pasar a la sala.');
+      await this.refrescar();
     } catch (e: any) {
       this.error.set(e?.message ?? 'No pudimos validar la entrada.');
     } finally {
@@ -53,10 +77,34 @@ export class ValidarEntrada {
     }
   }
 
+  async entregarCandy(): Promise<void> {
+    this.entregando.set(true);
+    this.error.set('');
+    this.exito.set('');
+
+    try {
+      await this.validacion.entregarCandy(this.codigo().trim());
+      this.exito.set('Candy entregado.');
+      await this.refrescar();
+    } catch (e: any) {
+      this.error.set(e?.message ?? 'No pudimos registrar la entrega.');
+    } finally {
+      this.entregando.set(false);
+    }
+  }
+
+  /**
+   * Vuelve a pedir la orden después de validar: así se ve qué quedó usado
+   * y la otra validación (sala o candy) sigue disponible con el mismo código.
+   */
+  private async refrescar(): Promise<void> {
+    this.orden.set(await this.validacion.consultar(this.codigo().trim()));
+  }
+
   limpiar(): void {
     this.codigo.set('');
     this.orden.set(null);
     this.error.set('');
-    this.exito.set(false);
+    this.exito.set('');
   }
 }

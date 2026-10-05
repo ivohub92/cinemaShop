@@ -21,4 +21,13 @@ export class ValidacionService {
 
     if (error) throw error;
   }
+
+  /** Entrega del candy: segunda validación del mismo QR, independiente del acceso (D-07). */
+  async entregarCandy(codigo: string): Promise<void> {
+    const { error } = await this.supabase.client.rpc('validar_candy', {
+      p_codigo: codigo,
+    });
+
+    if (error) throw error;
+  }
 }
