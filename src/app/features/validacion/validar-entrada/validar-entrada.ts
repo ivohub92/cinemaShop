@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ValidacionService } from '../validacion.service';
+import { EscanerQr } from '../escaner-qr/escaner-qr';
 
 /** Un producto de la orden tal como lo devuelve consultar_codigo(). */
 interface ItemOrden {
@@ -12,7 +13,7 @@ interface ItemOrden {
 
 @Component({
   selector: 'app-validar-entrada',
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, EscanerQr],
   templateUrl: './validar-entrada.html',
   styleUrl: './validar-entrada.scss',
 })
@@ -99,6 +100,12 @@ export class ValidarEntrada {
    */
   private async refrescar(): Promise<void> {
     this.orden.set(await this.validacion.consultar(this.codigo().trim()));
+  }
+
+  /** El escáner leyó un QR: se busca como si se hubiera escrito a mano. */
+  async alLeerQr(codigo: string): Promise<void> {
+    this.codigo.set(codigo);
+    await this.consultar();
   }
 
   limpiar(): void {

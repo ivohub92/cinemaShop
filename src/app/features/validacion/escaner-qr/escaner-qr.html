@@ -1,0 +1,17 @@
+<!-- El <video> está siempre en la página (oculto cuando no se usa): así existe
+     apenas se abre la cámara, sin esperar a que Angular lo dibuje. -->
+<div class="visor" [hidden]="!activo()">
+  <video #video playsinline muted aria-label="Vista de la cámara"></video>
+  <span class="marco" aria-hidden="true"></span>
+</div>
+
+@if (activo()) {
+  <p class="ayuda">Apuntá al código QR de la entrada.</p>
+  <button type="button" class="boton boton--discreto" (click)="cerrar()">Cancelar</button>
+} @else {
+  <button type="button" class="boton boton--contorno" (click)="abrir()">Escanear con la cámara</button>
+}
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}

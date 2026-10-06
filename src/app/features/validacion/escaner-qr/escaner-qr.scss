@@ -1,0 +1,46 @@
+:host {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  max-width: 30rem;
+  margin-bottom: 2rem;
+}
+
+.visor[hidden] {
+  display: none;
+}
+
+.visor {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: #000;
+  border-radius: 8px;
+
+  video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+}
+
+// Recuadro guía en el centro, para que el empleado sepa dónde apuntar.
+.marco {
+  position: absolute;
+  inset: 20%;
+  border: 3px solid #d9a441;
+  border-radius: 12px;
+  box-shadow: 0 0 0 999px rgb(0 0 0 / 0.35);
+}
+
+.ayuda {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+.error {
+  margin: 0;
+  color: #e38b8b;
+}

@@ -1,5 +1,7 @@
 <h1>Validar entrada</h1>
 
+<app-escaner-qr (leido)="alLeerQr($event)" />
+
 <form (ngSubmit)="consultar()" class="busqueda">
   <label>
     Código de la entrada
@@ -8,7 +10,7 @@
       [ngModel]="codigo()"
       (ngModelChange)="codigo.set($event)"
       name="codigo"
-      placeholder="Ingresá o escaneá el código"
+      placeholder="O ingresá el código a mano"
       autocomplete="off"
       autofocus
     />
