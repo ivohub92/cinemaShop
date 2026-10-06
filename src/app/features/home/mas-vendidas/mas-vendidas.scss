@@ -1,0 +1,40 @@
+.mas-vendidas {
+  margin-bottom: 3rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+.subtitulo {
+  margin: 0.25rem 0 1.5rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+// Misma grilla que la cartelera, pero con tres lugares como máximo.
+ol {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 2rem 1.5rem;
+  max-width: 48rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.puesto {
+  justify-self: start;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1c1233;
+  background-color: #d9a441;
+  border-radius: 999px;
+}

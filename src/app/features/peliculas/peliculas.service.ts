@@ -6,6 +6,17 @@ import { Pelicula } from '../../core/models/pelicula';
 export class PeliculasService {
   private readonly supabase = inject(SupabaseService);
 
+  /** RF-09: ranking de las más vendidas (últimos 30 días). Solo ids y cantidades. */
+  async masVendidas(cantidad = 3): Promise<{ peliculaId: string; entradas: number }[]> {
+    const { data, error } = await this.supabase.client.rpc('mas_vendidas', { p_cantidad: cantidad });
+    if (error) throw error;
+
+    return ((data as any[]) ?? []).map((fila) => ({
+      peliculaId: fila.pelicula_id,
+      entradas: Number(fila.entradas),
+    }));
+  }
+
   async listar(filtro?: 'en-cartel' | 'proximamente'): Promise<Pelicula[]> {
     const { data: conFunciones } = await this.supabase.client
       .from('peliculas_con_funciones')

@@ -1,0 +1,17 @@
+@if (destacadas().length) {
+  <section class="mas-vendidas" aria-labelledby="titulo-mas-vendidas">
+    <h2 id="titulo-mas-vendidas">Las más vendidas</h2>
+    <p class="subtitulo">Entradas vendidas en los últimos 30 días</p>
+
+    <ol>
+      @for (d of destacadas(); track d.pelicula.id) {
+        <li>
+          <span class="puesto">
+            #{{ d.puesto }} · {{ d.entradas }} {{ d.entradas === 1 ? 'entrada' : 'entradas' }}
+          </span>
+          <app-tarjeta-pelicula [pelicula]="d.pelicula" />
+        </li>
+      }
+    </ol>
+  </section>
+}
