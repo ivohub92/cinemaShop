@@ -1,7 +1,7 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { User } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase/supabase.service';
-import { Perfil } from '../models/perfil';
+import { Perfil, RolUsuario } from '../models/perfil';
 
 export interface DatosRegistro {
   email: string;
@@ -20,22 +20,24 @@ export class AuthService {
   private cargaInicial?: Promise<void>;
   readonly perfil = signal<Perfil | null>(null);
   readonly usuario = signal<User | null>(null);
+
+  /** RF-02: la app se comporta según el rol. Personal = empleado o admin. */
+  readonly rol = computed<RolUsuario | null>(() => this.perfil()?.rol ?? null);
+  readonly esCliente = computed(() => this.rol() === 'cliente');
+  readonly esPersonal = computed(() => this.rol() === 'empleado' || this.rol() === 'admin');
   
 
-   constructor() {
-    this.supabase.client.auth.getSession().then(({ data }) => {
-      this.usuario.set(data.session?.user ?? null);
-      this.cargarPerfil();
-    });
-
-    this.supabase.client.auth.onAuthStateChange((_evento, sesion) => {
-      this.usuario.set(sesion?.user ?? null);
-      this.cargarPerfil();
-    });
-
+  constructor() {
+    // Sesión guardada al abrir la app. perfilListo() espera esta carga.
     this.cargaInicial = this.supabase.client.auth.getSession().then(async ({ data }) => {
       this.usuario.set(data.session?.user ?? null);
       await this.cargarPerfil();
+    });
+
+    // Ingresos y salidas posteriores.
+    this.supabase.client.auth.onAuthStateChange((_evento, sesion) => {
+      this.usuario.set(sesion?.user ?? null);
+      this.cargarPerfil();
     });
   }
 
@@ -87,9 +89,21 @@ export class AuthService {
     if (error) throw error;
   }
 
-  async ingresar(email: string, password: string): Promise<void> {
-    const { error } = await this.supabase.client.auth.signInWithPassword({ email, password });
+  /** Devuelve el perfil ya cargado, para decidir a qué pantalla ir según el rol. */
+  async ingresar(email: string, password: string): Promise<Perfil | null> {
+    const { data, error } = await this.supabase.client.auth.signInWithPassword({ email, password });
     if (error) throw error;
+
+    this.usuario.set(data.user);
+    await this.cargarPerfil();
+    return this.perfil();
+  }
+
+  /** Pantalla de inicio de cada rol. */
+  inicioDe(rol: RolUsuario | null): string {
+    if (rol === 'admin') return '/admin';
+    if (rol === 'empleado') return '/validacion';
+    return '/cartelera';
   }
 
   async perfilListo(): Promise<Perfil | null> {

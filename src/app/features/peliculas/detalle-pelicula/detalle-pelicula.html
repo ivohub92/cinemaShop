@@ -45,6 +45,10 @@
   <section class="funciones">
     <h2>Funciones</h2>
 
+    @if (esPersonal()) {
+      <p class="aviso">Las cuentas del personal no compran entradas.</p>
+    }
+
     @if (porDia().length) {
       @for (grupo of porDia(); track grupo.dia) {
         <div class="dia">
@@ -53,11 +57,19 @@
           <ul class="horarios">
             @for (funcion of grupo.funciones; track funcion.id) {
               <li>
-                <a class="horario" [routerLink]="['/compra', funcion.id]">
-                  <strong>{{ funcion.inicio | date: 'HH:mm' }}</strong>
-                  <span>{{ funcion.formato }} · {{ funcion.idioma }}</span>
-                  <span>{{ funcion.salaNombre }}</span>
-                </a>
+                @if (esPersonal()) {
+                  <span class="horario horario--solo-lectura">
+                    <strong>{{ funcion.inicio | date: 'HH:mm' }}</strong>
+                    <span>{{ funcion.formato }} · {{ funcion.idioma }}</span>
+                    <span>{{ funcion.salaNombre }}</span>
+                  </span>
+                } @else {
+                  <a class="horario" [routerLink]="['/compra', funcion.id]">
+                    <strong>{{ funcion.inicio | date: 'HH:mm' }}</strong>
+                    <span>{{ funcion.formato }} · {{ funcion.idioma }}</span>
+                    <span>{{ funcion.salaNombre }}</span>
+                  </a>
+                }
               </li>
             }
           </ul>

@@ -25,6 +25,9 @@ export class PasoIdentidad {
   readonly error = signal('');
   readonly enviando = signal(false);
 
+  /** Tope del selector de fecha: no se puede nacer en el futuro. */
+  readonly hoy = new Date().toLocaleDateString('sv-SE');
+
   readonly formInvitado = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     fechaNacimiento: ['', Validators.required],

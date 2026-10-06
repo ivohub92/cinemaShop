@@ -48,6 +48,12 @@ export class FuncionesService {
     for (const fecha of this.fechasDe(datos.desde, datos.hasta, datos.diasSemana)) {
       const inicio = new Date(`${fecha}T${datos.hora}:00`);
 
+      // Hoy, a un horario que ya pasó: ni se intenta (la base también lo rechaza).
+      if (inicio.getTime() <= Date.now()) {
+        conflictos.push(`${fecha}: ese horario ya pasó`);
+        continue;
+      }
+
       const { error } = await this.supabase.client.rpc('crear_funcion_auto', {
         p_pelicula_id: datos.peliculaId,
         p_inicio: inicio.toISOString(),

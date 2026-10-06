@@ -3,7 +3,7 @@ import { PublicLayout } from './layouts/public-layout/public-layout';
 import { Home } from './features/home/home/home';
 import { adminGuard } from './core/auth/guards/admin-guard'; 
 import { empleadoGuard } from './core/guards/empleado-guard';
-import { sesionGuard } from './core/guards/session.guards';
+import { clienteGuard, compraGuard } from './core/guards/rol.guards';
 
 export const routes: Routes = [
   {
@@ -38,26 +38,34 @@ export const routes: Routes = [
       },
       {
         path: 'compra/:funcionId',
+        canMatch: [compraGuard],
         loadComponent: () => import('./features/compra/compra/compra').then((m) => m.Compra),
       },
       {
         path: 'mi-cuenta',
-        canMatch: [sesionGuard],
+        canMatch: [clienteGuard],
         loadComponent: () =>
           import('./features/cuenta/mi-cuenta/mi-cuenta').then((m) => m.MiCuenta),
       },
       {
         path: 'mis-compras',
-        canMatch: [sesionGuard],
+        canMatch: [clienteGuard],
         loadComponent: () =>
           import('./features/cuenta/mis-compras/mis-compras').then((m) => m.MisCompras),
       },
       {
      path: 'mis-peliculas',
-    canMatch: [sesionGuard],
+    canMatch: [clienteGuard],
     loadComponent: () =>
       import('./features/cuenta/mis-peliculas/mis-peliculas').then((m) => m.MisPeliculas),
   },
+      {
+        // Dentro del layout público: el empleado tiene el header con "Salir".
+        path: 'validacion',
+        canMatch: [empleadoGuard],
+        loadComponent: () =>
+          import('./features/validacion/validar-entrada/validar-entrada').then((m) => m.ValidarEntrada),
+      },
       
     ],
   },
@@ -125,6 +133,13 @@ export const routes: Routes = [
           import('./features/admin/reportes/panel-reportes/panel-reportes').then((m) => m.PanelReportes),
       },
       {
+        path: 'empleados',
+        loadComponent: () =>
+          import('./features/admin/empleados/gestion-empleados/gestion-empleados').then(
+            (m) => m.GestionEmpleados,
+          ),
+      },
+      {
         path: 'auditoria',
         loadComponent: () =>
           import('./features/admin/auditoria/registro-auditoria/registro-auditoria').then(
@@ -144,12 +159,6 @@ export const routes: Routes = [
           ),
       },
     ],
-  },
-  {
-    path: 'validacion',
-    canMatch: [empleadoGuard],
-    loadComponent: () =>
-      import('./features/validacion/validar-entrada/validar-entrada').then((m) => m.ValidarEntrada),
   },
   
   { path: '**', redirectTo: '' }

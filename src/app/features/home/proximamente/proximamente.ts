@@ -20,6 +20,7 @@ export class Proximamente implements OnInit {
   readonly cargando = signal(true);
 
   readonly usuario = inject(AuthService).usuario;
+  readonly esCliente = inject(AuthService).esCliente;
   readonly alertas = this.notificaciones.alertas;
   readonly permiso = this.notificaciones.permiso;
 

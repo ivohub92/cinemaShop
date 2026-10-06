@@ -5,7 +5,7 @@ import { EventoAuditoria } from '../../../../core/models/auditoria';
 
 const POR_PAGINA = 50;
 
-
+/** RF-62: log de actividad. Solo lectura (RN-05): no hay acciones sobre los registros. */
 @Component({
   selector: 'app-registro-auditoria',
   imports: [DatePipe],
@@ -17,6 +17,15 @@ export class RegistroAuditoria implements OnInit {
 
   readonly registros = signal<EventoAuditoria[]>([]);
   readonly entidad = signal('');
+  /** Filtro por tipo de usuario que hizo la acción ('' = todos). */
+  readonly rol = signal('');
+
+  readonly roles: { valor: string; nombre: string }[] = [
+    { valor: '', nombre: 'Todos' },
+    { valor: 'admin', nombre: 'Administrador' },
+    { valor: 'empleado', nombre: 'Empleado' },
+    { valor: 'cliente', nombre: 'Cliente' },
+  ];
   readonly cargando = signal(true);
   readonly hayMas = signal(false);
   readonly error = signal('');
@@ -34,6 +43,7 @@ export class RegistroAuditoria implements OnInit {
     { valor: 'recompensas', nombre: 'Recompensas' },
     { valor: 'salas', nombre: 'Salas' },
     { valor: 'perfiles', nombre: 'Roles de usuarios' },
+    { valor: 'empleados_autorizados', nombre: 'Altas de empleados' },
   ];
 
   private readonly nombresEntidad: Record<string, string> = {
@@ -48,6 +58,7 @@ export class RegistroAuditoria implements OnInit {
     recompensas: 'Recompensa',
     salas: 'Sala',
     perfiles: 'Usuario',
+    empleados_autorizados: 'Alta de empleado',
   };
 
   private readonly nombresAccion: Record<string, string> = {
@@ -68,13 +79,18 @@ export class RegistroAuditoria implements OnInit {
     await this.cargar(true);
   }
 
+  async filtrarRol(rol: string): Promise<void> {
+    this.rol.set(rol);
+    await this.cargar(true);
+  }
+
   async cargar(desdeCero = false): Promise<void> {
     this.cargando.set(true);
     this.error.set('');
 
     try {
       const desde = desdeCero ? 0 : this.registros().length;
-      const pagina = await this.auditoria.listar(desde, POR_PAGINA, this.entidad());
+      const pagina = await this.auditoria.listar(desde, POR_PAGINA, this.entidad(), this.rol());
 
       this.registros.update((actuales) => (desdeCero ? pagina : [...actuales, ...pagina]));
       this.hayMas.set(pagina.length === POR_PAGINA);
@@ -87,6 +103,10 @@ export class RegistroAuditoria implements OnInit {
 
   accion(registro: EventoAuditoria): string {
     return this.nombresAccion[registro.accion] ?? registro.accion;
+  }
+
+  nombreRol(rol: string): string {
+    return { admin: 'Administrador', empleado: 'Empleado', cliente: 'Cliente' }[rol] ?? rol;
   }
 
   nombreEntidad(entidad: string): string {

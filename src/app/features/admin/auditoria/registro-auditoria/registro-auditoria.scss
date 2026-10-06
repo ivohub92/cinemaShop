@@ -80,3 +80,39 @@ h1 {
 .mas {
   margin-top: 1.5rem;
 }
+
+.usuario {
+  display: grid;
+  justify-items: start;
+  gap: 0.2rem;
+
+  small {
+    font-size: 0.8rem;
+    color: var(--color-texto-suave);
+  }
+}
+
+.rol {
+  padding: 0.05rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+}
+
+// El admin, en el mismo dorado de los destacados.
+.rol--admin {
+  color: #1c1233;
+  background-color: #d9a441;
+  border-color: #d9a441;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+}
+
+.rol {
+  white-space: nowrap;
+}

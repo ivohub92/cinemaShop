@@ -16,7 +16,7 @@
   @if (cargando()) {
     <p class="aviso">Cargando reseñas…</p>
   } @else {
-    @if (perfil()) {
+    @if (esCliente()) {
       <form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario">
         <h3>{{ propia() ? 'Tu reseña' : 'Dejá tu reseña' }}</h3>
 
@@ -45,7 +45,7 @@
           }
         </div>
       </form>
-    } @else {
+    } @else if (!perfil()) {
       <p class="aviso">Ingresá a tu cuenta para dejar una reseña.</p>
     }
 

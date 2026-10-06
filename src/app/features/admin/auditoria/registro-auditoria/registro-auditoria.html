@@ -5,14 +5,25 @@
   lectura: los registros no se pueden editar ni borrar.
 </p>
 
-<label class="filtro">
-  Mostrar
-  <select [value]="entidad()" (change)="filtrar($any($event.target).value)">
-    @for (e of entidades; track e.valor) {
-      <option [value]="e.valor">{{ e.nombre }}</option>
-    }
-  </select>
-</label>
+<div class="filtros">
+  <label class="filtro">
+    Mostrar
+    <select (change)="filtrar($any($event.target).value)">
+      @for (e of entidades; track e.valor) {
+        <option [value]="e.valor" [selected]="e.valor === entidad()">{{ e.nombre }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="filtro">
+    Tipo de usuario
+    <select (change)="filtrarRol($any($event.target).value)">
+      @for (r of roles; track r.valor) {
+        <option [value]="r.valor" [selected]="r.valor === rol()">{{ r.nombre }}</option>
+      }
+    </select>
+  </label>
+</div>
 
 @if (error()) {
   <p class="error" role="alert">{{ error() }}</p>
@@ -24,6 +35,7 @@
       <tr>
         <th>Fecha y hora</th>
         <th>Usuario</th>
+        <th>Tipo de usuario</th>
         <th>Acción</th>
         <th>Detalle</th>
       </tr>
@@ -32,7 +44,17 @@
       @for (r of registros(); track r.id) {
         <tr>
           <td class="fecha">{{ r.creadoEn | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
-          <td>{{ r.usuarioEmail ?? '—' }}</td>
+          <td class="usuario">
+            <span>{{ r.usuarioNombre ?? '—' }}</span>
+            <small>{{ r.usuarioEmail }}</small>
+          </td>
+          <td>
+            @if (r.usuarioRol) {
+              <span class="rol" [class.rol--admin]="r.usuarioRol === 'admin'">{{ nombreRol(r.usuarioRol) }}</span>
+            } @else {
+              <span class="suave">—</span>
+            }
+          </td>
           <td>
             {{ accion(r) }}
             @if (!r.accion.includes('_')) {

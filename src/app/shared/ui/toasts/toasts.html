@@ -1,0 +1,8 @@
+<div class="pila" aria-live="polite">
+  @for (t of toasts(); track t.id) {
+    <div [class]="'toast toast--' + t.tipo" [attr.role]="t.tipo === 'error' ? 'alert' : 'status'">
+      <p>{{ t.texto }}</p>
+      <button type="button" class="toast__cerrar" aria-label="Cerrar aviso" (click)="cerrar(t.id)">×</button>
+    </div>
+  }
+</div>

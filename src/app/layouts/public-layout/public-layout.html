@@ -6,10 +6,12 @@
       @if (usuario()) {
         <span class="saludo">Hola, {{ perfil()?.nombre ?? 'invitado' }}</span>
 
-        <app-campana-notificaciones />
+        @if (esCliente()) {
+          <app-campana-notificaciones />
 
-        <a class="boton boton--contorno" routerLink="/mi-cuenta">Mi cuenta</a>
-        <a class="boton boton--contorno" routerLink="/mis-peliculas">Mis películas</a>
+          <a class="boton boton--contorno" routerLink="/mi-cuenta">Mi cuenta</a>
+          <a class="boton boton--contorno" routerLink="/mis-peliculas">Mis películas</a>
+        }
 
         @if (perfil()?.rol === 'admin') {
           <a class="boton boton--contorno" routerLink="/admin/peliculas">Administrar</a>
@@ -28,7 +30,7 @@
 </header>
 
 @if (!avisoCerrado()) {
-  @if (usuario() && cupon(); as c) {
+  @if (esCliente() && cupon(); as c) {
     <aside class="aviso-cupon" role="status">
       <p>
         @if (c.tipo === 'bienvenida') {

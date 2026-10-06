@@ -39,12 +39,12 @@
 
     <label>
       Desde
-      <app-selector-fecha formControlName="desde" />
+      <app-selector-fecha formControlName="desde" [minimo]="hoy" />
     </label>
 
     <label>
       Hasta
-      <app-selector-fecha formControlName="hasta" />
+      <app-selector-fecha formControlName="hasta" [minimo]="formulario.controls.desde.value || hoy" />
     </label>
 
     <label>

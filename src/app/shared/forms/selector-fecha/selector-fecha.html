@@ -13,8 +13,8 @@
 
   <select [disabled]="deshabilitado()" (change)="cambiar('mes', $event)" aria-label="Mes">
     <option value="" [selected]="!mes()">Mes</option>
-    @for (m of meses; track m; let i = $index) {
-      <option [value]="i + 1" [selected]="String(i + 1) === mes()">{{ m }}</option>
+    @for (m of mesesDisponibles(); track m) {
+      <option [value]="m" [selected]="String(m) === mes()">{{ meses.at(m - 1) }}</option>
     }
   </select>
 

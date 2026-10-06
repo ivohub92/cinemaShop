@@ -1,6 +1,6 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
@@ -12,6 +12,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 export class Ingreso {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
 
   readonly ingresado = output<void>();
@@ -35,9 +36,14 @@ export class Ingreso {
 
     try {
       const { email, password } = this.formulario.getRawValue();
-      await this.auth.ingresar(email, password);
+      const perfil = await this.auth.ingresar(email, password);
       this.formulario.reset();
       this.ingresado.emit();
+
+      // El personal va directo a su pantalla; el cliente sigue donde estaba.
+      if (perfil && perfil.rol !== 'cliente') {
+        this.router.navigateByUrl(this.auth.inicioDe(perfil.rol));
+      }
     } catch {
       this.error.set('Correo o contraseña incorrectos.');
     } finally {

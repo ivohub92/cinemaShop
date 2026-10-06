@@ -66,7 +66,7 @@
 
       <label>
         Fecha de nacimiento
-        <app-selector-fecha formControlName="fechaNacimiento" />
+        <app-selector-fecha formControlName="fechaNacimiento" [maximo]="hoy" />
         <small class="ayuda">La necesitamos para verificar la clasificación de la película.</small>
       </label>
 

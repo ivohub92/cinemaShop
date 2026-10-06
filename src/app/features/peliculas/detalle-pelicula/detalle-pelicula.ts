@@ -1,3 +1,4 @@
+import { AuthService } from '../../../core/auth/auth.service';
 import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -24,6 +25,7 @@ export class DetallePelicula implements OnInit {
   private readonly funcionesService = inject(FuncionesService);
 
   readonly id = input.required<string>();
+  readonly esPersonal = inject(AuthService).esPersonal;
 
   readonly pelicula = signal<(Pelicula & { sinopsis: string }) | null>(null);
   readonly funciones = signal<Funcion[]>([]);

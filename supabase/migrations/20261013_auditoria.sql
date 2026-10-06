@@ -1,16 +1,30 @@
-
+-- ============================================================================
+-- Auditoría (RF-62, RN-05): quién hizo qué, sobre qué entidad y cuándo.
+-- - La registran triggers en la base: no depende de qué pantalla se use, y
+--   también queda registrado lo que se haga por otro camino (RPC, panel).
+-- - Solo lectura: nadie puede editar ni borrar registros (ni siquiera el
+--   admin). Solo el admin puede leerlos.
+-- - Se registran acciones de usuarios: los procesos automáticos (cron, alta
+--   del cupón de bienvenida al registrarse) no tienen autor y no se registran.
+-- ============================================================================
 
 create table if not exists auditoria (
   id            bigint generated always as identity primary key,
-  usuario_id    uuid,         
-  usuario_email text,         
-  accion        text not null, 
-  entidad       text not null, 
+  usuario_id    uuid,          -- sin FK: el registro sobrevive aunque se borre el usuario
+  usuario_email  text,         -- copias tomadas en el momento: se ve quién fue
+  usuario_nombre text,         -- (y con qué rol) aunque después cambie su perfil
+  usuario_rol    text,
+  accion        text not null, -- crear, modificar, eliminar, validar_entrada, entregar_candy, cancelar_compra
+  entidad       text not null, -- tabla afectada
   entidad_id    text,
-  descripcion   text,          
-  detalle       jsonb,        
+  descripcion   text,          -- qué fue, en palabras (título, nombre, código…)
+  detalle       jsonb,         -- en modificaciones: { campo: { antes, despues } }
   creado_en     timestamptz not null default now()
 );
+
+-- Por si la tabla ya existía de una versión anterior de este archivo.
+alter table auditoria add column if not exists usuario_nombre text;
+alter table auditoria add column if not exists usuario_rol    text;
 
 create index if not exists auditoria_fecha_idx   on auditoria (creado_en desc);
 create index if not exists auditoria_entidad_idx on auditoria (entidad, creado_en desc);
@@ -20,10 +34,10 @@ alter table auditoria enable row level security;
 drop policy if exists "admin lee auditoria" on auditoria;
 create policy "admin lee auditoria" on auditoria for select using (es_admin());
 
-
+-- Sin políticas de insert/update/delete: desde la app no se puede escribir.
 revoke insert, update, delete on auditoria from anon, authenticated;
 
-
+-- Y aunque alguien tuviera permisos, los registros no se modifican.
 create or replace function auditoria_inmutable()
 returns trigger
 language plpgsql
@@ -38,7 +52,9 @@ create trigger auditoria_solo_lectura
   before update or delete on auditoria
   for each row execute function auditoria_inmutable();
 
-
+-- ----------------------------------------------------------------------------
+-- Trigger genérico para las tablas que gestiona el admin.
+-- ----------------------------------------------------------------------------
 create or replace function auditar()
 returns trigger
 language plpgsql
@@ -47,6 +63,7 @@ set search_path = public
 as $$
 declare
   v_usuario     uuid := auth.uid();
+  v_autor       perfiles;
   v_nueva       jsonb;
   v_vieja       jsonb;
   v_fila        jsonb;
@@ -57,10 +74,13 @@ begin
     return null;
   end if;
 
+  select * into v_autor from perfiles where id = v_usuario;
+
   if tg_op <> 'DELETE' then v_nueva := to_jsonb(new); end if;
   if tg_op <> 'INSERT' then v_vieja := to_jsonb(old); end if;
   v_fila := coalesce(v_nueva, v_vieja);
 
+  -- Los cupones de bienvenida son personales y automáticos: solo se auditan los del admin.
   if tg_table_name = 'cupones' and v_fila->>'tipo' <> 'mayores_50' then
     return null;
   end if;
@@ -87,10 +107,13 @@ begin
       coalesce(v_fila->>'titulo', v_fila->>'nombre', v_fila->>'codigo', v_fila->>'clave')
   end;
 
-  insert into auditoria (usuario_id, usuario_email, accion, entidad, entidad_id, descripcion, detalle)
+  insert into auditoria (usuario_id, usuario_email, usuario_nombre, usuario_rol,
+                         accion, entidad, entidad_id, descripcion, detalle)
   values (
     v_usuario,
-    (select email from perfiles where id = v_usuario),
+    v_autor.email,
+    v_autor.nombre || ' ' || v_autor.apellido,
+    v_autor.rol::text,
     case tg_op when 'INSERT' then 'crear' when 'UPDATE' then 'modificar' else 'eliminar' end,
     tg_table_name,
     coalesce(v_fila->>'id', v_fila->>'clave'),
@@ -126,7 +149,9 @@ create trigger perfiles_auditar
   when (old.rol is distinct from new.rol)
   execute function auditar();
 
-
+-- ----------------------------------------------------------------------------
+-- Órdenes: validación del QR (acceso y candy) y cancelaciones.
+-- ----------------------------------------------------------------------------
 create or replace function auditar_orden()
 returns trigger
 language plpgsql
@@ -135,21 +160,23 @@ set search_path = public
 as $$
 declare
   v_usuario uuid := auth.uid();
-  v_email   text;
+  v_autor   perfiles;
   v_accion  text;
 begin
   if v_usuario is null then
     return null;
   end if;
 
-  select email into v_email from perfiles where id = v_usuario;
+  select * into v_autor from perfiles where id = v_usuario;
 
   foreach v_accion in array array['validar_entrada', 'entregar_candy', 'cancelar_compra'] loop
     if (v_accion = 'validar_entrada' and old.validado_acceso_en is null and new.validado_acceso_en is not null)
        or (v_accion = 'entregar_candy' and old.validado_candy_en is null and new.validado_candy_en is not null)
        or (v_accion = 'cancelar_compra' and old.estado <> 'cancelada' and new.estado = 'cancelada') then
-      insert into auditoria (usuario_id, usuario_email, accion, entidad, entidad_id, descripcion)
-      values (v_usuario, v_email, v_accion, 'ordenes', new.id::text,
+      insert into auditoria (usuario_id, usuario_email, usuario_nombre, usuario_rol,
+                             accion, entidad, entidad_id, descripcion)
+      values (v_usuario, v_autor.email, v_autor.nombre || ' ' || v_autor.apellido, v_autor.rol::text,
+              v_accion, 'ordenes', new.id::text,
               'Compra ' || coalesce(new.codigo_qr, new.id::text) || ' · ' || new.email);
     end if;
   end loop;

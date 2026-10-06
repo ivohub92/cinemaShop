@@ -6,9 +6,7 @@ export const empleadoGuard: CanMatchFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  
-    const perfil = await auth.perfilListo();
-  console.log('guard empleado, perfil:', perfil);
+  const perfil = await auth.perfilListo();
 
   if (perfil?.rol === 'empleado' || perfil?.rol === 'admin') return true;
 

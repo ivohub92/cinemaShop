@@ -26,6 +26,7 @@ export class ReseniasPelicula implements OnInit {
   readonly error = signal('');
 
   readonly perfil = this.auth.perfil;
+  readonly esCliente = this.auth.esCliente;
 
 
   readonly propia = computed(() =>

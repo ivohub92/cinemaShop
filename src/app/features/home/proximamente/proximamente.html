@@ -20,7 +20,7 @@
       <li>
         <app-tarjeta-pelicula [pelicula]="pelicula" />
 
-        @if (usuario()) {
+        @if (esCliente()) {
           <button
             type="button"
             class="boton boton--discreto alerta"

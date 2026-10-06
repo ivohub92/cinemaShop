@@ -57,6 +57,9 @@ export class GestionFunciones implements OnInit {
     return `${String(hora).padStart(2, '0')}:00`;
   });
 
+  /** 'YYYY-MM-DD' de hoy en hora local: las funciones solo se programan a futuro. */
+  readonly hoy = new Date().toLocaleDateString('sv-SE');
+
   readonly formulario = this.fb.nonNullable.group({
     peliculaId: ['', Validators.required],
     hora: ['18:00', Validators.required],
@@ -116,6 +119,18 @@ export class GestionFunciones implements OnInit {
 
     if (!this.diasElegidos().length) {
       this.error.set('Elegí al menos un día de la semana.');
+      return;
+    }
+
+    const { desde, hasta } = this.formulario.getRawValue();
+
+    if (desde < this.hoy) {
+      this.error.set('La fecha "desde" no puede ser anterior a hoy.');
+      return;
+    }
+
+    if (hasta < desde) {
+      this.error.set('La fecha "hasta" no puede ser anterior a "desde".');
       return;
     }
 

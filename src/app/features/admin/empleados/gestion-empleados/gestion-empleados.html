@@ -1,0 +1,98 @@
+<h1>Empleados</h1>
+
+<section class="bloque">
+  <h2>Nuevo empleado</h2>
+  <p class="nota">
+    El empleado entra con este email y la contraseña inicial, y solo ve la pantalla de validación.
+    Si el email ya tenía una cuenta de cliente, pasa a ser empleado y conserva su contraseña.
+  </p>
+
+  <form [formGroup]="formulario" (ngSubmit)="crear()" class="formulario">
+    <div class="fila">
+      <label>
+        Nombre
+        <input type="text" formControlName="nombre" autocomplete="off" />
+        @if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) {
+          <small class="error">Al menos 2 letras.</small>
+        }
+      </label>
+
+      <label>
+        Apellido
+        <input type="text" formControlName="apellido" autocomplete="off" />
+        @if (formulario.controls.apellido.touched && formulario.controls.apellido.invalid) {
+          <small class="error">Al menos 2 letras.</small>
+        }
+      </label>
+    </div>
+
+    <label>
+      DNI
+      <input type="text" formControlName="dni" inputmode="numeric" maxlength="8" placeholder="Sin puntos" autocomplete="off" />
+      @if (formulario.controls.dni.touched && formulario.controls.dni.invalid) {
+        <small class="error">7 u 8 números, sin puntos.</small>
+      }
+    </label>
+
+    <label>
+      Email con el que ingresa
+      <input type="email" formControlName="email" autocomplete="off" />
+      @if (formulario.controls.email.touched && formulario.controls.email.invalid) {
+        <small class="error">Ingresá un email válido.</small>
+      }
+    </label>
+
+    <label>
+      Contraseña inicial
+      <input type="text" formControlName="password" autocomplete="off" />
+      @if (formulario.controls.password.touched && formulario.controls.password.invalid) {
+        <small class="error">Al menos 6 caracteres.</small>
+      }
+    </label>
+
+    <button type="submit" class="boton" [disabled]="enviando()">
+      {{ enviando() ? 'Creando…' : 'Crear empleado' }}
+    </button>
+  </form>
+</section>
+
+<section class="bloque">
+  <h2>Personal</h2>
+
+  @if (cargando()) {
+    <p class="nota">Cargando…</p>
+  } @else if (soloEmpleados().length) {
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>DNI</th>
+          <th>Email</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of soloEmpleados(); track m.id) {
+          <tr>
+            <td>{{ m.apellido }}, {{ m.nombre }}</td>
+            <td>{{ m.dni ?? '—' }}</td>
+            <td>{{ m.email }}</td>
+            <td>
+              <span class="estado" [class.estado--pendiente]="m.estado === 'pendiente'">
+                {{ m.estado === 'activo' ? 'Activo' : 'Sin cuenta todavía' }}
+              </span>
+            </td>
+            <td>
+              <button type="button" class="boton boton--discreto" (click)="quitar(m)">
+                {{ m.estado === 'activo' ? 'Quitar acceso' : 'Cancelar alta' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="nota">Todavía no hay empleados.</p>
+  }
+</section>

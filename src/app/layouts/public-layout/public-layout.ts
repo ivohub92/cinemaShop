@@ -19,6 +19,7 @@ export class PublicLayout {
   private readonly auth = inject(AuthService);
   readonly perfil = this.auth.perfil;
   readonly usuario = this.auth.usuario;
+  readonly esCliente = this.auth.esCliente;
 
   private readonly cuponesService = inject(CuponesService);
   private readonly notificaciones = inject(NotificacionesService);
@@ -32,8 +33,9 @@ export class PublicLayout {
 
   constructor() {
 
+    // Cupones y notificaciones son del cliente: el personal no los usa.
     effect(() => {
-      if (this.perfil()) {
+      if (this.esCliente()) {
         this.cuponesService.refrescarDisponibles();
       } else {
         this.cuponesService.disponibles.set([]);
@@ -44,7 +46,7 @@ export class PublicLayout {
     effect(() => {
       const usuario = this.usuario();
 
-      if (usuario) {
+      if (usuario && this.esCliente()) {
         this.notificaciones.iniciar(usuario.id);
       } else {
         this.notificaciones.detener();

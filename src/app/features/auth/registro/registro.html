@@ -35,7 +35,16 @@
 
    <label>
     Fecha de nacimiento
-    <app-selector-fecha formControlName="fechaNacimiento" />
+    <app-selector-fecha formControlName="fechaNacimiento" [maximo]="hoy" />
+    @if (formulario.controls.fechaNacimiento.touched) {
+      @if (formulario.controls.fechaNacimiento.hasError('required')) {
+        <small class="error">Elegí tu fecha de nacimiento.</small>
+      } @else if (formulario.controls.fechaNacimiento.hasError('edadMinima')) {
+        <small class="error">Tenés que tener al menos 13 años.</small>
+      } @else if (formulario.controls.fechaNacimiento.hasError('edadMaxima')) {
+        <small class="error">La fecha no es válida (más de 120 años).</small>
+      }
+    }
   </label>
 
   <label>
@@ -60,7 +69,10 @@
 
   <label>
     Días de vacaciones por año
-    <input type="number" formControlName="diasVacaciones" min="0" max="365" />
+    <input type="number" formControlName="diasVacaciones" min="0" max="365" step="1" inputmode="numeric" (keydown)="soloEnteros($event)" />
+    @if (formulario.controls.diasVacaciones.touched && formulario.controls.diasVacaciones.invalid) {
+      <small class="error">Un número entero entre 0 y 365.</small>
+    }
   </label>
 
   @if (error()) {
