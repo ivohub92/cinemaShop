@@ -15,7 +15,7 @@
 
   <select [value]="anio()" [disabled]="deshabilitado()" (change)="cambiar('anio', $event)" aria-label="Año">
     <option value="">Año</option>
-    @for (a of anios; track a) {
+    @for (a of anios(); track a) {
       <option [value]="a">{{ a }}</option>
     }
   </select>

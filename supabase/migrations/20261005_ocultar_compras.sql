@@ -1,8 +1,4 @@
--- ============================================================================
--- "Quitar del listado" en Mis compras: solo compras canceladas.
--- No se borra la orden: la necesitan el historial de crédito y los reportes.
--- Solo se marca como oculta para el usuario.
--- ============================================================================
+
 
 alter table ordenes
   add column if not exists oculta_en_historial boolean not null default false;

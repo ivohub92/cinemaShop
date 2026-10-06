@@ -58,3 +58,34 @@
   font-size: 0.9rem;
   color: var(--color-texto-suave);
 }
+// Aviso de cupón disponible, debajo del header.
+.aviso-cupon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #1c1233;
+  background-color: #d9a441;
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    font-weight: 600;
+  }
+}
+
+.aviso-cupon__cerrar {
+  padding: 0 0.4rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}

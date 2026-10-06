@@ -25,6 +25,30 @@
   </div>
 </header>
 
+@if (!avisoCerrado()) {
+  @if (usuario() && cupon(); as c) {
+    <aside class="aviso-cupon" role="status">
+      <p>
+        @if (c.tipo === 'bienvenida') {
+          Tenés <strong>{{ c.porcentaje }}% de descuento</strong> en tu primera compra.
+        } @else {
+          Tenés <strong>{{ c.porcentaje }}% de descuento</strong> con el cupón {{ c.codigo }}.
+        }
+        Se aplica solo al momento de pagar.
+      </p>
+      <button type="button" class="aviso-cupon__cerrar" aria-label="Cerrar aviso" (click)="avisoCerrado.set(true)">×</button>
+    </aside>
+  } @else if (!usuario() && porcentajeBienvenida(); as pct) {
+    <aside class="aviso-cupon" role="status">
+      <p>
+        <a routerLink="/registro">Registrate</a> y obtené <strong>{{ pct }}% de descuento</strong>
+        en tu primera compra.
+      </p>
+      <button type="button" class="aviso-cupon__cerrar" aria-label="Cerrar aviso" (click)="avisoCerrado.set(true)">×</button>
+    </aside>
+  }
+}
+
 <main class="contenido">
   <router-outlet />
 </main>

@@ -1,4 +1,4 @@
-import { Component, computed, forwardRef, signal } from '@angular/core';
+import { Component, computed, forwardRef, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 const MESES = [
@@ -26,10 +26,15 @@ export class SelectorFecha implements ControlValueAccessor {
 
   readonly meses = MESES;
 
-  readonly anios = Array.from(
-    { length: 100 },
-    (_, i) => new Date().getFullYear() - i,
-  );
+  /** false (por defecto): 100 años hacia atrás, para nacimientos. true: 10 hacia adelante, para vencimientos. */
+  readonly futuro = input(false);
+
+  readonly anios = computed(() => {
+    const actual = new Date().getFullYear();
+    return this.futuro()
+      ? Array.from({ length: 10 }, (_, i) => actual + i)
+      : Array.from({ length: 100 }, (_, i) => actual - i);
+  });
 
   readonly dias = computed(() => {
     const mes = Number(this.mes());

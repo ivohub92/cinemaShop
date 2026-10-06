@@ -1,0 +1,98 @@
+<h1>Cupones</h1>
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else {
+  <section class="bloque">
+    <h2>Cupón de bienvenida</h2>
+    <p class="nota">
+      Cada usuario nuevo recibe un cupón para su primera compra con este porcentaje.
+      Los cupones ya entregados conservan el porcentaje que tenían.
+    </p>
+
+    <form [formGroup]="formBienvenida" (ngSubmit)="guardarPorcentaje()" class="en-linea">
+      <label>
+        Porcentaje
+        <input type="number" formControlName="porcentaje" min="1" max="100" />
+      </label>
+      <button type="submit" class="boton" [disabled]="guardandoPct()">
+        {{ guardandoPct() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </form>
+
+    @if (mensajePct()) {
+      <p class="ok" role="status">{{ mensajePct() }}</p>
+    }
+  </section>
+
+  <section class="bloque">
+    <h2>Cupones para mayores de 50</h2>
+    <p class="nota">
+      Los ven y pueden usar solo los usuarios de 50 años o más, una vez cada uno.
+    </p>
+
+    <form [formGroup]="formCupon" (ngSubmit)="crearCupon()" class="formulario">
+      <label>
+        Código
+        <input type="text" formControlName="codigo" placeholder="MAYORES50" />
+        @if (formCupon.controls.codigo.touched && formCupon.controls.codigo.invalid) {
+          <small class="error">Entre 3 y 20 letras, números o guiones.</small>
+        }
+      </label>
+
+      <label>
+        Porcentaje
+        <input type="number" formControlName="porcentaje" min="1" max="100" />
+      </label>
+
+      <label>
+        Vence (opcional)
+        <app-selector-fecha formControlName="venceEn" [futuro]="true" />
+      </label>
+
+      <button type="submit" class="boton" [disabled]="creando()">
+        {{ creando() ? 'Creando…' : 'Crear cupón' }}
+      </button>
+    </form>
+
+    @if (cupones().length) {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Descuento</th>
+            <th>Vence</th>
+            <th>Usos</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cupon of cupones(); track cupon.id) {
+            <tr>
+              <td class="codigo">{{ cupon.codigo }}</td>
+              <td>{{ cupon.porcentaje }}%</td>
+              <td>
+                {{ cupon.venceEn ? (cupon.venceEn | date: 'd/M/yy') : 'Sin vencimiento' }}
+                @if (vencido(cupon)) { <small class="error">(vencido)</small> }
+              </td>
+              <td>{{ cupon.usos }}</td>
+              <td>{{ cupon.activo ? 'Activo' : 'Pausado' }}</td>
+              <td>
+                <button type="button" class="boton boton--discreto" (click)="cambiarEstado(cupon)">
+                  {{ cupon.activo ? 'Pausar' : 'Activar' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="nota">Todavía no hay cupones para mayores de 50.</p>
+    }
+  </section>
+}

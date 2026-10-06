@@ -76,11 +76,15 @@ export class ButacasService {
     return data;
   }
 
-  /** Paga la orden. Con usarCredito, primero se descuenta el saldo de la cuenta (RF-35). */
-  async confirmarCompra(ordenId: string, usarCredito = false): Promise<void> {
+  /**
+   * Paga la orden. Orden de RN-04: primero el cupón, después el crédito;
+   * el resto se cobra con el pago simulado. Los cálculos los hace la base.
+   */
+  async confirmarCompra(ordenId: string, usarCredito = false, cuponId: string | null = null): Promise<void> {
     const { error } = await this.supabase.client.rpc('confirmar_compra', {
       p_orden_id: ordenId,
       p_usar_credito: usarCredito,
+      p_cupon_id: cuponId,
     });
 
     if (error) throw error;

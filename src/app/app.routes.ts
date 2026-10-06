@@ -102,6 +102,11 @@ export const routes: Routes = [
           import('./features/admin/candy/form-combo/form-combo').then((m) => m.FormCombo),
       },
       {
+        path: 'cupones',
+        loadComponent: () =>
+          import('./features/admin/cupones/gestion-cupones/gestion-cupones').then((m) => m.GestionCupones),
+      },
+      {
         path: 'funciones',
         loadComponent: () =>
           import('./features/admin/funciones/gestion-funciones/gestion-funciones').then(

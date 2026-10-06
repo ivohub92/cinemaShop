@@ -2,23 +2,19 @@ import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 
- /** Candy de una orden, ordenado para mostrarlo: combos con su contenido y productos sueltos. */
+
 export interface ResumenCandy {
   combos: { nombre: string; cantidad: number; items: { nombre: string; cantidad: number }[] }[];
   sueltos: { nombre: string; cantidad: number; subtotal: number }[];
 }
 
-/** $ 31.000 — el formato de moneda argentino, para el PDF (en pantalla se usa CurrencyPipe). */
+
 const pesos = (valor: number | string) =>
   Number(valor).toLocaleString('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
 
 @Injectable({ providedIn: 'root' })
 export class ComprobanteService {
-  /**
-   * Agrupa los productos que devuelve obtener_orden(): los que traen "combo"
-   * van debajo de su combo (cuántos combos = cuántas butacas lo tienen);
-   * el resto son sueltos, con su subtotal.
-   */
+
   resumirCandy(orden: any): ResumenCandy {
     const productos: any[] = orden?.productos ?? [];
     const butacas: any[] = orden?.butacas ?? [];
@@ -122,8 +118,25 @@ export class ComprobanteService {
       }
     }
 
+    // Beneficios aplicados (RN-04): el total ya los tiene descontados.
+    // Guion común y no '−': la fuente estándar de jsPDF no tiene ese carácter.
+    if (Number(orden.descuento) > 0) {
+      y += 3;
+      doc.text(`Cupón ${orden.cupon ?? ''}`.trim(), 20, y);
+      doc.text(`- ${pesos(orden.descuento)}`, 115, y, { align: 'right' });
+      y += 7;
+    }
+
     doc.setFontSize(13);
     doc.text(`Total: ${pesos(orden.total)}`, 20, y + 6);
+
+    if (Number(orden.credito_usado) > 0) {
+      doc.setFontSize(10);
+      doc.setTextColor(90, 90, 110);
+      doc.text(`Pagado con crédito: ${pesos(orden.credito_usado)}`, 20, y + 13);
+      doc.setTextColor(28, 18, 51);
+      y += 7;
+    }
 
     doc.addImage(qr, 'PNG', 130, 55, 60, 60);
     doc.setFontSize(9);
