@@ -1,9 +1,11 @@
-<h1>Mis compras</h1>
+@if (!incrustado()) {
+  <h1>Mis compras</h1>
 
-<p class="credito">
-  Crédito disponible: <strong>{{ credito() | currency: 'ARS' : 'symbol-narrow' }}</strong>
-  <small>Se usa como medio de pago en tu próxima compra.</small>
-</p>
+  <p class="credito">
+    Crédito disponible: <strong>{{ credito() | currency: 'ARS' : 'symbol-narrow' }}</strong>
+    <small>Se usa como medio de pago en tu próxima compra.</small>
+  </p>
+}
 
 @if (aviso()) {
   <p class="aviso-ok" role="status">{{ aviso() }}</p>

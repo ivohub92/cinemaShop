@@ -41,6 +41,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/compra/compra/compra').then((m) => m.Compra),
       },
       {
+        path: 'mi-cuenta',
+        canMatch: [sesionGuard],
+        loadComponent: () =>
+          import('./features/cuenta/mi-cuenta/mi-cuenta').then((m) => m.MiCuenta),
+      },
+      {
         path: 'mis-compras',
         canMatch: [sesionGuard],
         loadComponent: () =>
@@ -100,6 +106,13 @@ export const routes: Routes = [
         path: 'candy/combos/:id',
         loadComponent: () =>
           import('./features/admin/candy/form-combo/form-combo').then((m) => m.FormCombo),
+      },
+      {
+        path: 'recompensas',
+        loadComponent: () =>
+          import('./features/admin/recompensas/gestion-recompensas/gestion-recompensas').then(
+            (m) => m.GestionRecompensas,
+          ),
       },
       {
         path: 'cupones',

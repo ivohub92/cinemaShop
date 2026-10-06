@@ -72,6 +72,25 @@
       </fieldset>
     }
 
+    @if (recompensasAplicables().length) {
+      <fieldset class="beneficio">
+        <legend>Canjear puntos · tenés {{ puntos().toLocaleString('es-AR') }}</legend>
+        @for (recompensa of recompensasAplicables(); track recompensa.id) {
+          <div class="canje">
+            <span>
+              {{ recompensa.nombre }}
+              <small>{{ recompensa.costoPuntos.toLocaleString('es-AR') }} pts</small>
+            </span>
+            <span class="contador">
+              <button type="button" aria-label="Quitar uno" [disabled]="!cantidadCanje(recompensa)" (click)="cambiarCanje(recompensa, -1)">−</button>
+              <span>{{ cantidadCanje(recompensa) }}</span>
+              <button type="button" aria-label="Agregar uno" [disabled]="!puedeSumarCanje(recompensa)" (click)="cambiarCanje(recompensa, 1)">+</button>
+            </span>
+          </div>
+        }
+      </fieldset>
+    }
+
     @if (credito() > 0) {
       <label class="usar-credito">
         <input type="checkbox" [checked]="usarCredito()" (change)="usarCredito.set(!usarCredito())" />
@@ -79,11 +98,17 @@
       </label>
     }
 
-    @if (descuento() || creditoAplicado()) {
+    @if (descuento() || descuentoPuntos() || creditoAplicado()) {
       @if (descuento()) {
         <p class="desglose">
           <span>Cupón {{ cuponElegido()?.porcentaje }}%</span>
           <span>− {{ descuento() | currency: 'ARS' : 'symbol-narrow' }}</span>
+        </p>
+      }
+      @if (descuentoPuntos()) {
+        <p class="desglose">
+          <span>Puntos ({{ puntosAUsar().toLocaleString('es-AR') }})</span>
+          <span>− {{ descuentoPuntos() | currency: 'ARS' : 'symbol-narrow' }}</span>
         </p>
       }
       @if (creditoAplicado()) {
@@ -103,6 +128,10 @@
         Función apta para mayores de {{ o.restriccion_edad }} años. Los menores deben
         concurrir acompañados por un adulto.
       </p>
+    }
+
+    @if (puntosAGanar()) {
+      <p class="envio">Con esta compra sumás {{ puntosAGanar().toLocaleString('es-AR') }} puntos.</p>
     }
 
     <p class="envio">Enviamos las entradas a {{ o.email }}</p>

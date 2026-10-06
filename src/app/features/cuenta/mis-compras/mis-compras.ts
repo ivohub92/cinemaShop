@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { CompraResumen, CuentaService } from '../cuenta.service';
 
@@ -13,6 +13,12 @@ const LIMITE_CANCELACION_MS = 2 * 60 * 60 * 1000;
 })
 export class MisCompras implements OnInit {
   private readonly cuenta = inject(CuentaService);
+
+  /** Dentro de Mi cuenta no repite el título ni el crédito: ya los muestra la página. */
+  readonly incrustado = input(false);
+
+  /** Avisa que cambió el saldo (se canceló una compra), para que Mi cuenta lo actualice. */
+  readonly cambio = output<void>();
 
   readonly compras = signal<CompraResumen[]>([]);
   readonly credito = signal(0);
@@ -76,6 +82,7 @@ export class MisCompras implements OnInit {
       const acreditado = await this.cuenta.cancelar(compra.id);
       this.aviso.set(`Compra cancelada. Se acreditaron $ ${acreditado.toLocaleString('es-AR')} en tu cuenta.`);
       await this.recargar();
+      this.cambio.emit();
     } catch (e: any) {
       this.error.set(e?.message ?? 'No pudimos cancelar la compra.');
     } finally {

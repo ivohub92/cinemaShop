@@ -87,6 +87,16 @@ export class Compra implements OnInit {
     this.cargando.set(false);
   }
 
+  /**
+   * El usuario logueado no alcanza la edad: se cierra la sesión y se vuelve
+   * a la identidad, para que no quede logueado mientras compra otra persona.
+   */
+  async salirYSeguirComoInvitado(): Promise<void> {
+    await this.auth.salir();
+    this.store.reiniciar();
+    this.eligiendoCandy.set(false);
+  }
+
   volverAIdentidad(): void {
     this.store.reiniciar();
     this.eligiendoCandy.set(false);

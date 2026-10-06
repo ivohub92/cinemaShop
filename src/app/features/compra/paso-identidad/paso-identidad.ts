@@ -19,6 +19,9 @@ export class PasoIdentidad {
   readonly listo = output<void>();
 
   readonly modo = signal<'elegir' | 'invitado' | 'ingresar'>('elegir');
+
+  /** Si ya hay sesión, se ofrece seguir con la cuenta o cerrarla; nunca las dos cosas a la vez. */
+  readonly perfil = this.auth.perfil;
   readonly error = signal('');
   readonly enviando = signal(false);
 
@@ -31,6 +34,16 @@ export class PasoIdentidad {
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   });
+
+  seguirConMiCuenta(): void {
+    if (this.store.tomarDeLaSesion()) this.listo.emit();
+  }
+
+  /** Cierra la sesión antes de comprar como invitado: la compra no queda en la cuenta de otro. */
+  async salirParaInvitado(): Promise<void> {
+    await this.auth.salir();
+    this.modo.set('invitado');
+  }
 
   continuarComoInvitado(): void {
     if (this.formInvitado.invalid) {

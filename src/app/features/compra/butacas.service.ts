@@ -77,14 +77,21 @@ export class ButacasService {
   }
 
   /**
-   * Paga la orden. Orden de RN-04: primero el cupón, después el crédito;
+   * Paga la orden. Orden de RN-04: cupón → puntos (recompensas) → crédito;
    * el resto se cobra con el pago simulado. Los cálculos los hace la base.
+   * recompensas: un id por canje (se repite para canjear dos veces la misma).
    */
-  async confirmarCompra(ordenId: string, usarCredito = false, cuponId: string | null = null): Promise<void> {
+  async confirmarCompra(
+    ordenId: string,
+    usarCredito = false,
+    cuponId: string | null = null,
+    recompensas: string[] = [],
+  ): Promise<void> {
     const { error } = await this.supabase.client.rpc('confirmar_compra', {
       p_orden_id: ordenId,
       p_usar_credito: usarCredito,
       p_cupon_id: cuponId,
+      p_recompensas: recompensas,
     });
 
     if (error) throw error;

@@ -1,0 +1,90 @@
+<h1>Mi cuenta</h1>
+
+@if (perfil(); as p) {
+  <section class="datos">
+    <p class="nombre">{{ p.nombre }} {{ p.apellido }}</p>
+    <p>{{ p.email }} · Nacimiento: {{ p.fechaNacimiento | date: 'd/M/yyyy' }}</p>
+  </section>
+}
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+
+@if (cargando()) {
+  <p class="suave">Cargando…</p>
+} @else {
+  <section class="resumen">
+    <div class="dato">
+      <span class="etiqueta">Crédito disponible</span>
+      <strong>{{ credito() | currency: 'ARS' : 'symbol-narrow' }}</strong>
+      <small>Por compras canceladas. Se usa al pagar.</small>
+    </div>
+
+    <div class="dato">
+      <span class="etiqueta">Puntos</span>
+      <strong>{{ puntos().toLocaleString('es-AR') }}</strong>
+      <small>1 punto por cada peso pagado. Se canjean al pagar.</small>
+    </div>
+
+    <div class="dato">
+      <span class="etiqueta">Cupones</span>
+      <strong>{{ cupones().length }}</strong>
+      <small>{{ cupones().length === 1 ? 'Disponible' : 'Disponibles' }} para tu próxima compra.</small>
+    </div>
+  </section>
+
+  @if (cupones().length) {
+    <section class="bloque">
+      <h2>Mis cupones</h2>
+      <ul class="cupones">
+        @for (cupon of cupones(); track cupon.id) {
+          <li>
+            <strong>{{ cupon.porcentaje }}% off</strong>
+            {{ cupon.tipo === 'bienvenida' ? 'en tu primera compra' : 'por ser mayor de 50' }}
+            <small>{{ cupon.codigo }}</small>
+            @if (cupon.venceEn) {
+              <small>· vence {{ cupon.venceEn | date: 'd/M/yy' }}</small>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <section class="bloque">
+    <h2>Historial de canjes</h2>
+    @if (canjes().length) {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Recompensa</th>
+            <th>Puntos</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (canje of canjes(); track canje.id) {
+            <tr [class.anulado]="canje.estadoOrden === 'cancelada'">
+              <td>{{ canje.creadoEn | date: 'd/M/yy' }}</td>
+              <td>
+                {{ canje.recompensa }}
+                @if (canje.estadoOrden === 'cancelada') { <small>(compra cancelada: puntos devueltos)</small> }
+              </td>
+              <td>{{ canje.puntos.toLocaleString('es-AR') }}</td>
+              <td>{{ canje.valor | currency: 'ARS' : 'symbol-narrow' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="suave">Todavía no canjeaste puntos.</p>
+    }
+  </section>
+
+  <section class="bloque">
+    <h2>Historial de compras</h2>
+    <app-mis-compras [incrustado]="true" (cambio)="recargarSaldos()" />
+  </section>
+}

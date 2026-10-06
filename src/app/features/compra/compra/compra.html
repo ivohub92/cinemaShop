@@ -27,9 +27,20 @@
       <p>
         Esta película está clasificada para mayores de {{ restriccionEdad() }} años.
       </p>
-      <button type="button" class="boton boton--contorno" (click)="volverAIdentidad()">
-        Usar otros datos
-      </button>
+      @if (store.comprador()?.usuarioId) {
+        <!-- Con sesión, la edad sale del perfil: no se puede cambiar sin salir de la cuenta. -->
+        <p>
+          La edad se toma de los datos de tu cuenta. Para comprar con otros datos,
+          cerrá la sesión y continuá como invitado.
+        </p>
+        <button type="button" class="boton boton--contorno" (click)="salirYSeguirComoInvitado()">
+          Cerrar sesión y comprar como invitado
+        </button>
+      } @else {
+        <button type="button" class="boton boton--contorno" (click)="volverAIdentidad()">
+          Usar otros datos
+        </button>
+      }
     </div>
   } @else if (pagada()) {
     <app-paso-confirmacion [ordenId]="ordenId()!" />

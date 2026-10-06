@@ -1,0 +1,95 @@
+<h1>Recompensas</h1>
+
+<p class="nota">
+  Los clientes suman 1 punto por cada peso que pagan en dinero y los canjean al pagar.
+  Una recompensa de <strong>entrada</strong> cubre una butaca (incluido el recargo VIP);
+  una de <strong>producto</strong> cubre una unidad de ese producto del candy.
+</p>
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ok" role="status">{{ aviso() }}</p>
+}
+
+<form [formGroup]="formulario" (ngSubmit)="crear()" class="formulario">
+  <label>
+    Nombre
+    <input type="text" formControlName="nombre" placeholder="Entrada gratis" />
+  </label>
+
+  <label>
+    Tipo
+    <select formControlName="tipo">
+      <option value="entrada">Entrada</option>
+      <option value="producto">Producto del candy</option>
+    </select>
+  </label>
+
+  @if (formulario.controls.tipo.value === 'producto') {
+    <label>
+      Producto
+      <select formControlName="productoId">
+        <option value="" disabled>Elegí un producto</option>
+        @for (producto of productos(); track producto.id) {
+          <option [value]="producto.id">{{ producto.nombre }}</option>
+        }
+      </select>
+    </label>
+  }
+
+  <label>
+    Costo en puntos
+    <input type="number" formControlName="costoPuntos" min="1" step="1000" />
+  </label>
+
+  <button type="submit" class="boton" [disabled]="creando()">
+    {{ creando() ? 'Creando…' : 'Crear recompensa' }}
+  </button>
+</form>
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else if (recompensas().length) {
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Recompensa</th>
+        <th>Cubre</th>
+        <th>Costo (puntos)</th>
+        <th>Estado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (recompensa of recompensas(); track recompensa.id) {
+        <tr>
+          <td>{{ recompensa.nombre }}</td>
+          <td>{{ recompensa.tipo === 'entrada' ? 'Una entrada' : recompensa.productoNombre }}</td>
+          <td>
+            <input
+              #campoCosto
+              class="costo"
+              type="number"
+              min="1"
+              [value]="recompensa.costoPuntos"
+              [attr.aria-label]="'Costo de ' + recompensa.nombre"
+              (keydown.enter)="guardarCosto(recompensa, campoCosto)"
+              (blur)="guardarCosto(recompensa, campoCosto)"
+            />
+          </td>
+          <td>{{ recompensa.activo ? 'Activa' : 'Pausada' }}</td>
+          <td>
+            <button type="button" class="boton boton--discreto" (click)="cambiarEstado(recompensa)">
+              {{ recompensa.activo ? 'Pausar' : 'Activar' }}
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <p class="nota">Para cambiar un costo, editá el número y presioná Enter.</p>
+} @else {
+  <p class="nota">Todavía no hay recompensas.</p>
+}
