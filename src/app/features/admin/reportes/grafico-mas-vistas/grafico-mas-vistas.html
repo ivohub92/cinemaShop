@@ -1,0 +1,41 @@
+<section class="grafico" aria-labelledby="titulo-mas-vistas">
+  <header class="cabecera">
+    <div>
+      <h2 id="titulo-mas-vistas">Películas más vistas</h2>
+      <p class="sub">Entradas validadas en la puerta · top 5</p>
+    </div>
+
+    <div class="controles">
+      <div class="segmentado" role="group" aria-label="Agrupar por">
+        <button type="button" [class.activo]="agrupacion() === 'semana'" [attr.aria-pressed]="agrupacion() === 'semana'" (click)="cambiarAgrupacion('semana')">Semana</button>
+        <button type="button" [class.activo]="agrupacion() === 'mes'" [attr.aria-pressed]="agrupacion() === 'mes'" (click)="cambiarAgrupacion('mes')">Mes</button>
+      </div>
+
+      <div class="periodo">
+        <button type="button" aria-label="Período anterior" (click)="mover(-1)">‹</button>
+        <span>{{ rango().etiqueta }}</span>
+        <button type="button" aria-label="Período siguiente" [disabled]="desplazamiento() === 0" (click)="mover(1)">›</button>
+      </div>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  } @else if (cargando()) {
+    <p class="vacio">Cargando…</p>
+  } @else if (peliculas().length) {
+    <ol class="barras">
+      @for (p of peliculas(); track p.peliculaId) {
+        <li class="fila" [attr.title]="p.titulo + ': ' + p.entradas + (p.entradas === 1 ? ' entrada validada' : ' entradas validadas')">
+          <span class="nombre">{{ p.titulo }}</span>
+          <span class="pista">
+            <span class="barra" [style.width.%]="porcentaje(p.entradas)"></span>
+          </span>
+          <span class="valor">{{ p.entradas }}</span>
+        </li>
+      }
+    </ol>
+  } @else {
+    <p class="vacio">No se validaron entradas en este período.</p>
+  }
+</section>

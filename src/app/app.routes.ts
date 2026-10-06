@@ -115,6 +115,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'reportes',
+        loadComponent: () =>
+          import('./features/admin/reportes/panel-reportes/panel-reportes').then((m) => m.PanelReportes),
+      },
+      {
         path: 'cupones',
         loadComponent: () =>
           import('./features/admin/cupones/gestion-cupones/gestion-cupones').then((m) => m.GestionCupones),

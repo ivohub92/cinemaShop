@@ -1,0 +1,139 @@
+h1 {
+  margin: 0 0 1.5rem;
+}
+
+.filtro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 1.5rem;
+  margin-bottom: 2rem;
+
+  label {
+    display: grid;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--color-texto-suave);
+  }
+}
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.dato {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1.25rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+
+  strong {
+    font-size: 1.6rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  small {
+    color: var(--color-texto-suave);
+  }
+}
+
+.dato__texto {
+  overflow: hidden;
+  font-size: 1.15rem !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detalle + .detalle {
+  margin-top: 3rem;
+
+  h2 {
+    margin: 0 0 1rem;
+    font-size: 1.15rem;
+  }
+}
+
+.etiqueta {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.detalle__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+}
+
+.acciones {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+
+  th,
+  td {
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-borde);
+  }
+
+  thead th {
+    font-size: 0.85rem;
+    color: var(--color-texto-suave);
+  }
+
+  tfoot th {
+    border-top: 2px solid var(--color-borde);
+    border-bottom: 0;
+  }
+
+  .num {
+    text-align: right;
+  }
+
+  td:first-child {
+    text-transform: capitalize;
+  }
+}
+
+.vacio {
+  color: var(--color-texto-suave);
+}
+
+.nota,
+.suave {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.error {
+  color: #e38b8b;
+}

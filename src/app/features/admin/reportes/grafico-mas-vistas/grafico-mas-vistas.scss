@@ -1,0 +1,157 @@
+.grafico {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+}
+
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+}
+
+.sub {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+button {
+  font: inherit;
+  color: var(--color-texto);
+  background: transparent;
+  border: 1px solid var(--color-borde);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.segmentado {
+  display: flex;
+
+  button {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+
+    &:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    &:last-child {
+      border-left: 0;
+      border-radius: 0 6px 6px 0;
+    }
+  }
+
+  .activo {
+    color: #1c1233;
+    background-color: #d9a441;
+    border-color: #d9a441;
+  }
+}
+
+.periodo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+
+  span {
+    min-width: 13rem;
+    text-align: center;
+  }
+
+  button {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+  }
+}
+
+// Barras horizontales: una sola serie, finas (≤ 24px), punta redondeada y base recta.
+.barras {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: minmax(8rem, 14rem) 1fr 3rem;
+  align-items: center;
+  gap: 1rem;
+
+  &:hover .barra {
+    filter: brightness(1.15);
+  }
+}
+
+.nombre {
+  overflow: hidden;
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pista {
+  height: 18px;
+  border-left: 1px solid var(--color-borde);
+}
+
+.barra {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  // #b8822a: validado contra el fondo oscuro (contraste ≥ 3:1 y luminosidad en rango).
+  background-color: #b8822a;
+  border-radius: 0 4px 4px 0;
+  transition: width 300ms ease;
+}
+
+.valor {
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--color-texto-suave);
+}
+
+.vacio {
+  color: var(--color-texto-suave);
+}
+
+.error {
+  color: #e38b8b;
+}
+
+@media (max-width: 34rem) {
+  .fila {
+    grid-template-columns: 1fr 2.5rem;
+
+    .pista {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+}

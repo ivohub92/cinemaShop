@@ -1,0 +1,162 @@
+<h1>Reportes</h1>
+
+<form [formGroup]="filtro" (ngSubmit)="consultar()" class="filtro">
+  <label>
+    Desde
+    <app-selector-fecha formControlName="desde" />
+  </label>
+
+  <label>
+    Hasta
+    <app-selector-fecha formControlName="hasta" />
+  </label>
+
+  <button type="submit" class="boton" [disabled]="cargando()">
+    {{ cargando() ? 'Generando…' : 'Ver reporte' }}
+  </button>
+</form>
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+
+@if (reporte(); as r) {
+  <section class="resumen" aria-label="Resumen del período">
+    <div class="dato">
+      <span class="etiqueta">Facturación</span>
+      <strong>{{ totales().facturacion | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+      <small>Dinero cobrado en el período</small>
+    </div>
+
+    <div class="dato">
+      <span class="etiqueta">Entradas vendidas</span>
+      <strong>{{ totales().entradas }}</strong>
+      <small>En {{ totales().ordenes }} {{ totales().ordenes === 1 ? 'compra' : 'compras' }}</small>
+    </div>
+
+    <div class="dato">
+      <span class="etiqueta">Ticket promedio</span>
+      <strong>{{ totales().ticketPromedio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+      <small>Facturación por compra</small>
+    </div>
+
+    <div class="dato">
+      <span class="etiqueta">Producto más vendido</span>
+      @if (productos()[0]; as top) {
+        <strong class="dato__texto">{{ top.nombre }}</strong>
+        <small>{{ top.unidades }} {{ top.unidades === 1 ? 'unidad' : 'unidades' }}</small>
+      } @else {
+        <strong class="dato__texto">—</strong>
+        <small>Sin ventas de candy</small>
+      }
+    </div>
+
+    <div class="dato">
+      <span class="etiqueta">Canceladas</span>
+      <strong>{{ r.canceladas.ordenes }}</strong>
+      <small>{{ r.canceladas.monto | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} devueltos como crédito</small>
+    </div>
+  </section>
+
+  <section class="detalle">
+    <header class="detalle__cabecera">
+      <h2>Facturación diaria</h2>
+      <div class="acciones">
+        <button type="button" class="boton boton--contorno" (click)="exportarPdf()">Exportar PDF</button>
+        <button type="button" class="boton boton--contorno" [disabled]="exportando()" (click)="exportarExcel()">
+          {{ exportando() ? 'Generando…' : 'Exportar Excel' }}
+        </button>
+      </div>
+      <label class="check">
+        <input
+          type="checkbox"
+          [checked]="mostrarDiasSinVentas()"
+          (change)="mostrarDiasSinVentas.set(!mostrarDiasSinVentas())"
+        />
+        Mostrar días sin ventas
+      </label>
+    </header>
+
+    @if (diasVisibles().length) {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th class="num">Compras</th>
+            <th class="num">Entradas</th>
+            <th class="num">Facturación</th>
+            <th class="num">Con crédito</th>
+            <th class="num">Descuentos</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of diasVisibles(); track d.dia) {
+            <tr [class.vacio]="!d.ordenes">
+              <td>{{ d.dia + 'T00:00:00' | date: 'EEE d/M' }}</td>
+              <td class="num">{{ d.ordenes }}</td>
+              <td class="num">{{ d.entradas }}</td>
+              <td class="num">{{ d.facturacion | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+              <td class="num">{{ d.credito | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+              <td class="num">{{ d.descuentos | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Total</th>
+            <th class="num">{{ totales().ordenes }}</th>
+            <th class="num">{{ totales().entradas }}</th>
+            <th class="num">{{ totales().facturacion | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</th>
+            <th class="num">{{ totales().credito | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</th>
+            <th class="num">{{ totales().descuentos | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</th>
+          </tr>
+        </tfoot>
+      </table>
+    } @else {
+      <p class="suave">No hubo ventas en este período.</p>
+    }
+
+    <p class="nota">
+      Facturación = dinero cobrado (total menos lo pagado con crédito). Las compras canceladas no
+      suman: su importe volvió como crédito al cliente.
+    </p>
+  </section>
+
+  <section class="detalle">
+    <h2>Productos más vendidos del candy</h2>
+
+    @if (errorProductos()) {
+      <p class="error" role="alert">{{ errorProductos() }}</p>
+    }
+
+    @if (productos().length) {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th class="num">Unidades</th>
+            <th class="num">Sueltas</th>
+            <th class="num">En combos</th>
+            <th class="num">Facturado suelto</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of productos(); track p.productoId) {
+            <tr>
+              <td>{{ p.nombre }}</td>
+              <td class="num">{{ p.unidades }}</td>
+              <td class="num">{{ p.sueltas }}</td>
+              <td class="num">{{ p.enCombo }}</td>
+              <td class="num">{{ p.facturado | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <p class="nota">Los productos de combo no tienen precio propio: su valor está incluido en el combo.</p>
+    } @else {
+      <p class="suave">No se vendieron productos del candy en este período.</p>
+    }
+  </section>
+}
+
+<app-grafico-mas-vistas />
