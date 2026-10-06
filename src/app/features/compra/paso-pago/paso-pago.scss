@@ -151,6 +151,16 @@ h2 {
   }
 }
 
+.canje--no-aplica {
+  opacity: 0.55;
+}
+
+.motivo {
+  margin-top: -0.25rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
 .usar-credito {
   display: flex;
   align-items: center;

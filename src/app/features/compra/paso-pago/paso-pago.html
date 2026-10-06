@@ -72,23 +72,45 @@
       </fieldset>
     }
 
-    @if (recompensasAplicables().length) {
+    @if (conCuenta()) {
       <fieldset class="beneficio">
-        <legend>Canjear puntos · tenés {{ puntos().toLocaleString('es-AR') }}</legend>
-        @for (recompensa of recompensasAplicables(); track recompensa.id) {
-          <div class="canje">
-            <span>
-              {{ recompensa.nombre }}
-              <small>{{ recompensa.costoPuntos.toLocaleString('es-AR') }} pts</small>
-            </span>
-            <span class="contador">
-              <button type="button" aria-label="Quitar uno" [disabled]="!cantidadCanje(recompensa)" (click)="cambiarCanje(recompensa, -1)">−</button>
-              <span>{{ cantidadCanje(recompensa) }}</span>
-              <button type="button" aria-label="Agregar uno" [disabled]="!puedeSumarCanje(recompensa)" (click)="cambiarCanje(recompensa, 1)">+</button>
-            </span>
-          </div>
+        <legend>Puntos · tenés {{ puntos().toLocaleString('es-AR') }}</legend>
+
+        @for (recompensa of recompensas(); track recompensa.id) {
+          @if (aplica(recompensa)) {
+            <div class="canje">
+              <span>
+                {{ recompensa.nombre }}
+                <small>{{ recompensa.costoPuntos.toLocaleString('es-AR') }} pts</small>
+              </span>
+              <span class="contador">
+                <button type="button" aria-label="Quitar uno" [disabled]="!cantidadCanje(recompensa)" (click)="cambiarCanje(recompensa, -1)">−</button>
+                <span>{{ cantidadCanje(recompensa) }}</span>
+                <button type="button" aria-label="Agregar uno" [disabled]="!puedeSumarCanje(recompensa)" (click)="cambiarCanje(recompensa, 1)">+</button>
+              </span>
+            </div>
+            @if (!cantidadCanje(recompensa) && puntos() < recompensa.costoPuntos) {
+              <small class="motivo">Te faltan {{ (recompensa.costoPuntos - puntos()).toLocaleString('es-AR') }} puntos.</small>
+            }
+          } @else {
+            <div class="canje canje--no-aplica">
+              <span>
+                {{ recompensa.nombre }}
+                <small>{{ recompensa.costoPuntos.toLocaleString('es-AR') }} pts</small>
+              </span>
+            </div>
+            <small class="motivo">{{ motivoNoAplica(recompensa) }}</small>
+          }
+        } @empty {
+          <small class="motivo">Todavía no hay recompensas para canjear.</small>
+        }
+
+        @if (errorBeneficios()) {
+          <small class="motivo error">No pudimos cargar todos tus beneficios. Podés pagar igual.</small>
         }
       </fieldset>
+    } @else {
+      <p class="nota">Comprando como invitado: cupones, puntos y crédito son para usuarios registrados.</p>
     }
 
     @if (credito() > 0) {

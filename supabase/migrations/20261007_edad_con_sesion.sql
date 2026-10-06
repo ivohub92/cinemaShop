@@ -1,9 +1,4 @@
--- ============================================================================
--- Arreglo de seguridad (RN-02): un usuario logueado no puede saltear la
--- restricción de edad "comprando como invitado" con otra fecha de nacimiento.
--- Si hay sesión, reservar_butacas usa el correo y la fecha del perfil e ignora
--- los que lleguen por parámetro. Misma firma: create or replace la reemplaza.
--- ============================================================================
+
 
 create or replace function public.reservar_butacas(
   p_funcion_id       uuid,

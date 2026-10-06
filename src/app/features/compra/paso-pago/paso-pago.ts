@@ -8,6 +8,7 @@ import { CuponesService } from '../../../core/services/cupones.service';
 import { Cupon } from '../../../core/models/cupon';
 import { PuntosService } from '../../../core/services/puntos.service';
 import { Recompensa } from '../../../core/models/recompensa';
+import { CompraStore } from '../compra/compra.store';
 
 @Component({
   selector: 'app-paso-pago',
@@ -22,6 +23,7 @@ export class PasoPago implements OnInit {
   private readonly cuenta = inject(CuentaService);
   private readonly cuponesService = inject(CuponesService);
   private readonly puntosService = inject(PuntosService);
+  private readonly store = inject(CompraStore);
 
   readonly ordenId = input.required<string>();
 
@@ -32,6 +34,11 @@ export class PasoPago implements OnInit {
   readonly pagando = signal(false);
   readonly error = signal('');
   readonly restante = signal('');
+
+  /** Si la compra es de un usuario con cuenta (los beneficios no aplican a invitados, D-01). */
+  readonly conCuenta = signal(false);
+  /** Si falló la carga de cupones, puntos o crédito: se avisa en vez de esconder la sección. */
+  readonly errorBeneficios = signal(false);
 
   /** Combos y productos de la orden, agrupados para el resumen. */
   readonly candy = computed(() => this.comprobante.resumirCandy(this.orden()));
@@ -76,6 +83,18 @@ export class PasoPago implements OnInit {
       r.tipo === 'entrada' ? this.preciosEntradas().length > 0 : this.productosSueltos().has(r.productoId!),
     ),
   );
+
+  aplica(recompensa: Recompensa): boolean {
+    return this.recompensasAplicables().includes(recompensa);
+  }
+
+  /** Por qué una recompensa no se puede usar en esta compra, para explicarlo en pantalla. */
+  motivoNoAplica(recompensa: Recompensa): string {
+    if (recompensa.tipo === 'entrada') {
+      return 'Tus entradas tienen combo: no se pueden cubrir con puntos.';
+    }
+    return `Agregá "${recompensa.productoNombre}" en el candy para canjearlo.`;
+  }
 
   cantidadCanje(recompensa: Recompensa): number {
     return this.canjes()[recompensa.id] ?? 0;
@@ -157,12 +176,24 @@ export class PasoPago implements OnInit {
   async ngOnInit(): Promise<void> {
     this.orden.set(await this.butacasService.obtenerOrden(this.ordenId()));
 
-    if (this.auth.perfil()) {
+    // perfilListo() espera a que termine de cargar la sesión; perfil() solo
+    // podía devolver null si todavía estaba cargando, y la sección no aparecía.
+    // Además, los beneficios son del titular de la compra, no de quien esté logueado.
+    const perfil = await this.auth.perfilListo();
+    this.conCuenta.set(!!perfil && this.store.comprador()?.usuarioId === perfil.id);
+
+    if (this.conCuenta()) {
+      const seguro = <T>(promesa: Promise<T>, porDefecto: T): Promise<T> =>
+        promesa.catch(() => {
+          this.errorBeneficios.set(true);
+          return porDefecto;
+        });
+
       const [credito, cupones, puntos, recompensas] = await Promise.all([
-        this.cuenta.saldoCredito().catch(() => 0),
-        this.cuponesService.misCupones().catch(() => []),
-        this.puntosService.misPuntos().catch(() => 0),
-        this.puntosService.listarRecompensas().catch(() => []),
+        seguro(this.cuenta.saldoCredito(), 0),
+        seguro(this.cuponesService.misCupones(), []),
+        seguro(this.puntosService.misPuntos(), 0),
+        seguro(this.puntosService.listarRecompensas(), []),
       ]);
       this.credito.set(credito);
       this.cupones.set(cupones);
