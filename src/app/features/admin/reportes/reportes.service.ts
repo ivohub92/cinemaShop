@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { SupabaseService } from '../../../core/supabase/supabase.service';
-import { PeliculaMasVista, ProductoVendido, ReporteFacturacion } from '../../../core/models/reporte';
+import { PeliculaMasVista, ProductoVendido, ReporteCombos, ReporteFacturacion } from '../../../core/models/reporte';
 
 /** Reportes del admin. Los cálculos los hace la base (y controla que sea admin). */
 @Injectable({ providedIn: 'root' })
@@ -63,5 +63,26 @@ export class ReportesService {
       enCombo: Number(f.en_combo ?? 0),
       facturado: Number(f.facturado ?? 0),
     }));
+  }
+
+  async combos(desde: string, hasta: string): Promise<ReporteCombos> {
+    const { data, error } = await this.supabase.client.rpc('reporte_combos', {
+      p_desde: desde,
+      p_hasta: hasta,
+    });
+
+    if (error) throw error;
+
+    const reporte = data as any;
+    return {
+      combos: (reporte?.combos ?? []).map((c: any) => ({
+        comboId: c.combo_id,
+        nombre: c.nombre,
+        unidades: Number(c.unidades),
+        facturado: Number(c.facturado ?? 0),
+        parteCandy: Number(c.parte_candy ?? 0),
+      })),
+      totalSuelto: Number(reporte?.total_suelto ?? 0),
+    };
   }
 }

@@ -3,7 +3,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ReportesService } from '../reportes.service';
 import { ExportarReportesService } from '../exportar-reportes.service';
-import { ProductoVendido, ReporteFacturacion } from '../../../../core/models/reporte';
+import { ProductoVendido, ReporteCombos, ReporteFacturacion } from '../../../../core/models/reporte';
 import { SelectorFecha } from '../../../../shared/forms/selector-fecha/selector-fecha';
 import { GraficoMasVistas } from '../grafico-mas-vistas/grafico-mas-vistas';
 
@@ -29,6 +29,9 @@ export class PanelReportes implements OnInit {
   /** RF-61: top 5 de productos del candy en el mismo período. */
   readonly productos = signal<ProductoVendido[]>([]);
   readonly errorProductos = signal('');
+  /** Combos y total del candy: el dinero de los combos no está en los productos. */
+  readonly combos = signal<ReporteCombos | null>(null);
+  readonly errorCombos = signal('');
   readonly cargando = signal(false);
   readonly error = signal('');
   /** Por defecto se ocultan los días sin ventas: la tabla queda más corta. */
@@ -62,6 +65,14 @@ export class PanelReportes implements OnInit {
     };
   });
 
+  /** Candy facturado = productos sueltos + parte candy (estimada) de los combos. */
+  readonly candy = computed(() => {
+    const r = this.combos();
+    const combos = r?.combos.reduce((total, c) => total + c.parteCandy, 0) ?? 0;
+    const suelto = r?.totalSuelto ?? 0;
+    return { suelto, combos, total: suelto + combos };
+  });
+
   readonly diasVisibles = computed(() => {
     const dias = this.reporte()?.dias ?? [];
     return this.mostrarDiasSinVentas() ? dias : dias.filter((d) => d.ordenes > 0);
@@ -88,9 +99,10 @@ export class PanelReportes implements OnInit {
     this.error.set('');
 
     // Cada reporte por separado: si uno falla, el otro se muestra igual.
-    const [facturacion, productos] = await Promise.allSettled([
+    const [facturacion, productos, combos] = await Promise.allSettled([
       this.reportes.facturacion(desde, hasta),
       this.reportes.productos(desde, hasta, 5),
+      this.reportes.combos(desde, hasta),
     ]);
 
     try {
@@ -107,6 +119,14 @@ export class PanelReportes implements OnInit {
       } else {
         this.productos.set([]);
         this.errorProductos.set(productos.reason?.message ?? 'No pudimos cargar los productos.');
+      }
+
+      if (combos.status === 'fulfilled') {
+        this.combos.set(combos.value);
+        this.errorCombos.set('');
+      } else {
+        this.combos.set(null);
+        this.errorCombos.set(combos.reason?.message ?? 'No pudimos cargar los combos.');
       }
     } finally {
       this.cargando.set(false);

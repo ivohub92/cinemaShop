@@ -1,0 +1,86 @@
+<h1>Salas</h1>
+
+<p class="nota">
+  Todas las salas tienen la misma distribución (RF-15 a RF-19): filas A a T con 4 + 20 + 4
+  butacas; J y K accesibles (2 + 10 + 2) y R, S, T VIP. Al crear una sala se generan sus
+  532 butacas automáticamente.
+</p>
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ok" role="status">{{ aviso() }}</p>
+}
+
+<div class="nueva">
+  <input
+    #campoNueva
+    type="text"
+    placeholder="Nombre de la sala nueva (ej.: Sala 5)"
+    aria-label="Nombre de la sala nueva"
+    (keydown.enter)="crear(campoNueva)"
+  />
+  <button type="button" class="boton" [disabled]="creando()" (click)="crear(campoNueva)">
+    {{ creando() ? 'Creando…' : 'Crear sala' }}
+  </button>
+</div>
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else if (salas().length) {
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Sala</th>
+        <th class="num">Butacas</th>
+        <th class="num">Estándar</th>
+        <th class="num">Accesibles</th>
+        <th class="num">VIP</th>
+        <th class="num">Funciones futuras</th>
+        <th>Estado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (sala of salas(); track sala.id) {
+        <tr [class.inactiva]="!sala.activa">
+          <td>
+            @if (editando() === sala.id) {
+              <input
+                #campoNombre
+                class="renombrar"
+                type="text"
+                [value]="sala.nombre"
+                aria-label="Nuevo nombre de la sala"
+                (keydown.enter)="renombrar(sala, campoNombre)"
+                (keydown.escape)="editando.set(null)"
+              />
+            } @else {
+              {{ sala.nombre }}
+            }
+          </td>
+          <td class="num">{{ sala.butacas }}</td>
+          <td class="num">{{ sala.estandar }}</td>
+          <td class="num">{{ sala.accesibles }}</td>
+          <td class="num">{{ sala.vip }}</td>
+          <td class="num">{{ sala.funcionesFuturas }}</td>
+          <td>{{ sala.activa ? 'Activa' : 'Inactiva' }}</td>
+          <td class="acciones">
+            @if (editando() === sala.id) {
+              <button type="button" class="boton boton--discreto" (click)="editando.set(null)">Cancelar</button>
+            } @else {
+              <button type="button" class="boton boton--discreto" (click)="editando.set(sala.id)">Renombrar</button>
+            }
+            <button type="button" class="boton boton--discreto" (click)="cambiarEstado(sala)">
+              {{ sala.activa ? 'Desactivar' : 'Activar' }}
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <p class="nota">Para renombrar, escribí el nombre nuevo y presioná Enter (Escape cancela).</p>
+} @else {
+  <p class="nota">Todavía no hay salas.</p>
+}

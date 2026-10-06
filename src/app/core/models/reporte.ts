@@ -29,3 +29,17 @@ export interface ProductoVendido {
   enCombo: number;
   facturado: number;
 }
+
+/** Combos vendidos en un período. Su precio incluye una entrada. */
+export interface ComboVendido {
+  comboId: string;
+  nombre: string;
+  unidades: number;
+  facturado: number;   // precio del combo (entrada incluida), sin recargo VIP
+  parteCandy: number;  // estimada: precio del combo − precio base de la función
+}
+
+export interface ReporteCombos {
+  combos: ComboVendido[];
+  totalSuelto: number; // todos los productos vendidos sueltos del período
+}

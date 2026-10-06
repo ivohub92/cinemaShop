@@ -1,54 +1,8 @@
-
-
-create table if not exists categorias_producto (
-  id     uuid primary key default gen_random_uuid(),
-  nombre text not null unique
-);
-
-create table if not exists productos (
-  id           uuid primary key default gen_random_uuid(),
-  categoria_id uuid not null references categorias_producto(id),
-  nombre       text not null,
-  descripcion  text,
-  precio       numeric(12,2) not null check (precio >= 0),
-  imagen_url   text,
-  activo       boolean not null default true,
-  creado_en    timestamptz not null default now()
-);
-
-create table if not exists orden_items (
-  id              uuid primary key default gen_random_uuid(),
-  orden_id        uuid not null references ordenes(id) on delete cascade,
-  producto_id     uuid not null references productos(id),
-  cantidad        smallint not null default 1 check (cantidad > 0),
-  precio_unitario numeric(12,2) not null check (precio_unitario >= 0)
-);
-
-create index if not exists orden_items_orden_idx on orden_items (orden_id);
-
-alter table categorias_producto enable row level security;
-alter table productos           enable row level security;
-alter table orden_items         enable row level security;
-
-drop policy if exists "lectura publica"           on categorias_producto;
-drop policy if exists "admin gestiona categorias" on categorias_producto;
-drop policy if exists "lectura publica"           on productos;
-drop policy if exists "admin gestiona productos"  on productos;
-drop policy if exists "items propios"             on orden_items;
-
-create policy "lectura publica"           on categorias_producto for select using (true);
-create policy "admin gestiona categorias" on categorias_producto for all using (es_admin()) with check (es_admin());
-create policy "lectura publica"           on productos for select using (true);
-create policy "admin gestiona productos"  on productos for all using (es_admin()) with check (es_admin());
-create policy "items propios" on orden_items for select using (
-  es_empleado()
-  or exists (select 1 from ordenes o where o.id = orden_items.orden_id and o.usuario_id = auth.uid())
-);
-
-
-alter table ordenes
-  add column if not exists validado_candy_en  timestamptz,
-  add column if not exists validado_candy_por uuid references perfiles(id);
+-- ============================================================================
+-- Validación del candy bar: el empleado entrega los productos de una compra.
+-- Las tablas (categorias_producto, productos, orden_items), sus permisos y las
+-- columnas validado_candy_* de ordenes se crean en 20260929_candy.sql.
+-- ============================================================================
 
 create or replace function validar_candy(p_codigo text)
 returns json

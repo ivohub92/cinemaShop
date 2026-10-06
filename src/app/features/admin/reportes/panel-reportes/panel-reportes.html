@@ -52,6 +52,15 @@
     </div>
 
     <div class="dato">
+      <span class="etiqueta">Candy facturado</span>
+      <strong>{{ candy().total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+      <small>
+        {{ candy().suelto | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} sueltos +
+        {{ candy().combos | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} en combos
+      </small>
+    </div>
+
+    <div class="dato">
       <span class="etiqueta">Canceladas</span>
       <strong>{{ r.canceladas.ordenes }}</strong>
       <small>{{ r.canceladas.monto | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} devueltos como crédito</small>
@@ -155,6 +164,44 @@
       <p class="nota">Los productos de combo no tienen precio propio: su valor está incluido en el combo.</p>
     } @else {
       <p class="suave">No se vendieron productos del candy en este período.</p>
+    }
+  </section>
+
+  <section class="detalle">
+    <h2>Combos vendidos</h2>
+
+    @if (errorCombos()) {
+      <p class="error" role="alert">{{ errorCombos() }}</p>
+    }
+
+    @if (combos()?.combos?.length) {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Combo</th>
+            <th class="num">Unidades</th>
+            <th class="num">Facturado</th>
+            <th class="num">Parte candy</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of combos()!.combos; track c.comboId) {
+            <tr>
+              <td>{{ c.nombre }}</td>
+              <td class="num">{{ c.unidades }}</td>
+              <td class="num">{{ c.facturado | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+              <td class="num">{{ c.parteCandy | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <p class="nota">
+        Cada combo incluye una entrada. "Facturado" es el precio del combo (sin recargo VIP);
+        "Parte candy" es lo que excede al precio base de la función. Son precios de lista: los
+        cupones y puntos se descuentan sobre la compra entera.
+      </p>
+    } @else if (!errorCombos()) {
+      <p class="suave">No se vendieron combos en este período.</p>
     }
   </section>
 }

@@ -58,7 +58,8 @@ create policy "items propios" on orden_items for select
 
 
 insert into categorias_producto (nombre, orden) values
-  ('Pochoclos', 1), ('Bebidas', 2), ('Golosinas', 3), ('Combos', 4);
+  ('Pochoclos', 1), ('Bebidas', 2), ('Golosinas', 3);
+-- Los combos no son una categoría: tienen su propia tabla (20260930_combos.sql).
 
 insert into productos (categoria_id, nombre, descripcion, precio)
 select c.id, p.nombre, p.descripcion, p.precio
