@@ -8,10 +8,7 @@ import { Cupon } from '../../../core/models/cupon';
 import { Canje } from '../../../core/models/recompensa';
 import { MisCompras } from '../mis-compras/mis-compras';
 
-/**
- * Perfil del usuario (RF-05): datos, crédito, cupones, puntos,
- * historial de canjes e historial de compras en una sola pantalla.
- */
+
 @Component({
   selector: 'app-mi-cuenta',
   imports: [CurrencyPipe, DatePipe, MisCompras],
@@ -43,7 +40,7 @@ export class MiCuenta implements OnInit {
     }
   }
 
-  /** También se llama cuando se cancela una compra desde el historial de abajo. */
+
   async recargarSaldos(): Promise<void> {
     const [credito, puntos, cupones, canjes] = await Promise.all([
       this.cuenta.saldoCredito(),

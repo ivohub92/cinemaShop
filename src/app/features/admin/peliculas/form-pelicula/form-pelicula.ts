@@ -31,6 +31,9 @@ export class FormPelicula implements OnInit {
     posterUrl: [''],
     restriccionEdad: [0, Validators.required],
     fechaEstreno: ['', Validators.required],
+
+    preventa: [false],
+    precioPreventa: [5000, [Validators.min(0)]],
   });
 
   async ngOnInit(): Promise<void> {
@@ -50,6 +53,8 @@ export class FormPelicula implements OnInit {
       posterUrl: pelicula.posterUrl,
       restriccionEdad: pelicula.restriccionEdad,
       fechaEstreno: pelicula.fechaEstreno,
+      preventa: pelicula.precioPreventa !== null,
+      precioPreventa: pelicula.precioPreventa ?? 5000,
     });
     this.generosElegidos.set(pelicula.generosIds);
   }
@@ -75,9 +80,11 @@ export class FormPelicula implements OnInit {
     this.error.set('');
 
    try {
+      const { preventa, precioPreventa, ...valores } = this.formulario.getRawValue();
       const datos = {
-        ...this.formulario.getRawValue(),
-        restriccionEdad: Number(this.formulario.getRawValue().restriccionEdad),
+        ...valores,
+        restriccionEdad: Number(valores.restriccionEdad),
+        precioPreventa: preventa ? Number(precioPreventa) : null,
         generosIds: this.generosElegidos(),
       };
 

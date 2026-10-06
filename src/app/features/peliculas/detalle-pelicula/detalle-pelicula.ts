@@ -33,7 +33,7 @@ export class DetallePelicula implements OnInit {
 
   readonly puntaje = signal<PuntajePelicula>({ promedio: null, cantidad: 0 });
 
-  /** Funciones agrupadas por día, para no listar 30 horarios seguidos. */
+
   readonly porDia = computed(() => {
     const grupos = new Map<string, Funcion[]>();
 

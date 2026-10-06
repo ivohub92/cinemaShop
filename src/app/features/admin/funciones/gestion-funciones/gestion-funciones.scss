@@ -82,3 +82,44 @@ input[type='checkbox'] {
     color: var(--color-texto-suave);
   }
 }
+.ayuda {
+  max-width: 34rem;
+  margin: -0.5rem 0 1.25rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.formulario--recargos {
+  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+  align-items: end;
+
+  .resultado,
+  .boton {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
+
+.edicion {
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--color-destacado);
+  }
+
+  .ayuda {
+    margin: 0;
+  }
+}
+
+.acciones-edicion {
+  display: flex;
+  gap: 0.75rem;
+}

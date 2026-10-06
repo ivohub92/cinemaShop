@@ -23,7 +23,7 @@ export class CompraStore {
     return 'butacas';
   });
 
-  /** Edad del comprador al día de hoy, para la restricción por película. */
+
   readonly edad = computed(() => {
     const nacimiento = this.comprador()?.fechaNacimiento;
     if (!nacimiento) return null;
@@ -40,7 +40,7 @@ export class CompraStore {
     return edad;
   });
 
-  /** Si hay sesión, la identidad ya está resuelta */
+
   tomarDeLaSesion(): boolean {
     const perfil = this.auth.perfil();
     if (!perfil) return false;
@@ -66,7 +66,6 @@ export class CompraStore {
   readonly productos = signal<ItemCarrito[]>([]);
   readonly combos = signal<ComboElegido[]>([]);
 
-  /** Total de combos elegidos: no puede superar la cantidad de butacas */
   readonly totalCombos = computed(() => this.combos().reduce((suma, c) => suma + c.cantidad, 0));
 
   cantidadDe(productoId: string): number {

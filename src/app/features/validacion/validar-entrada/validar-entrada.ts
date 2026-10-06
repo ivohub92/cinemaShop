@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ValidacionService } from '../validacion.service';
 import { EscanerQr } from '../escaner-qr/escaner-qr';
 
-/** Un producto de la orden tal como lo devuelve consultar_codigo(). */
+
 interface ItemOrden {
   nombre: string;
   cantidad: number;
@@ -28,7 +28,7 @@ export class ValidarEntrada {
   readonly error = signal('');
   readonly exito = signal('');
 
-  /** Productos de la orden, separados en combos (con su contenido) y sueltos. */
+
   readonly candy = computed(() => {
     const items: ItemOrden[] = this.orden()?.productos ?? [];
     const nombresCombos = [...new Set(items.filter((i) => i.combo).map((i) => i.combo as string))];
@@ -94,15 +94,11 @@ export class ValidarEntrada {
     }
   }
 
-  /**
-   * Vuelve a pedir la orden después de validar: así se ve qué quedó usado
-   * y la otra validación (sala o candy) sigue disponible con el mismo código.
-   */
+ 
   private async refrescar(): Promise<void> {
     this.orden.set(await this.validacion.consultar(this.codigo().trim()));
   }
 
-  /** El escáner leyó un QR: se busca como si se hubiera escrito a mano. */
   async alLeerQr(codigo: string): Promise<void> {
     this.codigo.set(codigo);
     await this.consultar();

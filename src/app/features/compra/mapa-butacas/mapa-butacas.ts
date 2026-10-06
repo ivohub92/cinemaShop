@@ -3,9 +3,13 @@ import { CompraStore } from '../compra/compra.store';
 import { Butaca } from '../../../core/models/butaca';
 import { Component, computed, inject, input, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { CurrencyPipe, DatePipe } from '@angular/common';
+import { PreciosService } from '../../../core/services/precios.service';
+import { PreciosFuncion } from '../../../core/models/precios';
 
 @Component({
   selector: 'app-mapa-butacas',
+  imports: [CurrencyPipe, DatePipe],
   templateUrl: './mapa-butacas.html',
   styleUrl: './mapa-butacas.scss',
 })
@@ -23,13 +27,25 @@ export class MapaButacas implements OnInit, OnDestroy{
 
   readonly listo = output<void>();
 
+  private readonly preciosService = inject(PreciosService);
+
+
+  readonly precios = signal<PreciosFuncion | null>(null);
+
+  readonly precioEntrada = computed(() => {
+    const p = this.precios();
+    return p ? p.precio + p.recargoFormato : 0;
+  });
+
+  readonly precioVip = computed(() => this.precioEntrada() + (this.precios()?.recargoVip ?? 0));
+
   readonly total = computed(() =>
     this.butacas()
       .filter((b) => this.seleccionadas().includes(b.id))
-      .reduce((suma, b) => suma + (b.tipo === 'vip' ? 8000 : 6500), 0),
+      .reduce((suma, b) => suma + (b.tipo === 'vip' ? this.precioVip() : this.precioEntrada()), 0),
   );
 
-  /** Guarda la elección y pasa al candy. La reserva se hace al final de ese paso. */
+
   continuar(): void {
     if (!this.seleccionadas().length) return;
 
@@ -66,7 +82,12 @@ export class MapaButacas implements OnInit, OnDestroy{
       this.aplicarCambio(id, ocupada),
     );
 
-    this.butacas.set(await this.butacasService.listarPorFuncion(this.funcionId()));
+    const [butacas, precios] = await Promise.all([
+      this.butacasService.listarPorFuncion(this.funcionId()),
+      this.preciosService.deFuncion(this.funcionId()).catch(() => null),
+    ]);
+    this.butacas.set(butacas);
+    this.precios.set(precios);
     this.recuperarEleccion();
     this.cargando.set(false);
   }

@@ -3,7 +3,7 @@ import { PeliculasService } from '../../peliculas/peliculas.service';
 import { Pelicula } from '../../../core/models/pelicula';
 import { TarjetaPelicula } from '../../peliculas/components/tarjeta-pelicula/tarjeta-pelicula';
 
-/** RF-09: las tres películas más vendidas, primero en la página principal. */
+
 @Component({
   selector: 'app-mas-vendidas',
   imports: [TarjetaPelicula],
@@ -16,10 +16,7 @@ export class MasVendidas implements OnInit {
   private readonly ranking = signal<{ peliculaId: string; entradas: number }[]>([]);
   private readonly peliculas = signal<Pelicula[]>([]);
 
-  /**
-   * El ranking trae solo ids; se cruza con las películas en cartel para
-   * reusar la misma tarjeta de la cartelera. Mantiene el orden del ranking.
-   */
+
   readonly destacadas = computed(() => {
     const porId = new Map(this.peliculas().map((p) => [p.id, p]));
 

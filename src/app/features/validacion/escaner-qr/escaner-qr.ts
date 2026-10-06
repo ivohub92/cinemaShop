@@ -1,17 +1,13 @@
 import { Component, ElementRef, OnDestroy, output, signal, viewChild } from '@angular/core';
 
-/**
- * RF-49: lee el QR de la entrada con la cámara del dispositivo.
- * Usa jsQR (se descarga recién al abrir la cámara: import dinámico).
- * La cámara del navegador solo funciona en HTTPS o en localhost.
- */
+
 @Component({
   selector: 'app-escaner-qr',
   templateUrl: './escaner-qr.html',
   styleUrl: './escaner-qr.scss',
 })
 export class EscanerQr implements OnDestroy {
-  /** El texto del QR leído (el código de la orden). */
+
   readonly leido = output<string>();
 
   private readonly video = viewChild.required<ElementRef<HTMLVideoElement>>('video');
@@ -75,7 +71,6 @@ export class EscanerQr implements OnDestroy {
     this.cuadro = requestAnimationFrame(leerCuadro);
   }
 
-  /** Apaga la cámara: si no, la luz del dispositivo queda prendida. */
   cerrar(): void {
     this.activo.set(false);
     if (this.cuadro) cancelAnimationFrame(this.cuadro);

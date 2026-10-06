@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { SupabaseService } from '../../../core/supabase/supabase.service';
 import { PeliculaMasVista, ProductoVendido, ReporteCombos, ReporteFacturacion } from '../../../core/models/reporte';
 
-/** Reportes del admin. Los cálculos los hace la base (y controla que sea admin). */
+
 @Injectable({ providedIn: 'root' })
 export class ReportesService {
   private readonly supabase = inject(SupabaseService);

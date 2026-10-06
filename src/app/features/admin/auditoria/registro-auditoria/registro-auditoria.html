@@ -1,0 +1,68 @@
+<h1>Auditoría</h1>
+
+<p class="ayuda">
+  Registro de las acciones sobre la operación: quién las hizo, sobre qué y cuándo. Es de solo
+  lectura: los registros no se pueden editar ni borrar.
+</p>
+
+<label class="filtro">
+  Mostrar
+  <select [value]="entidad()" (change)="filtrar($any($event.target).value)">
+    @for (e of entidades; track e.valor) {
+      <option [value]="e.valor">{{ e.nombre }}</option>
+    }
+  </select>
+</label>
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+
+@if (registros().length) {
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Fecha y hora</th>
+        <th>Usuario</th>
+        <th>Acción</th>
+        <th>Detalle</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (r of registros(); track r.id) {
+        <tr>
+          <td class="fecha">{{ r.creadoEn | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+          <td>{{ r.usuarioEmail ?? '—' }}</td>
+          <td>
+            {{ accion(r) }}
+            @if (!r.accion.includes('_')) {
+              <span class="entidad">{{ nombreEntidad(r.entidad) }}</span>
+            }
+          </td>
+          <td>
+            <span>{{ r.descripcion ?? '—' }}</span>
+            @if (r.cambios.length) {
+              <ul class="cambios">
+                @for (c of r.cambios; track c.campo) {
+                  <li>
+                    <code>{{ c.campo }}</code>: {{ valor(c.antes) }} → <strong>{{ valor(c.despues) }}</strong>
+                  </li>
+                }
+              </ul>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (hayMas()) {
+    <button type="button" class="boton boton--contorno mas" [disabled]="cargando()" (click)="cargar()">
+      {{ cargando() ? 'Cargando…' : 'Ver más' }}
+    </button>
+  }
+} @else if (cargando()) {
+  <p class="suave">Cargando…</p>
+} @else {
+  <p class="suave">Todavía no hay actividad registrada.</p>
+}

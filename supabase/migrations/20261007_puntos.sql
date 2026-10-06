@@ -86,10 +86,7 @@ as $$
    where c.usuario_id = auth.uid();
 $$;
 
--- ----------------------------------------------------------------------------
--- confirmar_compra: se agrega p_recompensas (una por canje; se puede repetir).
--- Cambia la lista de parámetros: se borra la versión anterior.
--- ----------------------------------------------------------------------------
+
 drop function if exists public.confirmar_compra(uuid, boolean, uuid);
 
 create or replace function public.confirmar_compra(
@@ -275,11 +272,7 @@ exception
 end;
 $$;
 
--- ----------------------------------------------------------------------------
--- cancelar_compra: además del crédito, devuelve los puntos canjeados y quita
--- los ganados (RN-04). El saldo de puntos puede quedar negativo si ya se
--- gastaron; se compensa con las próximas compras.
--- ----------------------------------------------------------------------------
+
 create or replace function cancelar_compra(p_orden_id uuid)
 returns numeric
 language plpgsql
@@ -347,9 +340,6 @@ begin
 end;
 $$;
 
--- ----------------------------------------------------------------------------
--- obtener_orden: suma puntos y el id de cada producto (para saber qué se puede canjear).
--- ----------------------------------------------------------------------------
 create or replace function obtener_orden(p_orden_id uuid)
 returns json
 language plpgsql

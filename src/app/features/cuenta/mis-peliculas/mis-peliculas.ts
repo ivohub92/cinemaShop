@@ -22,13 +22,13 @@ export class MisPeliculas implements OnInit {
   readonly resenias = signal<Resenia[]>([]);
   readonly cargando = signal(true);
 
-  /** Cuál está calificando ahora mismo, para abrir un solo formulario. */
+
   readonly calificando = signal<string | null>(null);
   readonly puntaje = signal(0);
   readonly comentario = signal('');
   readonly guardando = signal(false);
 
-  /** Une cada película vista con la reseña propia, si existe. */
+
   readonly historial = computed(() =>
     this.peliculas().map((pelicula) => ({
       ...pelicula,

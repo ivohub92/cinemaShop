@@ -35,6 +35,28 @@
     <app-selector-fecha formControlName="fechaEstreno" />
   </label>
 
+  <fieldset class="preventa">
+    <legend>Preventa</legend>
+
+    <label class="genero">
+      <input type="checkbox" formControlName="preventa" />
+      Habilitar preventa
+    </label>
+
+    @if (formulario.controls.preventa.value) {
+      <label>
+        Precio de preventa
+        <input type="number" formControlName="precioPreventa" min="0" step="100" />
+      </label>
+    }
+
+    <p class="ayuda">
+      Las compras hechas en los 7 días anteriores al estreno pagan este precio en lugar del precio
+      base de la función (se mantienen los recargos por formato y VIP). Desde el día del estreno
+      vuelve el precio normal.
+    </p>
+  </fieldset>
+
   <fieldset class="generos">
     <legend>Géneros</legend>
     @for (genero of generos(); track genero.id) {

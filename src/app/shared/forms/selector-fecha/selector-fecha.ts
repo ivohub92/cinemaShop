@@ -26,10 +26,9 @@ export class SelectorFecha implements ControlValueAccessor {
 
   readonly meses = MESES;
 
-  /** Para comparar en el template: los signals guardan texto y las opciones son números. */
   protected readonly String = String;
 
-  /** false (por defecto): 100 años hacia atrás, para nacimientos. true: 10 hacia adelante, para vencimientos. */
+
   readonly futuro = input(false);
 
   readonly anios = computed(() => {

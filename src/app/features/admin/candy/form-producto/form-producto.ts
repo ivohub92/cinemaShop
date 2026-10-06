@@ -15,7 +15,7 @@ export class FormProducto implements OnInit {
   private readonly productosService = inject(ProductosService);
   private readonly router = inject(Router);
 
-  /** Viene de la URL (/admin/candy/:id). Vacío = producto nuevo. */
+
   readonly id = input<string>('');
 
   readonly categorias = signal<CategoriaProducto[]>([]);

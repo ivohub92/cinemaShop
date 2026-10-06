@@ -23,7 +23,7 @@ export class PanelLateral {
     this.cerrado.emit();
   }
 
-  /** Cierra si el clic cae en el fondo oscurecido y no dentro del panel. */
+
   alClickFondo(evento: MouseEvent): void {
     if (evento.target === this.dialogo().nativeElement) this.cerrar();
   }

@@ -4,7 +4,6 @@ export interface Recompensa {
   id: string;
   nombre: string;
   tipo: TipoRecompensa;
-  /** Solo si tipo = 'producto': qué producto del candy cubre. */
   productoId: string | null;
   productoNombre: string;
   costoPuntos: number;

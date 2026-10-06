@@ -18,10 +18,9 @@ export class PasoCandy implements OnInit {
 
   readonly funcionId = input.required<string>();
 
-  /** La reserva salió bien: el padre pasa al pago con esta orden*/
   readonly reservado = output<string>();
 
-  /** El usuario quiere cambiar sus butacas */
+
   readonly volver = output<void>();
 
   readonly productos = signal<Producto[]>([]);
@@ -31,16 +30,16 @@ export class PasoCandy implements OnInit {
   readonly reservando = signal(false);
   readonly error = signal('');
 
-  /** Cada combo incluye una entrada: no puede haber más combos que butacas */
+
   readonly maxCombos = computed(() => this.store.butacas().length);
   readonly quedanCombos = computed(() => this.store.totalCombos() < this.maxCombos());
 
-  /** Destacados primero */
+
   readonly combosOrdenados = computed(() =>
     [...this.combos()].sort((a, b) => Number(b.destacado) - Number(a.destacado)),
   );
 
-  /** Productos agrupados por categoría, en el orden que definió el admin */
+
   readonly grupos = computed(() =>
     this.categorias()
       .map((categoria) => ({
@@ -50,7 +49,7 @@ export class PasoCandy implements OnInit {
       .filter((grupo) => grupo.productos.length),
   );
 
-  /** Lo que suman los productos sueltos. Los combos se ven aparte porque reemplazan una entrada */
+
   readonly subtotalProductos = computed(() =>
     this.productos().reduce((suma, p) => suma + p.precio * this.store.cantidadDe(p.id), 0),
   );
@@ -104,7 +103,7 @@ export class PasoCandy implements OnInit {
     this.confirmar();
   }
 
-  /** Recién acá se reservan las butacas, junto con el candy elegido */
+
   async confirmar(): Promise<void> {
     const comprador = this.store.comprador();
     if (!comprador || !this.store.butacas().length) return;

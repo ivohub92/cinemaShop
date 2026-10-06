@@ -19,7 +19,6 @@ export class FormCombo implements OnInit {
   readonly id = input<string>('');
 
   readonly productos = signal<Producto[]>([]);
-  /** productoId → cantidad dentro del combo. Si no está, no se incluye. */
   readonly cantidades = signal<Record<string, number>>({});
   readonly editando = signal(false);
   readonly enviando = signal(false);
@@ -33,7 +32,7 @@ export class FormCombo implements OnInit {
     destacado: [true],
   });
 
-  /** Lo que costarían los productos comprados sueltos: referencia para fijar el precio. */
+
   readonly valorSuelto = computed(() =>
     this.productos().reduce((suma, p) => suma + p.precio * (this.cantidades()[p.id] ?? 0), 0),
   );

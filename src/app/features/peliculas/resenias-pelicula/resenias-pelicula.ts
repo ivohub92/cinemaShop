@@ -27,7 +27,7 @@ export class ReseniasPelicula implements OnInit {
 
   readonly perfil = this.auth.perfil;
 
-  /** La reseña propia, si el usuario ya opinó sobre esta película. */
+
   readonly propia = computed(() =>
     this.resenias().find((r) => r.usuarioId === this.perfil()?.id) ?? null,
   );

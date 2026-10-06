@@ -6,7 +6,7 @@ import { Pelicula } from '../../core/models/pelicula';
 export class PeliculasService {
   private readonly supabase = inject(SupabaseService);
 
-  /** RF-09: ranking de las más vendidas (últimos 30 días). Solo ids y cantidades. */
+
   async masVendidas(cantidad = 3): Promise<{ peliculaId: string; entradas: number }[]> {
     const { data, error } = await this.supabase.client.rpc('mas_vendidas', { p_cantidad: cantidad });
     if (error) throw error;
@@ -28,7 +28,6 @@ export class PeliculasService {
       .from('puntajes_peliculas')
       .select('pelicula_id, promedio, cantidad');
 
-    // Mapa para cruzar sin recorrer el arreglo en cada película.
     const porPelicula = new Map<string, { promedio: number | null; cantidad: number }>(
       (puntajes ?? []).map((p: any) => [
         p.pelicula_id,
@@ -45,14 +44,14 @@ export class PeliculasService {
       consulta = consulta.eq('activa', true);
 
       if (filtro === 'portada') {
-        // RF-12: las que eligió el admin, estén en cartel o por estrenarse.
+
         consulta = consulta.eq('en_portada', true);
       } else if (filtro === 'en-cartel') {
-        // Sin funciones programadas no hay ninguna película en cartel.
+
         if (!ids.length) return [];
         consulta = consulta.in('id', ids);
       } else {
-        // Próximamente: sin funciones todavía y con estreno por delante.
+
         if (ids.length) consulta = consulta.not('id', 'in', `(${ids.join(',')})`);
         consulta = consulta.gt('fecha_estreno', new Date().toISOString().slice(0, 10));
       }
@@ -90,10 +89,12 @@ export class PeliculasService {
     return data ?? [];
   }
 
-  async obtener(id: string): Promise<(Pelicula & { sinopsis: string; generosIds: string[] }) | null> {
+  async obtener(
+    id: string,
+  ): Promise<(Pelicula & { sinopsis: string; generosIds: string[]; precioPreventa: number | null }) | null> {
     const { data, error } = await this.supabase.client
       .from('peliculas')
-      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, en_portada, generos(id, nombre)')
+      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, en_portada, precio_preventa, generos(id, nombre)')
       .eq('id', id)
       .single();
 
@@ -110,9 +111,9 @@ export class PeliculasService {
       fechaEstreno: data.fecha_estreno,
       activa: data.activa,
       enPortada: data.en_portada,
+      precioPreventa: data.precio_preventa !== null ? Number(data.precio_preventa) : null,
       generos: (data.generos ?? []).map((g: any) => g.nombre),
       generosIds: (data.generos ?? []).map((g: any) => g.id),
-      // El detalle consulta el puntaje por separado con el servicio de reseñas.
       promedio: null,
       cantidadResenias: 0,
     };
@@ -125,6 +126,7 @@ export class PeliculasService {
     posterUrl: string;
     restriccionEdad: number;
     fechaEstreno: string;
+    precioPreventa: number | null;
     generosIds: string[];
   }): Promise<void> {
     const { data, error } = await this.supabase.client
@@ -136,6 +138,7 @@ export class PeliculasService {
         poster_url: pelicula.posterUrl,
         restriccion_edad: pelicula.restriccionEdad,
         fecha_estreno: pelicula.fechaEstreno,
+        precio_preventa: pelicula.precioPreventa,
       })
       .select('id')
       .single();
@@ -158,6 +161,7 @@ export class PeliculasService {
     posterUrl: string;
     restriccionEdad: number;
     fechaEstreno: string;
+    precioPreventa: number | null;
     generosIds: string[];
   }): Promise<void> {
     const { error } = await this.supabase.client
@@ -169,13 +173,12 @@ export class PeliculasService {
         poster_url: pelicula.posterUrl,
         restriccion_edad: pelicula.restriccionEdad,
         fecha_estreno: pelicula.fechaEstreno,
+        precio_preventa: pelicula.precioPreventa,
       })
       .eq('id', id);
 
     if (error) throw error;
 
-    // Los géneros se reemplazan: se borran los actuales y se cargan los nuevos.
-    // Es más simple que calcular cuáles se agregaron y cuáles se quitaron.
     const { error: errorBorrar } = await this.supabase.client
       .from('peliculas_generos')
       .delete()
@@ -210,7 +213,6 @@ export class PeliculasService {
     if (error) throw error;
   }
 
-  /** RF-12: destacar (o no) una película en la página principal. */
   async cambiarPortada(id: string, enPortada: boolean): Promise<void> {
     const { error } = await this.supabase.client
       .from('peliculas')

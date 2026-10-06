@@ -19,12 +19,11 @@ export class Proximamente implements OnInit {
   readonly peliculas = signal<Pelicula[]>([]);
   readonly cargando = signal(true);
 
-  /** RF-14: las alertas son solo para usuarios registrados (D-01). */
   readonly usuario = inject(AuthService).usuario;
   readonly alertas = this.notificaciones.alertas;
   readonly permiso = this.notificaciones.permiso;
 
-  /** Película cuya alerta se está guardando (para deshabilitar su botón). */
+
   readonly guardando = signal<string | null>(null);
   readonly error = signal('');
 

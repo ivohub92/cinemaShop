@@ -88,7 +88,7 @@ export class ProductosService {
     if (error) throw error;
   }
 
-  /** Los productos no se borran: ya vendidos, los referencia orden_items. */
+
   async cambiarActivo(id: string, activo: boolean): Promise<void> {
     const { error } = await this.supabase.client.from('productos').update({ activo }).eq('id', id);
     if (error) throw error;

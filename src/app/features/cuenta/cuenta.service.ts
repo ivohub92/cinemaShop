@@ -19,7 +19,6 @@ export interface CompraResumen {
   tieneCandy: boolean;
 }
 
-/** Lo que tiene que ver con la cuenta del usuario: historial de compras y crédito. */
 @Injectable({ providedIn: 'root' })
 export class CuentaService {
   private readonly supabase = inject(SupabaseService);
@@ -47,14 +46,14 @@ export class CuentaService {
     }));
   }
 
-  /** Saldo de crédito del usuario logueado (0 si no tiene). */
+
   async saldoCredito(): Promise<number> {
     const { data, error } = await this.supabase.client.rpc('mi_credito');
     if (error) throw error;
     return Number(data ?? 0);
   }
 
-  /** Quita una compra cancelada del listado. No la borra: queda para el crédito y los reportes. */
+
   async quitarDelListado(ordenId: string): Promise<void> {
     const { error } = await this.supabase.client.rpc('ocultar_compra', {
       p_orden_id: ordenId,
@@ -63,7 +62,7 @@ export class CuentaService {
     if (error) throw error;
   }
 
-  /** Cancela una compra y devuelve el crédito acreditado. */
+
   async cancelar(ordenId: string): Promise<number> {
     const { data, error } = await this.supabase.client.rpc('cancelar_compra', {
       p_orden_id: ordenId,

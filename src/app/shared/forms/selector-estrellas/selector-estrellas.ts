@@ -27,7 +27,6 @@ export class SelectorEstrellas implements ControlValueAccessor {
   private alCambiar: (valor: number) => void = () => {};
   private alTocar: () => void = () => {};
 
-  /** Cuántas se pintan: la previsualización manda mientras el cursor está encima. */
   activas(): number {
     return this.previsualizado() || this.valor();
   }

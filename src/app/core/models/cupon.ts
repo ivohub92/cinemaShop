@@ -7,7 +7,6 @@ export interface Cupon {
   tipo: TipoCupon;
   venceEn: string | null;
   activo: boolean;
-  /** Cuántas veces se usó (solo lo carga el listado del admin). */
   usos: number;
 }
 

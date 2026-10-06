@@ -23,13 +23,11 @@ export class PublicLayout {
   private readonly cuponesService = inject(CuponesService);
   private readonly notificaciones = inject(NotificacionesService);
 
-  /** El cupón que se avisa: el de mayor descuento (vienen ordenados así). */
+
   readonly cupon = computed(() => this.cuponesService.disponibles()[0] ?? null);
 
-  /** Para invitar a registrarse a quien todavía no tiene cuenta (RF-04). */
   readonly porcentajeBienvenida = signal<number | null>(null);
 
-  /** El aviso se puede cerrar; vuelve a aparecer en la próxima visita. */
   readonly avisoCerrado = signal(false);
 
   constructor() {

@@ -13,7 +13,7 @@ export class Ingreso {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
 
-  /** Avisa al panel que ya puede cerrarse. */
+
   readonly ingresado = output<void>();
 
   readonly enviando = signal(false);

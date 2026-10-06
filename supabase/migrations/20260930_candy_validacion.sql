@@ -56,10 +56,7 @@ begin
 end;
 $$;
 
--- ----------------------------------------------------------------------------
--- obtener_orden (comprobante) y consultar_codigo (empleado) ahora incluyen
--- los productos. Misma firma: "create or replace" las reemplaza sin duplicar.
--- ----------------------------------------------------------------------------
+
 create or replace function obtener_orden(p_orden_id uuid)
 returns json
 language plpgsql

@@ -9,15 +9,11 @@ const MESES = [
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
 ];
 
-/** 'YYYY-MM-DD' en hora local. */
 function iso(fecha: Date): string {
   return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`;
 }
 
-/**
- * RF-60: las películas más vistas (entradas validadas) por semana o por mes.
- * Barras horizontales: una sola serie, así que no lleva leyenda; el título dice qué se mide.
- */
+
 @Component({
   selector: 'app-grafico-mas-vistas',
   templateUrl: './grafico-mas-vistas.html',
@@ -27,13 +23,12 @@ export class GraficoMasVistas implements OnInit {
   private readonly reportes = inject(ReportesService);
 
   readonly agrupacion = signal<Agrupacion>('semana');
-  /** 0 = la semana/mes actual, -1 = la anterior, etc. */
   readonly desplazamiento = signal(0);
   readonly peliculas = signal<PeliculaMasVista[]>([]);
   readonly cargando = signal(false);
   readonly error = signal('');
 
-  /** Lunes a domingo de la semana elegida, o del 1 al último día del mes elegido. */
+
   readonly rango = computed(() => {
     const hoy = new Date();
 
@@ -57,7 +52,7 @@ export class GraficoMasVistas implements OnInit {
     };
   });
 
-  /** El largo de cada barra es proporcional a la que más vendió (100%). */
+
   readonly maximo = computed(() => Math.max(1, ...this.peliculas().map((p) => p.entradas)));
 
   async ngOnInit(): Promise<void> {

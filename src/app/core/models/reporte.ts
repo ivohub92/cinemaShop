@@ -1,4 +1,3 @@
-/** Un día del reporte de facturación (RF-58). Montos en pesos. */
 export interface DiaFacturacion {
   dia: string;        
   ordenes: number;

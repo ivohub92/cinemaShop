@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
 import { DiaFacturacion, ReporteFacturacion } from '../../../core/models/reporte';
 
-/** Totales del período, tal como los calcula PanelReportes. */
+
 export interface TotalesFacturacion {
   ordenes: number;
   entradas: number;
@@ -12,14 +12,12 @@ export interface TotalesFacturacion {
   ticketPromedio: number;
 }
 
-/** $ 31.000 — formato argentino, sin decimales. */
 const pesos = (valor: number) =>
   valor.toLocaleString('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
 
-/** '2026-10-06' → '06/10/2026' */
 const fecha = (iso: string) => iso.split('-').reverse().join('/');
 
-/** Exportación del reporte de facturación (RF-59): PDF y Excel. */
+
 @Injectable({ providedIn: 'root' })
 export class ExportarReportesService {
   exportarPdf(
@@ -118,10 +116,7 @@ export class ExportarReportesService {
     doc.save(`facturacion-${desde}-a-${hasta}.pdf`);
   }
 
-  /**
-   * Excel real (.xlsx). La librería pesa cientos de KB: con import() dinámico
-   * se descarga recién cuando el admin toca "Exportar Excel" (lazy loading).
-   */
+
   async exportarExcel(
     dias: DiaFacturacion[],
     totales: TotalesFacturacion,

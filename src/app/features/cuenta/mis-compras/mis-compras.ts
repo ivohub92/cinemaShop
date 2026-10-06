@@ -2,7 +2,7 @@ import { Component, inject, input, OnInit, output, signal } from '@angular/core'
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { CompraResumen, CuentaService } from '../cuenta.service';
 
-/** Se puede cancelar hasta 2 horas antes de la función (RF-33). */
+
 const LIMITE_CANCELACION_MS = 2 * 60 * 60 * 1000;
 
 @Component({
@@ -14,10 +14,10 @@ const LIMITE_CANCELACION_MS = 2 * 60 * 60 * 1000;
 export class MisCompras implements OnInit {
   private readonly cuenta = inject(CuentaService);
 
-  /** Dentro de Mi cuenta no repite el título ni el crédito: ya los muestra la página. */
+
   readonly incrustado = input(false);
 
-  /** Avisa que cambió el saldo (se canceló una compra), para que Mi cuenta lo actualice. */
+
   readonly cambio = output<void>();
 
   readonly compras = signal<CompraResumen[]>([]);
@@ -47,10 +47,7 @@ export class MisCompras implements OnInit {
     this.credito.set(credito);
   }
 
-  /**
-   * Misma regla que cancelar_compra() en la base, para mostrar u ocultar el botón.
-   * La que vale es la del servidor: esta solo evita ofrecer algo que va a fallar.
-   */
+
   sePuedeCancelar(compra: CompraResumen): boolean {
     return (
       compra.estado === 'pagada' &&
@@ -60,7 +57,6 @@ export class MisCompras implements OnInit {
     );
   }
 
-  /** Por qué no se puede cancelar una compra pagada, para explicarlo en pantalla. */
   motivoSinCancelacion(compra: CompraResumen): string {
     if (compra.validadoAccesoEn || compra.validadoCandyEn) return 'Ya utilizada';
     if (new Date(compra.inicio).getTime() < Date.now()) return 'Función finalizada';

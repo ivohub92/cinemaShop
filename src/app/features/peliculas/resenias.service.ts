@@ -64,7 +64,7 @@ export class ReseniasService {
     if (error) throw error;
   }
 
-    /** Películas que el usuario vio: compra validada y función ya pasada. */
+
   async misPeliculas(usuarioId: string): Promise<any[]> {
     const { data, error } = await this.supabase.client
       .from('mis_peliculas')
@@ -84,7 +84,7 @@ export class ReseniasService {
     }));
   }
 
-  /** Las reseñas que escribió el usuario, para cruzarlas con su historial. */
+
   async misResenias(usuarioId: string): Promise<Resenia[]> {
     const { data, error } = await this.supabase.client
       .from('resenias_publicas')

@@ -95,8 +95,105 @@
   </form>
 </section>
 
+<section class="programar">
+  <h2>Recargos</h2>
+  <p class="ayuda">
+    Se suman al precio base de la función (o al de preventa). Las butacas accesibles no tienen
+    recargo. Cambiarlos no modifica las entradas ya vendidas.
+  </p>
+
+  <form [formGroup]="recargos" (ngSubmit)="guardarRecargos()" class="formulario formulario--recargos">
+    <label>
+      3D
+      <input type="number" formControlName="recargo3d" min="0" step="100" />
+    </label>
+    <label>
+      4D
+      <input type="number" formControlName="recargo4d" min="0" step="100" />
+    </label>
+    <label>
+      5D
+      <input type="number" formControlName="recargo5d" min="0" step="100" />
+    </label>
+    <label>
+      Butaca VIP
+      <input type="number" formControlName="recargoVip" min="0" step="100" />
+    </label>
+
+    @if (mensajeRecargos()) {
+      <p class="resultado">{{ mensajeRecargos() }}</p>
+    }
+
+    <button type="submit" class="boton" [disabled]="guardandoRecargos()">
+      {{ guardandoRecargos() ? 'Guardando…' : 'Guardar recargos' }}
+    </button>
+  </form>
+</section>
+
 <section class="listado">
   <h2>Funciones programadas</h2>
+
+  @if (errorListado()) {
+    <p class="error" role="alert">{{ errorListado() }}</p>
+  }
+
+  @if (editando(); as f) {
+    <form [formGroup]="edicion" (ngSubmit)="guardarEdicion()" class="formulario edicion">
+      <h3>Editar: {{ f.peliculaTitulo }} · {{ f.inicio | date: 'EEEE d/M HH:mm' }} · {{ f.salaNombre }}</h3>
+      <p class="ayuda">
+        Si ya tiene entradas vendidas, solo se puede cambiar el precio (lo vendido conserva el suyo).
+        Si cambiás el horario, la sala se vuelve a asignar automáticamente.
+      </p>
+
+      <label>
+        Fecha
+        <app-selector-fecha formControlName="fecha" [futuro]="true" />
+      </label>
+
+      <label>
+        Horario
+        <select formControlName="hora">
+          @for (hora of horas; track hora) {
+            <option [value]="hora">{{ hora }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Formato
+        <select formControlName="formato">
+          <option value="2D">2D</option>
+          <option value="3D">3D</option>
+          <option value="4D">4D</option>
+          <option value="5D">5D</option>
+        </select>
+      </label>
+
+      <label>
+        Idioma
+        <select formControlName="idioma">
+          <option value="castellano">Castellano</option>
+          <option value="subtitulada">Subtitulada</option>
+        </select>
+      </label>
+
+      <label>
+        Precio base
+        <input type="number" formControlName="precioBase" min="0" step="100" />
+      </label>
+
+      @if (errorEdicion()) {
+        <p class="error" role="alert">{{ errorEdicion() }}</p>
+      }
+
+      <div class="acciones-edicion">
+        <button type="submit" class="boton" [disabled]="guardandoEdicion()">
+          {{ guardandoEdicion() ? 'Guardando…' : 'Guardar cambios' }}
+        </button>
+        <button type="button" class="boton boton--contorno" (click)="cancelarEdicion()">Cancelar</button>
+      </div>
+    </form>
+  }
 
   @if (funciones().length) {
     <table class="tabla">
@@ -121,6 +218,9 @@
             <td>{{ funcion.idioma }}</td>
             <td>{{ funcion.precioBase }}</td>
             <td>
+              <button type="button" class="boton boton--discreto" (click)="editar(funcion)">
+                Editar
+              </button>
               <button type="button" class="boton boton--discreto" (click)="eliminar(funcion)">
                 Eliminar
               </button>

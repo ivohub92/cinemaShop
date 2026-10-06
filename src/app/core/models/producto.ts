@@ -14,7 +14,7 @@ export interface Producto {
   activo: boolean;
 }
 
-/** Lo que manda el formulario del admin para crear o editar. */
+
 export type DatosProducto = Omit<Producto, 'id' | 'categoria' | 'activo'>;
 
 export interface ItemCarrito {
@@ -39,11 +39,11 @@ export interface Combo {
   items: ItemCombo[];
 }
 
-/** Lo que manda el formulario: los ítems solo con id y cantidad. */
+
 export type DatosCombo = Omit<Combo, 'id' | 'activo' | 'items'> & {
   items: { productoId: string; cantidad: number }[];
 };
-/** Un combo elegido en la compra y cuántas veces. */
+
 export interface ComboElegido {
   comboId: string;
   cantidad: number;

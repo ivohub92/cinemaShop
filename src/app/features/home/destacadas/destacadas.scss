@@ -7,7 +7,7 @@
   }
 }
 
-// Misma grilla que la cartelera.
+
 ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
@@ -27,7 +27,7 @@ li {
   gap: 0.5rem;
 }
 
-// Para las que todavía no se estrenaron (destacadas desde Próximamente).
+
 .etiqueta {
   justify-self: start;
   padding: 0.2rem 0.65rem;

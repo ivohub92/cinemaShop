@@ -1,4 +1,3 @@
-/** Una sala con el resumen de su distribución (RF-22). */
 export interface Sala {
   id: string;
   nombre: string;

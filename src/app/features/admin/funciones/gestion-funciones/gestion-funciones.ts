@@ -6,6 +6,7 @@ import { PeliculasService } from '../../../peliculas/peliculas.service';
 import { Funcion } from '../../../../core/models/funcion';
 import { Pelicula } from '../../../../core/models/pelicula';
 import { SelectorFecha } from '../../../../shared/forms/selector-fecha/selector-fecha';
+import { PreciosService } from '../../../../core/services/precios.service';
 
 @Component({
   selector: 'app-gestion-funciones',
@@ -17,6 +18,7 @@ export class GestionFunciones implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly funcionesService = inject(FuncionesService);
   private readonly peliculasService = inject(PeliculasService);
+  private readonly preciosService = inject(PreciosService);
 
   readonly peliculas = signal<Pelicula[]>([]);
   readonly funciones = signal<Funcion[]>([]);
@@ -25,6 +27,20 @@ export class GestionFunciones implements OnInit {
   readonly error = signal('');
   readonly resultado = signal('');
   readonly conflictos = signal<string[]>([]);
+  readonly errorListado = signal('');
+
+
+  readonly editando = signal<Funcion | null>(null);
+  readonly guardandoEdicion = signal(false);
+  readonly errorEdicion = signal('');
+
+  readonly edicion = this.fb.nonNullable.group({
+    fecha: ['', Validators.required],
+    hora: ['18:00', Validators.required],
+    formato: ['2D', Validators.required],
+    idioma: ['castellano', Validators.required],
+    precioBase: [0, [Validators.required, Validators.min(0)]],
+  });
 
   readonly dias = [
     { valor: 1, nombre: 'Lunes' },
@@ -51,9 +67,39 @@ export class GestionFunciones implements OnInit {
     precioBase: [6500, [Validators.required, Validators.min(0)]],
   });
 
+
+  readonly recargos = this.fb.nonNullable.group({
+    recargo3d: [0, [Validators.required, Validators.min(0)]],
+    recargo4d: [0, [Validators.required, Validators.min(0)]],
+    recargo5d: [0, [Validators.required, Validators.min(0)]],
+    recargoVip: [0, [Validators.required, Validators.min(0)]],
+  });
+  readonly guardandoRecargos = signal(false);
+  readonly mensajeRecargos = signal('');
+
   async ngOnInit(): Promise<void> {
     this.peliculas.set(await this.peliculasService.listar());
     this.funciones.set(await this.funcionesService.listar());
+    this.recargos.setValue(await this.preciosService.recargos());
+  }
+
+  async guardarRecargos(): Promise<void> {
+    if (this.recargos.invalid) {
+      this.recargos.markAllAsTouched();
+      return;
+    }
+
+    this.guardandoRecargos.set(true);
+    this.mensajeRecargos.set('');
+
+    try {
+      await this.preciosService.guardarRecargos(this.recargos.getRawValue());
+      this.mensajeRecargos.set('Recargos guardados. Se aplican a las compras que se hagan desde ahora.');
+    } catch {
+      this.mensajeRecargos.set('No pudimos guardar los recargos.');
+    } finally {
+      this.guardandoRecargos.set(false);
+    }
   }
 
   alternarDia(valor: number): void {
@@ -99,10 +145,67 @@ export class GestionFunciones implements OnInit {
     }
   }
 
+  editar(funcion: Funcion): void {
+    const inicio = new Date(funcion.inicio);
+
+    this.edicion.setValue({
+      fecha: inicio.toLocaleDateString('sv-SE'),   // 'YYYY-MM-DD' en hora local
+      hora: inicio.toTimeString().slice(0, 5),
+      formato: funcion.formato,
+      idioma: funcion.idioma,
+      precioBase: funcion.precioBase,
+    });
+    this.errorEdicion.set('');
+    this.errorListado.set('');
+    this.editando.set(funcion);
+
+    setTimeout(() => document.querySelector('.edicion')?.scrollIntoView({ behavior: 'smooth' }));
+  }
+
+  cancelarEdicion(): void {
+    this.editando.set(null);
+  }
+
+  async guardarEdicion(): Promise<void> {
+    const funcion = this.editando();
+    if (!funcion) return;
+
+    if (this.edicion.invalid) {
+      this.edicion.markAllAsTouched();
+      return;
+    }
+
+    this.guardandoEdicion.set(true);
+    this.errorEdicion.set('');
+
+    try {
+      const valores = this.edicion.getRawValue();
+      await this.funcionesService.editar(funcion.id, {
+        ...valores,
+        formato: valores.formato as any,
+        idioma: valores.idioma as any,
+      });
+
+      this.editando.set(null);
+      this.funciones.set(await this.funcionesService.listar());
+    } catch (e: any) {
+      this.errorEdicion.set(e?.message ?? 'No pudimos guardar los cambios.');
+    } finally {
+      this.guardandoEdicion.set(false);
+    }
+  }
+
   async eliminar(funcion: Funcion): Promise<void> {
     if (!confirm(`¿Eliminar la función de "${funcion.peliculaTitulo}"?`)) return;
 
-    await this.funcionesService.eliminar(funcion.id);
-    this.funciones.set(await this.funcionesService.listar());
+    this.errorListado.set('');
+
+    try {
+      await this.funcionesService.eliminar(funcion.id);
+      if (this.editando()?.id === funcion.id) this.editando.set(null);
+      this.funciones.set(await this.funcionesService.listar());
+    } catch (e: any) {
+      this.errorListado.set(e?.message ?? 'No pudimos eliminar la función.');
+    }
   }
 }

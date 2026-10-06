@@ -75,11 +75,6 @@ export class ButacasService {
     return data;
   }
 
-  /**
-   * Paga la orden. Orden de RN-04: cupón → puntos (recompensas) → crédito;
-   * el resto se cobra con el pago simulado. Los cálculos los hace la base.
-   * recompensas: un id por canje (se repite para canjear dos veces la misma).
-   */
   async confirmarCompra(
     ordenId: string,
     usarCredito = false,

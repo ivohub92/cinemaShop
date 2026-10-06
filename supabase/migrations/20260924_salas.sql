@@ -65,7 +65,6 @@ begin
 end;
 $$;
 
--- Toda sala nueva nace con su mapa de butacas completo.
 create or replace function trg_generar_butacas()
 returns trigger language plpgsql as $$
 begin
@@ -80,10 +79,7 @@ create trigger salas_generar_butacas
   after insert on salas
   for each row execute function trg_generar_butacas();
 
--- ----------------------------------------------------------------------------
--- Seguridad: el mapa de butacas lo tiene que ver cualquiera que vaya a comprar,
--- incluso sin cuenta. La gestión queda reservada al administrador.
--- ----------------------------------------------------------------------------
+
 alter table salas   enable row level security;
 alter table butacas enable row level security;
 

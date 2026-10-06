@@ -40,11 +40,7 @@ create policy "lectura publica"       on combo_productos for select using (true)
 create policy "admin gestiona combo_productos" on combo_productos
   for all using (es_admin()) with check (es_admin());
 
--- ----------------------------------------------------------------------------
--- reservar_butacas: se agrega p_combos. Como cambia la lista de parámetros,
--- primero se borra la versión anterior (si no, quedarían dos y Supabase no
--- sabría cuál llamar: el error de "Could not choose the best candidate").
--- ----------------------------------------------------------------------------
+
 drop function if exists public.reservar_butacas(uuid, uuid[], text, date);
 drop function if exists public.reservar_butacas(uuid, uuid[], text, date, jsonb);
 
@@ -195,10 +191,7 @@ exception
 end;
 $$;
 
--- ----------------------------------------------------------------------------
--- obtener_orden y consultar_codigo: indican qué entrada y qué productos
--- vienen de un combo.
--- ----------------------------------------------------------------------------
+
 create or replace function obtener_orden(p_orden_id uuid)
 returns json
 language plpgsql

@@ -31,16 +31,12 @@ export class FuncionesService {
     }));
   }
 
-  /**
-   * Programa funciones a partir de una regla de recurrencia.
-   * El administrador indica los días de la semana y el horario; la sala la
-   * asigna la base de datos.
-   */
+ 
   async programar(datos: {
     peliculaId: string;
-    diasSemana: number[];     // 0 = domingo … 6 = sábado
-    hora: string;             // "18:00"
-    desde: string;            // "2026-10-01"
+    diasSemana: number[];    
+    hora: string;           
+    desde: string;           
     hasta: string;
     formato: FormatoProyeccion;
     idioma: IdiomaFuncion;
@@ -70,7 +66,6 @@ export class FuncionesService {
     return { creadas, conflictos };
   }
 
-  /** Devuelve las fechas del rango que caen en los días de semana elegidos. */
   private fechasDe(desde: string, hasta: string, diasSemana: number[]): string[] {
     const fechas: string[] = [];
     const fin = new Date(`${hasta}T00:00:00`);
@@ -86,8 +81,27 @@ export class FuncionesService {
     return fechas;
   }
 
+ 
+  async editar(id: string, datos: {
+    fecha: string;           
+    hora: string;         
+    formato: FormatoProyeccion;
+    idioma: IdiomaFuncion;
+    precioBase: number;
+  }): Promise<void> {
+    const { error } = await this.supabase.client.rpc('editar_funcion', {
+      p_funcion_id: id,
+      p_inicio: new Date(`${datos.fecha}T${datos.hora}:00`).toISOString(),
+      p_formato: datos.formato,
+      p_idioma: datos.idioma,
+      p_precio: datos.precioBase,
+    });
+
+    if (error) throw error;
+  }
+
   async eliminar(id: string): Promise<void> {
-    const { error } = await this.supabase.client.from('funciones').delete().eq('id', id);
+    const { error } = await this.supabase.client.rpc('eliminar_funcion', { p_funcion_id: id });
     if (error) throw error;
   }
 }

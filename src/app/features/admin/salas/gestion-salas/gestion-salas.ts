@@ -13,7 +13,6 @@ export class GestionSalas implements OnInit {
   readonly salas = signal<Sala[]>([]);
   readonly cargando = signal(true);
   readonly creando = signal(false);
-  /** Sala que se está renombrando (null = ninguna). */
   readonly editando = signal<string | null>(null);
   readonly error = signal('');
   readonly aviso = signal('');

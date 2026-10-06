@@ -34,6 +34,19 @@
     </div>
   </div>
 
+  @if (precios(); as p) {
+    <p class="precios">
+      Entrada {{ precioEntrada() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+      · VIP {{ precioVip() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+      @if (p.recargoFormato) {
+        <span class="suave">(incluye {{ p.recargoFormato | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} por {{ p.formato }})</span>
+      }
+      @if (p.preventa) {
+        <span class="preventa">Preventa hasta el {{ p.preventaHasta + 'T00:00:00' | date: 'd/M' }}</span>
+      }
+    </p>
+  }
+
   <div class="referencias">
     <span class="referencia"><i class="butaca"></i> Disponible</span>
     <span class="referencia"><i class="butaca butaca--accesible"></i> Accesible</span>
@@ -53,6 +66,9 @@
         {{ seleccionadas().length }}
         {{ seleccionadas().length === 1 ? 'butaca elegida' : 'butacas elegidas' }}:
         {{ resumen() }}
+        @if (precios()) {
+          · <strong>{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+        }
       </p>     
 
       <button type="button" class="boton" (click)="continuar()">Continuar</button>

@@ -4,7 +4,7 @@ import { Cupon, DatosCupon } from '../models/cupon';
 
 const CLAVE_BIENVENIDA = 'cupon_bienvenida_pct';
 
-/** Cupones: los que puede usar el cliente al pagar y la gestión del admin. */
+
 @Injectable({ providedIn: 'root' })
 export class CuponesService {
   private readonly supabase = inject(SupabaseService);

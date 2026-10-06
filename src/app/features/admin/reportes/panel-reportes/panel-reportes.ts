@@ -7,7 +7,6 @@ import { ProductoVendido, ReporteCombos, ReporteFacturacion } from '../../../../
 import { SelectorFecha } from '../../../../shared/forms/selector-fecha/selector-fecha';
 import { GraficoMasVistas } from '../grafico-mas-vistas/grafico-mas-vistas';
 
-/** 'YYYY-MM-DD' en hora local (toISOString usaría UTC y podría correr el día). */
 function fechaLocal(fecha: Date): string {
   const m = String(fecha.getMonth() + 1).padStart(2, '0');
   const d = String(fecha.getDate()).padStart(2, '0');
@@ -26,22 +25,19 @@ export class PanelReportes implements OnInit {
   private readonly exportador = inject(ExportarReportesService);
 
   readonly reporte = signal<ReporteFacturacion | null>(null);
-  /** RF-61: top 5 de productos del candy en el mismo período. */
   readonly productos = signal<ProductoVendido[]>([]);
   readonly errorProductos = signal('');
-  /** Combos y total del candy: el dinero de los combos no está en los productos. */
   readonly combos = signal<ReporteCombos | null>(null);
   readonly errorCombos = signal('');
   readonly cargando = signal(false);
   readonly error = signal('');
-  /** Por defecto se ocultan los días sin ventas: la tabla queda más corta. */
   readonly mostrarDiasSinVentas = signal(false);
   readonly exportando = signal(false);
 
-  /** Período del reporte que está en pantalla (no el del formulario, que puede haber cambiado). */
+
   private periodo = { desde: '', hasta: '' };
 
-  /** Período por defecto: los últimos 30 días, hoy incluido. */
+
   readonly filtro = this.fb.nonNullable.group({
     desde: [fechaLocal(new Date(Date.now() - 29 * 864e5))],
     hasta: [fechaLocal(new Date())],
@@ -65,7 +61,7 @@ export class PanelReportes implements OnInit {
     };
   });
 
-  /** Candy facturado = productos sueltos + parte candy (estimada) de los combos. */
+
   readonly candy = computed(() => {
     const r = this.combos();
     const combos = r?.combos.reduce((total, c) => total + c.parteCandy, 0) ?? 0;
@@ -133,7 +129,7 @@ export class PanelReportes implements OnInit {
     }
   }
 
-  /** Exporta lo mismo que muestra la tabla (con o sin los días sin ventas). */
+
   exportarPdf(): void {
     const reporte = this.reporte();
     if (!reporte) return;

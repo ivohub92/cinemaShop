@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { SupabaseService } from '../../../core/supabase/supabase.service';
 import { Sala } from '../../../core/models/sala';
 
-/** Gestión de salas (RF-22). Las butacas las genera la base al crear la sala. */
 @Injectable({ providedIn: 'root' })
 export class SalasService {
   private readonly supabase = inject(SupabaseService);
@@ -23,7 +22,7 @@ export class SalasService {
     }));
   }
 
-  /** El trigger salas_generar_butacas crea las 532 butacas automáticamente. */
+
   async crear(nombre: string): Promise<void> {
     const { error } = await this.supabase.client.from('salas').insert({ nombre });
     if (error) throw error;
@@ -34,7 +33,7 @@ export class SalasService {
     if (error) throw error;
   }
 
-  /** Una sala inactiva no recibe funciones nuevas (crear_funcion_auto la saltea). */
+
   async cambiarActiva(id: string, activa: boolean): Promise<void> {
     const { error } = await this.supabase.client.from('salas').update({ activa }).eq('id', id);
     if (error) throw error;

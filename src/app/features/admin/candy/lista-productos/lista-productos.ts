@@ -80,12 +80,11 @@ export class ListaProductos implements OnInit {
     }
   }
 
-  /** Cuántos productos (activos o no) usan cada categoría. */
   productosEn(categoria: CategoriaProducto): number {
     return this.productos().filter((p) => p.categoriaId === categoria.id).length;
   }
 
-  /** Traduce los códigos de error de Postgres a un mensaje para el admin. */
+
   private mensajeCategoria(e: any, porDefecto: string): string {
     if (e?.code === '23505') return 'Ya existe una categoría con ese nombre.';
     if (e?.code === '23503') {
@@ -108,7 +107,7 @@ export class ListaProductos implements OnInit {
     await this.recargar();
   }
 
-  /** "1 × Pochoclo grande, 1 × Gaseosa chica" para mostrar en la tabla. */
+
   detalle(combo: Combo): string {
     return combo.items.map((i) => `${i.cantidad} × ${i.productoNombre}`).join(', ');
   }

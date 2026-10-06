@@ -70,9 +70,7 @@ create policy "cupon propio" on cupones
 create policy "cupones usados propios" on cupones_usados
   for select using (usuario_id = auth.uid() or es_admin());
 
--- ----------------------------------------------------------------------------
--- Cupón de bienvenida automático (RF-04).
--- ----------------------------------------------------------------------------
+
 create or replace function crear_cupon_bienvenida()
 returns trigger
 language plpgsql
