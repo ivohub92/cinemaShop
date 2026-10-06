@@ -17,7 +17,7 @@ export class PeliculasService {
     }));
   }
 
-  async listar(filtro?: 'en-cartel' | 'proximamente'): Promise<Pelicula[]> {
+  async listar(filtro?: 'en-cartel' | 'proximamente' | 'portada'): Promise<Pelicula[]> {
     const { data: conFunciones } = await this.supabase.client
       .from('peliculas_con_funciones')
       .select('pelicula_id');
@@ -28,7 +28,7 @@ export class PeliculasService {
       .from('puntajes_peliculas')
       .select('pelicula_id, promedio, cantidad');
 
-
+    // Mapa para cruzar sin recorrer el arreglo en cada película.
     const porPelicula = new Map<string, { promedio: number | null; cantidad: number }>(
       (puntajes ?? []).map((p: any) => [
         p.pelicula_id,
@@ -38,18 +38,21 @@ export class PeliculasService {
 
     let consulta = this.supabase.client
       .from('peliculas')
-      .select('id, titulo, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, generos(nombre)')
+      .select('id, titulo, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, en_portada, generos(nombre)')
       .order('titulo');
 
     if (filtro) {
       consulta = consulta.eq('activa', true);
 
-      if (filtro === 'en-cartel') {
-    
+      if (filtro === 'portada') {
+        // RF-12: las que eligió el admin, estén en cartel o por estrenarse.
+        consulta = consulta.eq('en_portada', true);
+      } else if (filtro === 'en-cartel') {
+        // Sin funciones programadas no hay ninguna película en cartel.
         if (!ids.length) return [];
         consulta = consulta.in('id', ids);
       } else {
-   
+        // Próximamente: sin funciones todavía y con estreno por delante.
         if (ids.length) consulta = consulta.not('id', 'in', `(${ids.join(',')})`);
         consulta = consulta.gt('fecha_estreno', new Date().toISOString().slice(0, 10));
       }
@@ -69,6 +72,7 @@ export class PeliculasService {
         restriccionEdad: fila.restriccion_edad,
         fechaEstreno: fila.fecha_estreno,
         activa: fila.activa,
+        enPortada: fila.en_portada,
         generos: (fila.generos ?? []).map((g: any) => g.nombre),
         promedio: puntaje?.promedio ?? null,
         cantidadResenias: puntaje?.cantidad ?? 0,
@@ -89,7 +93,7 @@ export class PeliculasService {
   async obtener(id: string): Promise<(Pelicula & { sinopsis: string; generosIds: string[] }) | null> {
     const { data, error } = await this.supabase.client
       .from('peliculas')
-      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, generos(id, nombre)')
+      .select('id, titulo, sinopsis, duracion_min, poster_url, restriccion_edad, fecha_estreno, activa, en_portada, generos(id, nombre)')
       .eq('id', id)
       .single();
 
@@ -105,8 +109,10 @@ export class PeliculasService {
       restriccionEdad: data.restriccion_edad,
       fechaEstreno: data.fecha_estreno,
       activa: data.activa,
+      enPortada: data.en_portada,
       generos: (data.generos ?? []).map((g: any) => g.nombre),
       generosIds: (data.generos ?? []).map((g: any) => g.id),
+      // El detalle consulta el puntaje por separado con el servicio de reseñas.
       promedio: null,
       cantidadResenias: 0,
     };
@@ -167,6 +173,9 @@ export class PeliculasService {
       .eq('id', id);
 
     if (error) throw error;
+
+    // Los géneros se reemplazan: se borran los actuales y se cargan los nuevos.
+    // Es más simple que calcular cuáles se agregaron y cuáles se quitaron.
     const { error: errorBorrar } = await this.supabase.client
       .from('peliculas_generos')
       .delete()
@@ -196,6 +205,16 @@ export class PeliculasService {
     const { error } = await this.supabase.client
       .from('peliculas')
       .update({ activa: true })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  /** RF-12: destacar (o no) una película en la página principal. */
+  async cambiarPortada(id: string, enPortada: boolean): Promise<void> {
+    const { error } = await this.supabase.client
+      .from('peliculas')
+      .update({ en_portada: enPortada })
       .eq('id', id);
 
     if (error) throw error;

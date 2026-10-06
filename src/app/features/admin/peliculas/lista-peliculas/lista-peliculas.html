@@ -3,6 +3,16 @@
   <a class="boton" routerLink="/admin/peliculas/nueva">Agregar película</a>
 </header>
 
+<p class="ayuda">
+  Las películas <strong>destacadas</strong> aparecen primero en la página principal
+  ({{ enPortada() }} {{ enPortada() === 1 ? 'destacada' : 'destacadas' }} ahora). Si no hay ninguna,
+  la portada muestra solo las más vendidas y la cartelera.
+</p>
+
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+
 @if (cargando()) {
   <p>Cargando…</p>
 } @else if (peliculas().length) {
@@ -14,6 +24,7 @@
         <th>Edad</th>
         <th>Géneros</th>
         <th>Estado</th>
+        <th>Portada</th>
         <th></th>
       </tr>
     </thead>
@@ -24,7 +35,19 @@
           <td>{{ pelicula.duracionMin }} min</td>
           <td>{{ pelicula.restriccionEdad === 0 ? 'ATP' : '+' + pelicula.restriccionEdad }}</td>
           <td>{{ pelicula.generos.join(', ') }}</td>
-                    <td>{{ pelicula.activa ? 'En catálogo' : 'Dada de baja' }}</td>
+          <td>{{ pelicula.activa ? 'En catálogo' : 'Dada de baja' }}</td>
+          <td>
+            <button
+              type="button"
+              class="boton boton--discreto portada"
+              [class.portada--activa]="pelicula.enPortada"
+              [attr.aria-pressed]="pelicula.enPortada"
+              [title]="pelicula.activa ? '' : 'Dada de baja: no se muestra aunque esté destacada'"
+              (click)="cambiarPortada(pelicula)"
+            >
+              {{ pelicula.enPortada ? '★ Destacada' : '☆ Destacar' }}
+            </button>
+          </td>
           <td class="acciones">
             <a class="boton boton--discreto" [routerLink]="['/admin/peliculas', pelicula.id]">Editar</a>
             <button type="button" class="boton boton--discreto" (click)="cambiarEstado(pelicula)">

@@ -1,0 +1,16 @@
+@if (peliculas().length) {
+  <section class="destacadas" aria-labelledby="titulo-destacadas">
+    <h2 id="titulo-destacadas">Destacadas</h2>
+
+    <ul>
+      @for (pelicula of peliculas(); track pelicula.id) {
+        <li>
+          @if (pelicula.fechaEstreno > hoy) {
+            <span class="etiqueta">Estreno {{ pelicula.fechaEstreno + 'T00:00:00' | date: 'd/M' }}</span>
+          }
+          <app-tarjeta-pelicula [pelicula]="pelicula" />
+        </li>
+      }
+    </ul>
+  </section>
+}

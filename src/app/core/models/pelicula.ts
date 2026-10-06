@@ -7,6 +7,7 @@ export interface Pelicula {
   restriccionEdad: 0 | 13 | 18;
   fechaEstreno: string;
   activa: boolean;
+  enPortada: boolean;  
   promedio: number | null;
   cantidadResenias: number;
 }
