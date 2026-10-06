@@ -22,12 +22,11 @@ export class GestionCupones implements OnInit {
   readonly mensajePct = signal('');
   readonly error = signal('');
 
-  /** RF-41: porcentaje del cupón de bienvenida. */
   readonly formBienvenida = this.fb.nonNullable.group({
     porcentaje: [10, [Validators.required, Validators.min(1), Validators.max(100)]],
   });
 
-  /** RF-42: cupón para mayores de 50. El código va en mayúsculas, sin espacios. */
+
   readonly formCupon = this.fb.nonNullable.group({
     codigo: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9-]{3,20}$/)]],
     porcentaje: [15, [Validators.required, Validators.min(1), Validators.max(100)]],
@@ -86,7 +85,7 @@ export class GestionCupones implements OnInit {
       this.formCupon.reset();
       this.cupones.set(await this.cuponesService.listarMayores50());
     } catch (e: any) {
-      // 23505 = unique_violation: ya existe un cupón con ese código.
+      
       this.error.set(e?.code === '23505' ? 'Ya existe un cupón con ese código.' : 'No pudimos crear el cupón.');
     } finally {
       this.creando.set(false);

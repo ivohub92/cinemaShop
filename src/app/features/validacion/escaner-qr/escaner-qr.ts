@@ -32,7 +32,7 @@ export class EscanerQr implements OnDestroy {
     }
 
     try {
-      // La cámara trasera en el celular; en la compu, la que haya.
+
       this.stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' },
         audio: false,
@@ -51,7 +51,7 @@ export class EscanerQr implements OnDestroy {
 
     const contexto = this.lienzo.getContext('2d', { willReadFrequently: true })!;
 
-    // Cada cuadro de video se copia a un canvas y jsQR busca un QR en los píxeles.
+  
     const leerCuadro = () => {
       if (!this.activo()) return;
 

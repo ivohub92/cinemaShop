@@ -98,7 +98,7 @@ export class PanelReportes implements OnInit {
     this.cargando.set(true);
     this.error.set('');
 
-    // Cada reporte por separado: si uno falla, el otro se muestra igual.
+
     const [facturacion, productos, combos] = await Promise.allSettled([
       this.reportes.facturacion(desde, hasta),
       this.reportes.productos(desde, hasta, 5),

@@ -39,7 +39,7 @@ export class ExportarReportesService {
       { titulo: 'Descuentos', x: 195, alinear: 'right' as const },
     ];
 
-    // Encabezado
+
     doc.setFillColor(28, 18, 51);
     doc.rect(0, 0, 210, 28, 'F');
     doc.setTextColor(255, 255, 255);
@@ -50,7 +50,7 @@ export class ExportarReportesService {
     doc.setFontSize(11);
     doc.text(`Período: ${fecha(desde)} al ${fecha(hasta)}`, 15, 40);
 
-    // Resumen
+
     doc.setFontSize(10);
     const resumen = [
       `Facturación: ${pesos(totales.facturacion)}`,
@@ -60,7 +60,7 @@ export class ExportarReportesService {
     ];
     resumen.forEach((linea, i) => doc.text(linea, 15, 50 + i * 6));
 
-    // Tabla
+
     let y = 82;
     const encabezado = () => {
       doc.setFontSize(9);
@@ -94,7 +94,7 @@ export class ExportarReportesService {
       y += 6;
     }
 
-    // Totales
+
     doc.line(15, y - 3, 195, y - 3);
     y += 2;
     const filaTotal = [
@@ -131,7 +131,6 @@ export class ExportarReportesService {
   ): Promise<void> {
     const XLSX = await import('xlsx');
 
-    // Los montos van como números (no texto): en Excel se pueden sumar y graficar.
     const filas = dias.map((d) => ({
       Día: fecha(d.dia),
       Compras: d.ordenes,

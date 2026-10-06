@@ -16,7 +16,7 @@
     transform: translateX(0);
   }
 
-  // Estado inicial de la animación de entrada.
+
   @starting-style {
     &[open] {
       transform: translateX(100%);

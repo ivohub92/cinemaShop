@@ -69,7 +69,7 @@ export class PasoIdentidad {
       const { email, password } = this.formIngreso.getRawValue();
       await this.auth.ingresar(email, password);
 
-      // Espera a que el perfil termine de cargar tras el ingreso.
+
       const perfil = await this.auth.perfilListo();
       if (perfil) {
         this.store.tomarDeLaSesion();

@@ -51,7 +51,7 @@ export class ReseniasPelicula implements OnInit {
     this.resenias.set(resenias);
     this.puntaje.set(puntaje);
 
-    // Si ya opinó, el formulario arranca con su reseña cargada para editarla.
+
     const propia = this.propia();
     if (propia) {
       this.formulario.patchValue({ puntaje: propia.puntaje, comentario: propia.comentario });

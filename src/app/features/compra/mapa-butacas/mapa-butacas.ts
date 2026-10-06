@@ -21,7 +21,6 @@ export class MapaButacas implements OnInit, OnDestroy{
   readonly cargando = signal(true);
   private readonly store = inject(CompraStore);
 
-  /** Avisa que el usuario terminó de elegir: las butacas quedan en el store. */
   readonly listo = output<void>();
 
   readonly total = computed(() =>
@@ -62,8 +61,7 @@ export class MapaButacas implements OnInit, OnDestroy{
  
 
    async ngOnInit(): Promise<void> {
-    // Primero se escucha y después se carga: así no se pierde ningún cambio
-    // que ocurra mientras llega la carga inicial.
+
     this.canal = this.butacasService.escucharCambios(this.funcionId(), (id, ocupada) =>
       this.aplicarCambio(id, ocupada),
     );
@@ -73,10 +71,7 @@ export class MapaButacas implements OnInit, OnDestroy{
     this.cargando.set(false);
   }
 
-  /**
-   * Si el usuario vuelve desde el candy, se marcan de nuevo sus butacas,
-   * salvo las que otra persona haya tomado mientras tanto.
-   */
+
   private recuperarEleccion(): void {
     const previas = this.store.butacas();
     if (!previas.length) return;
@@ -100,13 +95,12 @@ export class MapaButacas implements OnInit, OnDestroy{
     }
   }
 
-  /** Aplica en el mapa un cambio que llegó en vivo desde otra compra. */
+
   private aplicarCambio(butacaId: string, ocupada: boolean): void {
     this.butacas.update((actuales) =>
       actuales.map((b) => (b.id === butacaId ? { ...b, ocupada } : b)),
     );
 
-    // Si alguien tomó una butaca que este usuario tenía elegida, se la quita.
     if (ocupada && this.seleccionadas().includes(butacaId)) {
       this.seleccionadas.update((ids) => ids.filter((id) => id !== butacaId));
       this.aviso.set('Una de las butacas que elegiste acaba de ser reservada por otra persona.');

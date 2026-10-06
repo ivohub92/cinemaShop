@@ -1,6 +1,3 @@
-// Botones de la aplicación.
-// Al pasar el cursor invierten sus colores. Es un efecto puramente visual,
-// así que se resuelve con CSS y no con una directiva.
 
 .boton {
   display: inline-flex;
@@ -26,13 +23,12 @@
   }
 }
 
-// Contorneado: arranca en el estado inverso al principal.
 .boton--contorno {
   color: var(--color-destacado);
   background-color: transparent;
 }
 
-// Discreto: para acciones secundarias dentro de tablas y listados.
+
 .boton--discreto {
   padding: 0.35rem 0.9rem;
   font-size: 0.85rem;
@@ -42,8 +38,7 @@
   border-color: var(--color-borde);
 }
 
-// El hover solo existe en dispositivos con puntero real: en pantallas táctiles
-// el estado quedaría activado después de tocar.
+
 @media (hover: hover) {
   .boton:not(:disabled):hover {
     color: var(--color-destacado);

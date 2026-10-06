@@ -58,7 +58,6 @@ export class ButacasService {
       p_butacas: butacas,
       p_email: email,
       p_fecha_nacimiento: fechaNacimiento,
-      // El SQL lee "id" y "cantidad" de cada ítem.
       p_productos: productos.map((p) => ({ id: p.productoId, cantidad: p.cantidad })),
       p_combos: combos.map((c) => ({ id: c.comboId, cantidad: c.cantidad })),
     });

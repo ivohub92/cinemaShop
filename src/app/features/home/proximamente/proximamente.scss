@@ -14,3 +14,27 @@
     grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
   }
 }
+.aviso a {
+  color: var(--color-destacado);
+}
+
+.error {
+  color: #ff8a8a;
+}
+
+.grilla li {
+  display: grid;
+  align-content: start;
+  gap: 0.6rem;
+}
+
+.alerta {
+  width: 100%;
+}
+
+
+.alerta--activa {
+  color: #1c1233;
+  background-color: #d9a441;
+  border-color: #d9a441;
+}

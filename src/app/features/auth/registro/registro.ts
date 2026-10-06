@@ -34,7 +34,6 @@ export class Registro {
 
   async enviar(): Promise<void> {
     if (this.formulario.invalid) {
-      // Marca todos los campos como tocados para que se vean los errores.
       this.formulario.markAllAsTouched();
       return;
     }

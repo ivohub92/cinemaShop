@@ -88,7 +88,7 @@ button {
   }
 }
 
-// Barras horizontales: una sola serie, finas (≤ 24px), punta redondeada y base recta.
+
 .barras {
   display: grid;
   gap: 0.75rem;
@@ -124,7 +124,6 @@ button {
   display: block;
   height: 100%;
   min-width: 2px;
-  // #b8822a: validado contra el fondo oscuro (contraste ≥ 3:1 y luminosidad en rango).
   background-color: #b8822a;
   border-radius: 0 4px 4px 0;
   transition: width 300ms ease;

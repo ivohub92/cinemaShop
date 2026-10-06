@@ -14,12 +14,12 @@ const CAMPOS_PRODUCTO =
 const CAMPOS_COMBO =
   'id, nombre, descripcion, precio, imagen_url, activo, destacado, combo_productos(producto_id, cantidad, productos(nombre))';
 
-/** Candy bar: categorías, productos y combos. Lo usan la compra y el admin. */
+
 @Injectable({ providedIn: 'root' })
 export class ProductosService {
   private readonly supabase = inject(SupabaseService);
 
-  // ---------------------------------------------------------------- categorías
+
 
   async listarCategorias(): Promise<CategoriaProducto[]> {
     const { data, error } = await this.supabase.client
@@ -47,15 +47,12 @@ export class ProductosService {
     if (error) throw error;
   }
 
-  /** Falla con código 23503 si algún producto todavía usa la categoría. */
+
   async borrarCategoria(id: string): Promise<void> {
     const { error } = await this.supabase.client.from('categorias_producto').delete().eq('id', id);
     if (error) throw error;
   }
 
-  // ----------------------------------------------------------------- productos
-
-  /** Por defecto solo los activos (lo que se vende); el admin pide todos con false. */
   async listar(soloActivos = true): Promise<Producto[]> {
     let consulta = this.supabase.client.from('productos').select(CAMPOS_PRODUCTO).order('nombre');
     if (soloActivos) consulta = consulta.eq('activo', true);
@@ -97,8 +94,6 @@ export class ProductosService {
     if (error) throw error;
   }
 
-  // -------------------------------------------------------------------- combos
-
   async listarCombos(soloActivos = true): Promise<Combo[]> {
     let consulta = this.supabase.client.from('combos').select(CAMPOS_COMBO).order('nombre');
     if (soloActivos) consulta = consulta.eq('activo', true);
@@ -139,7 +134,7 @@ export class ProductosService {
 
     if (error) throw error;
 
-    // Igual que los géneros de una película: se borran y se vuelven a cargar.
+
     const { error: errorBorrar } = await this.supabase.client
       .from('combo_productos')
       .delete()

@@ -4,12 +4,12 @@ import { Canje, DatosRecompensa, Recompensa } from '../models/recompensa';
 
 const CAMPOS = 'id, nombre, tipo, producto_id, costo_puntos, activo, productos(nombre)';
 
-/** Puntos y recompensas (RF-43 a RF-46). El saldo y los canjes los calcula la base. */
+
 @Injectable({ providedIn: 'root' })
 export class PuntosService {
   private readonly supabase = inject(SupabaseService);
 
-  // ------------------------------------------------------------------ cliente
+
 
   async misPuntos(): Promise<number> {
     const { data, error } = await this.supabase.client.rpc('mis_puntos');
@@ -32,7 +32,7 @@ export class PuntosService {
     }));
   }
 
-  /** Por defecto solo las activas (las que se ofrecen al pagar); el admin pide todas. */
+
   async listarRecompensas(soloActivas = true): Promise<Recompensa[]> {
     let consulta = this.supabase.client.from('recompensas').select(CAMPOS).order('costo_puntos');
     if (soloActivas) consulta = consulta.eq('activo', true);
@@ -42,7 +42,7 @@ export class PuntosService {
     return (data ?? []).map((fila: any) => this.aRecompensa(fila));
   }
 
-  // -------------------------------------------------------------------- admin
+
 
   async crear(recompensa: DatosRecompensa): Promise<void> {
     const { error } = await this.supabase.client.from('recompensas').insert({
@@ -55,7 +55,7 @@ export class PuntosService {
     if (error) throw error;
   }
 
-  /** RF-45: el admin cambia cuántos puntos cuesta cada recompensa. */
+
   async cambiarCosto(id: string, costoPuntos: number): Promise<void> {
     const { error } = await this.supabase.client
       .from('recompensas')

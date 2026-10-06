@@ -25,7 +25,7 @@ export class ImagenRespaldo {
   private respaldoAplicado = false;
 
   usarRespaldo(): void {
-    // Si el respaldo también falla no se reintenta: evita un bucle infinito.
+
     if (this.respaldoAplicado) return;
     this.respaldoAplicado = true;
     this.imagen.nativeElement.src = this.appImagenRespaldo() || POSTER_RESPALDO;

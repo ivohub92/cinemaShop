@@ -35,7 +35,6 @@ export class PosterHover {
     if (!this.activo()) return;
 
     const caja = this.elemento.nativeElement.getBoundingClientRect();
-    // Posición del cursor relativa a la tarjeta: de -0,5 a 0,5 en cada eje.
     const relativoX = (evento.clientX - caja.left) / caja.width - 0.5;
     const relativoY = (evento.clientY - caja.top) / caja.height - 0.5;
 

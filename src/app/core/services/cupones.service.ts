@@ -9,26 +9,21 @@ const CLAVE_BIENVENIDA = 'cupon_bienvenida_pct';
 export class CuponesService {
   private readonly supabase = inject(SupabaseService);
 
-  // ------------------------------------------------------------------ cliente
 
-  /**
-   * Cupones disponibles del usuario logueado, compartidos por toda la app:
-   * los lee el aviso del header y se refrescan al loguearse o al pagar.
-   */
   readonly disponibles = signal<Cupon[]>([]);
 
   async refrescarDisponibles(): Promise<void> {
     this.disponibles.set(await this.misCupones().catch(() => []));
   }
 
-  /** Cupones que el usuario logueado puede usar hoy (la regla vive en la base). */
+
   async misCupones(): Promise<Cupon[]> {
     const { data, error } = await this.supabase.client.rpc('mis_cupones');
     if (error) throw error;
     return ((data as any[]) ?? []).map((fila) => this.aCupon(fila));
   }
 
-  // -------------------------------------------------------------------- admin
+
 
   async listarMayores50(): Promise<Cupon[]> {
     const { data, error } = await this.supabase.client

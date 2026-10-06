@@ -28,7 +28,7 @@ export class PeliculasService {
       .from('puntajes_peliculas')
       .select('pelicula_id, promedio, cantidad');
 
-    // Mapa para cruzar sin recorrer el arreglo en cada película.
+
     const porPelicula = new Map<string, { promedio: number | null; cantidad: number }>(
       (puntajes ?? []).map((p: any) => [
         p.pelicula_id,
@@ -45,11 +45,11 @@ export class PeliculasService {
       consulta = consulta.eq('activa', true);
 
       if (filtro === 'en-cartel') {
-        // Sin funciones programadas no hay ninguna película en cartel.
+    
         if (!ids.length) return [];
         consulta = consulta.in('id', ids);
       } else {
-        // Próximamente: sin funciones todavía y con estreno por delante.
+   
         if (ids.length) consulta = consulta.not('id', 'in', `(${ids.join(',')})`);
         consulta = consulta.gt('fecha_estreno', new Date().toISOString().slice(0, 10));
       }
@@ -107,7 +107,6 @@ export class PeliculasService {
       activa: data.activa,
       generos: (data.generos ?? []).map((g: any) => g.nombre),
       generosIds: (data.generos ?? []).map((g: any) => g.id),
-      // El detalle consulta el puntaje por separado con el servicio de reseñas.
       promedio: null,
       cantidadResenias: 0,
     };
@@ -168,9 +167,6 @@ export class PeliculasService {
       .eq('id', id);
 
     if (error) throw error;
-
-    // Los géneros se reemplazan: se borran los actuales y se cargan los nuevos.
-    // Es más simple que calcular cuáles se agregaron y cuáles se quitaron.
     const { error: errorBorrar } = await this.supabase.client
       .from('peliculas_generos')
       .delete()

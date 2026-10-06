@@ -37,7 +37,7 @@ export class MasVendidas implements OnInit {
       this.ranking.set(ranking);
       this.peliculas.set(peliculas);
     } catch {
-      // Si falla, la sección no se muestra: la cartelera de abajo sigue funcionando.
+ 
     }
   }
 }

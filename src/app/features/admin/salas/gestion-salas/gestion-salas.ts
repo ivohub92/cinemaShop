@@ -88,7 +88,6 @@ export class GestionSalas implements OnInit {
   }
 
   private mensaje(e: any, porDefecto: string): string {
-    // 23505 = unique_violation: ya hay una sala con ese nombre.
     return e?.code === '23505' ? 'Ya existe una sala con ese nombre.' : (e?.message ?? porDefecto);
   }
 }

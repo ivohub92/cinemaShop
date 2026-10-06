@@ -1,14 +1,4 @@
--- ============================================================================
--- Reporte de combos y total del candy (RF-61, complemento). Solo admin.
--- Los productos de un combo se guardan en orden_items a precio 0: el dinero del
--- combo queda en entradas.precio (combo + recargo VIP), porque cada combo
--- incluye una entrada. Por eso reporte_productos no los ve como facturación.
--- Acá se reporta:
--- - por combo: unidades, facturado (precio del combo, entrada incluida) y la
---   parte candy estimada = precio del combo − precio base de la función.
--- - total_suelto: todos los productos vendidos sueltos (no solo el top 5).
--- Montos de lista: cupones y puntos se descuentan sobre la orden entera.
--- ============================================================================
+
 
 create or replace function reporte_combos(p_desde date, p_hasta date)
 returns json

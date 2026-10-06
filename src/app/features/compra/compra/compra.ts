@@ -17,8 +17,6 @@ import { PasoCandy } from '../paso-candy/paso-candy';
   imports: [DatePipe, RouterLink, MapaButacas, PasoIdentidad, PasoCandy, PasoPago, PasoConfirmacion],
   templateUrl: './compra.html',
   styleUrl: './compra.scss',
-
-  // El store se crea con esta pantalla y muere con ella cada compra arranca limpia, sin arrastrar datos de una anterior
   providers: [CompraStore],
 })
 export class Compra implements OnInit {
@@ -32,7 +30,6 @@ export class Compra implements OnInit {
   readonly cargando = signal(true);
   readonly ordenId = signal<string | null>(null);
   readonly pagada = signal(false);
-  /** Butacas elegidas: se muestra el candy antes de reservar */
   readonly eligiendoCandy = signal(false);
 
   alPagar(): void {
@@ -52,7 +49,6 @@ export class Compra implements OnInit {
     this.ordenId.set(id);
   }
   constructor() {
-    // Si se cierra la sesión en medio de la compra, se vuelve al primer paso: las butacas elegidas ya no tienen titular
     effect(() => {
       const usuario = this.auth.usuario();
       const comprador = this.store.comprador();
@@ -64,7 +60,7 @@ export class Compra implements OnInit {
     });
   }
 
-  /** Impide avanzar si el comprador no alcanza la edad mínima de la película */
+
   readonly edadInsuficiente = computed(() => {
     const edad = this.store.edad();
     return edad !== null && edad < this.restriccionEdad();
@@ -82,15 +78,12 @@ export class Compra implements OnInit {
       this.restriccionEdad.set(pelicula?.restriccionEdad ?? 0);
     }
 
-    // Si ya hay sesión iniciada, no se pide identidad de nuevo
+
     this.store.tomarDeLaSesion();
     this.cargando.set(false);
   }
 
-  /**
-   * El usuario logueado no alcanza la edad: se cierra la sesión y se vuelve
-   * a la identidad, para que no quede logueado mientras compra otra persona.
-   */
+ 
   async salirYSeguirComoInvitado(): Promise<void> {
     await this.auth.salir();
     this.store.reiniciar();

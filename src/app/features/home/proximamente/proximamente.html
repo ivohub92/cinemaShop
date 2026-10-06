@@ -1,10 +1,37 @@
 @if (cargando()) {
   <p class="aviso">Cargando los próximos estrenos…</p>
 } @else if (peliculas().length) {
+  @if (!usuario()) {
+    <p class="aviso">
+      <a routerLink="/registro">Registrate</a> para activar alertas y enterarte cuando salgan las entradas.
+    </p>
+  } @else if (permiso() === 'denied' && alertas().size) {
+    <p class="aviso">
+      Bloqueaste las notificaciones del navegador: los avisos te van a llegar solo a la campana.
+    </p>
+  }
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
   <ul class="grilla">
     @for (pelicula of peliculas(); track pelicula.id) {
       <li>
         <app-tarjeta-pelicula [pelicula]="pelicula" />
+
+        @if (usuario()) {
+          <button
+            type="button"
+            class="boton boton--discreto alerta"
+            [class.alerta--activa]="alertas().has(pelicula.id)"
+            [attr.aria-pressed]="alertas().has(pelicula.id)"
+            [disabled]="guardando() === pelicula.id"
+            (click)="alternarAlerta(pelicula)"
+          >
+            {{ alertas().has(pelicula.id) ? 'Te vamos a avisar · Quitar' : 'Avisarme cuando salgan' }}
+          </button>
+        }
       </li>
     }
   </ul>

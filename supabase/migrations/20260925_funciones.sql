@@ -1,13 +1,4 @@
--- ============================================================================
--- Funciones (proyecciones) y baja lógica de películas.
--- Esto se había creado desde el panel de Supabase; este archivo lo deja
--- igual que en la base para que las migraciones se puedan correr de cero.
--- Es idempotente: correrlo sobre la base actual no cambia nada.
--- - fin = inicio + duración de la película; fin_ocupacion = fin + 30 min de
---   limpieza. Los calcula un trigger, el admin solo carga el inicio.
--- - Dos funciones no pueden ocupar la misma sala en horarios que se pisan
---   (restricción de exclusión, necesita btree_gist).
--- ============================================================================
+
 
 create extension if not exists btree_gist;
 

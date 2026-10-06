@@ -97,7 +97,7 @@ export class MisCompras implements OnInit {
 
     try {
       await this.cuenta.quitarDelListado(compra.id);
-      // Se saca de la lista sin volver a pedir todo: el crédito no cambia.
+
       this.compras.update((actuales) => actuales.filter((c) => c.id !== compra.id));
     } catch (e: any) {
       this.error.set(e?.message ?? 'No pudimos quitar la compra del listado.');

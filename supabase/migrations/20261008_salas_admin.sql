@@ -1,9 +1,4 @@
--- ============================================================================
--- Gestión de salas desde el admin (RF-22, RF-57). Solo admin.
--- Las salas y sus butacas ya existen (20260924_salas.sql): al crear una sala,
--- el trigger salas_generar_butacas arma las 532 butacas con la distribución
--- del cliente (RF-15 a RF-19, D-03). Acá solo se agrega un resumen por sala.
--- ============================================================================
+
 
 create or replace function resumen_salas()
 returns json

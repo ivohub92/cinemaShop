@@ -88,7 +88,6 @@ export class ComprobanteService {
       y += 7;
     }
 
-    // Candy bar: los combos con lo que incluyen y los productos sueltos con su precio.
     const candy = this.resumirCandy(orden);
     const hayCandy = candy.combos.length > 0 || candy.sueltos.length > 0;
 
@@ -118,8 +117,6 @@ export class ComprobanteService {
       }
     }
 
-    // Beneficios aplicados (RN-04): el total ya los tiene descontados.
-    // Guion común y no '−': la fuente estándar de jsPDF no tiene ese carácter.
     if (Number(orden.descuento) > 0) {
       y += 3;
       doc.text(`Cupón ${orden.cupon ?? ''}`.trim(), 20, y);

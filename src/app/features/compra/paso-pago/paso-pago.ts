@@ -35,19 +35,18 @@ export class PasoPago implements OnInit {
   readonly error = signal('');
   readonly restante = signal('');
 
-  /** Si la compra es de un usuario con cuenta (los beneficios no aplican a invitados, D-01). */
+
   readonly conCuenta = signal(false);
-  /** Si falló la carga de cupones, puntos o crédito: se avisa en vez de esconder la sección. */
+
   readonly errorBeneficios = signal(false);
 
-  /** Combos y productos de la orden, agrupados para el resumen. */
   readonly candy = computed(() => this.comprobante.resumirCandy(this.orden()));
 
-  /** Cupones disponibles (solo usuarios registrados) y el elegido: uno por orden. */
+
   readonly cupones = signal<Cupon[]>([]);
   readonly cuponId = signal<string | null>(null);
 
-  /** Crédito de la cuenta (solo usuarios registrados) y si lo quiere usar. */
+
   readonly credito = signal(0);
   readonly usarCredito = signal(false);
 
@@ -55,12 +54,12 @@ export class PasoPago implements OnInit {
 
   readonly cuponElegido = computed(() => this.cupones().find((c) => c.id === this.cuponId()) ?? null);
 
-  /** Puntos de la cuenta, recompensas activas y cuántas veces se canjea cada una. */
+
   readonly puntos = signal(0);
   readonly recompensas = signal<Recompensa[]>([]);
   readonly canjes = signal<Record<string, number>>({});
 
-  /** Precios de las entradas que se pueden cubrir con puntos (las de combo no), de mayor a menor. */
+
   private readonly preciosEntradas = computed<number[]>(() =>
     (this.orden()?.butacas ?? [])
       .filter((b: any) => !b.combo)
@@ -68,7 +67,6 @@ export class PasoPago implements OnInit {
       .sort((a: number, b: number) => b - a),
   );
 
-  /** Productos comprados sueltos: id → cantidad y precio. */
   private readonly productosSueltos = computed(() => {
     const mapa = new Map<string, { cantidad: number; precio: number }>();
     for (const p of this.orden()?.productos ?? []) {
@@ -77,7 +75,7 @@ export class PasoPago implements OnInit {
     return mapa;
   });
 
-  /** Solo las recompensas que aplican a esta compra. */
+
   readonly recompensasAplicables = computed(() =>
     this.recompensas().filter((r) =>
       r.tipo === 'entrada' ? this.preciosEntradas().length > 0 : this.productosSueltos().has(r.productoId!),
@@ -88,7 +86,7 @@ export class PasoPago implements OnInit {
     return this.recompensasAplicables().includes(recompensa);
   }
 
-  /** Por qué una recompensa no se puede usar en esta compra, para explicarlo en pantalla. */
+
   motivoNoAplica(recompensa: Recompensa): string {
     if (recompensa.tipo === 'entrada') {
       return 'Tus entradas tienen combo: no se pueden cubrir con puntos.';
@@ -104,7 +102,6 @@ export class PasoPago implements OnInit {
     this.recompensas().reduce((suma, r) => suma + r.costoPuntos * this.cantidadCanje(r), 0),
   );
 
-  /** Cuántas entradas y cuántas unidades de cada producto ya están cubiertas. */
   private readonly cubiertos = computed(() => {
     let entradas = 0;
     const productos = new Map<string, number>();
@@ -117,7 +114,7 @@ export class PasoPago implements OnInit {
     return { entradas, productos };
   });
 
-  /** Si se puede canjear una más: que haya algo para cubrir y que alcancen los puntos. */
+
   puedeSumarCanje(recompensa: Recompensa): boolean {
     if (this.puntosAUsar() + recompensa.costoPuntos > this.puntos()) return false;
     if (recompensa.tipo === 'entrada') return this.cubiertos().entradas < this.preciosEntradas().length;
@@ -136,16 +133,13 @@ export class PasoPago implements OnInit {
     });
   }
 
-  /**
-   * RN-04: cupón → puntos → crédito → dinero.
-   * Es una vista previa: el cálculo que vale lo repite confirmar_compra() en la base.
-   */
+
   readonly descuento = computed(() => {
     const cupon = this.cuponElegido();
     return cupon ? Math.round(this.total() * cupon.porcentaje) / 100 : 0;
   });
 
-  /** Lo que cubren los canjes: las entradas más caras primero, igual que la base. */
+
   readonly descuentoPuntos = computed(() => {
     const { entradas, productos } = this.cubiertos();
     let valor = this.preciosEntradas().slice(0, entradas).reduce((a, b) => a + b, 0);
@@ -163,10 +157,10 @@ export class PasoPago implements OnInit {
     () => this.total() - this.descuento() - this.descuentoPuntos() - this.creditoAplicado(),
   );
 
-  /** RF-43: 1 punto por peso pagado en dinero (solo con cuenta). */
+
   readonly puntosAGanar = computed(() => (this.auth.perfil() ? Math.floor(this.aPagar()) : 0));
 
-  /** Un id por canje, como lo espera confirmar_compra(). */
+
   private recompensasElegidas(): string[] {
     return Object.entries(this.canjes()).flatMap(([id, n]) => Array<string>(n).fill(id));
   }
@@ -176,9 +170,7 @@ export class PasoPago implements OnInit {
   async ngOnInit(): Promise<void> {
     this.orden.set(await this.butacasService.obtenerOrden(this.ordenId()));
 
-    // perfilListo() espera a que termine de cargar la sesión; perfil() solo
-    // podía devolver null si todavía estaba cargando, y la sección no aparecía.
-    // Además, los beneficios son del titular de la compra, no de quien esté logueado.
+
     const perfil = await this.auth.perfilListo();
     this.conCuenta.set(!!perfil && this.store.comprador()?.usuarioId === perfil.id);
 
@@ -199,7 +191,6 @@ export class PasoPago implements OnInit {
       this.cupones.set(cupones);
       this.puntos.set(puntos);
       this.recompensas.set(recompensas);
-      // El de mayor descuento viene primero: se sugiere solo, el usuario lo puede sacar.
       this.cuponId.set(cupones[0]?.id ?? null);
     }
 
@@ -207,7 +198,6 @@ export class PasoPago implements OnInit {
     this.iniciarCuentaRegresiva();
   }
 
-  /** Muestra cuánto falta para que venza la reserva. */
   private iniciarCuentaRegresiva(): void {
     const vence = new Date(this.orden().expira_en).getTime();
 
@@ -243,7 +233,7 @@ export class PasoPago implements OnInit {
         this.cuponId(),
         this.recompensasElegidas(),
       );
-      // Actualiza el aviso del header: el cupón usado ya no está disponible.
+
       if (this.cuponId()) this.cuponesService.refrescarDisponibles();
       clearInterval(this.intervalo);
       this.pagado.emit();

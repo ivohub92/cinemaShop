@@ -53,7 +53,6 @@ export class ListaProductos implements OnInit {
   async renombrarCategoria(categoria: CategoriaProducto, campo: HTMLInputElement): Promise<void> {
     const nombre = campo.value.trim();
 
-    // Vacío o sin cambios: se cancela sin tocar la base.
     if (!nombre || nombre === categoria.nombre) {
       this.editandoCategoria.set(null);
       return;

@@ -1,0 +1,58 @@
+<button
+  type="button"
+  class="campana"
+  [attr.aria-expanded]="abierta()"
+  [attr.aria-label]="noLeidas() ? 'Notificaciones, ' + noLeidas() + ' sin leer' : 'Notificaciones'"
+  (click)="alternar()"
+>
+  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+    <path
+      d="M12 3a6 6 0 0 0-6 6v3.6l-1.6 2.7A1 1 0 0 0 5.3 17h13.4a1 1 0 0 0 .9-1.7L18 12.6V9a6 6 0 0 0-6-6Zm-2.5 15.5a2.5 2.5 0 0 0 5 0Z"
+      fill="currentColor"
+    />
+  </svg>
+
+  @if (noLeidas()) {
+    <span class="campana__contador">{{ noLeidas() > 9 ? '9+' : noLeidas() }}</span>
+  }
+</button>
+
+@if (abierta()) {
+  <section class="panel" aria-label="Notificaciones">
+    <h2 class="panel__titulo">Notificaciones</h2>
+
+    @switch (permiso()) {
+      @case ('default') {
+        <p class="panel__permiso">
+          Activá las notificaciones para enterarte aunque estés en otra pestaña.
+          <button type="button" class="boton boton--discreto" (click)="activarSistema()">Activar</button>
+        </p>
+      }
+      @case ('denied') {
+        <p class="panel__permiso">
+          Bloqueaste las notificaciones de este sitio. Las vas a ver solo acá; para recibirlas,
+          habilitalas desde el candado de la barra de direcciones.
+        </p>
+      }
+    }
+
+    @if (lista().length) {
+      <ul class="lista">
+        @for (n of lista(); track n.id) {
+          <li [class.nueva]="!n.leida">
+            <a [routerLink]="n.url ?? '/'" (click)="cerrar()">
+              <strong>{{ n.titulo }}</strong>
+              <span>{{ n.mensaje }}</span>
+              <time [attr.datetime]="n.creadoEn">{{ n.creadoEn | date: 'd/M HH:mm' }}</time>
+            </a>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="panel__vacio">
+        No tenés notificaciones. Activá una alerta en una película de "Próximamente" y te avisamos
+        cuando salgan sus entradas.
+      </p>
+    }
+  </section>
+}

@@ -13,7 +13,7 @@
   color: var(--color-texto-suave);
 }
 
-// Misma grilla que la cartelera, pero con tres lugares como máximo.
+
 ol {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));

@@ -22,14 +22,13 @@ textarea {
   border-radius: 6px;
 }
 
-// Texto explicativo arriba del formulario.
+
 .nota {
   max-width: 34rem;
   color: var(--color-texto-suave);
   line-height: 1.5;
 }
 
-// Recuadro con la lista de productos del combo.
 .items {
   display: grid;
   gap: 0.5rem;
@@ -38,7 +37,7 @@ textarea {
   border-radius: 6px;
 }
 
-// Cada fila: nombre del producto a la izquierda, cantidad a la derecha.
+
 .item {
   display: flex;
   align-items: center;
@@ -53,7 +52,7 @@ textarea {
   }
 }
 
-// El checkbox "Destacar": en línea con su texto, no en grilla como los demás labels.
+
 .check {
   display: flex;
   flex-direction: row;

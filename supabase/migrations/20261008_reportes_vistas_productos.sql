@@ -1,10 +1,4 @@
--- ============================================================================
--- Reportes del admin, segunda parte. Solo admin.
--- - RF-60: películas más vistas en un período = entradas VALIDADAS en la puerta
---   (las que se usaron de verdad), por fecha de validación, en hora argentina.
--- - RF-61: productos más vendidos = unidades en órdenes pagadas, sueltos y
---   dentro de combos (por separado), por fecha de pago.
--- ============================================================================
+
 
 create or replace function reporte_mas_vistas(p_desde date, p_hasta date, p_cantidad integer default 5)
 returns json

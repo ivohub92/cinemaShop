@@ -1,11 +1,3 @@
--- ============================================================================
--- Reporte de facturación diaria y entradas vendidas (RF-58). Solo admin.
--- - Facturación = dinero cobrado: total − crédito usado (el crédito no es un
---   ingreso nuevo, ya se cobró en la compra que se canceló).
--- - Cuenta las órdenes pagadas; las canceladas no suman y se informan aparte.
--- - Los días se cuentan en hora argentina, no en UTC.
--- ============================================================================
-
 create or replace function reporte_facturacion(p_desde date, p_hasta date)
 returns json
 language plpgsql

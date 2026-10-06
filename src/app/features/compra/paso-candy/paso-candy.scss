@@ -36,7 +36,7 @@ ul {
   list-style: none;
 }
 
-// Combos: tarjetas en grilla.
+
 .tarjetas {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
@@ -70,7 +70,7 @@ ul {
   border-radius: 999px;
 }
 
-// Productos sueltos: filas.
+
 .lista {
   display: grid;
   gap: 0.5rem;
@@ -96,7 +96,6 @@ ul {
   font-weight: 600;
 }
 
-// Botones − cantidad +
 .contador {
   display: flex;
   align-items: center;
