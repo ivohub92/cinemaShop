@@ -28,13 +28,12 @@ export class AuthService {
   
 
   constructor() {
-    // Sesión guardada al abrir la app. perfilListo() espera esta carga.
     this.cargaInicial = this.supabase.client.auth.getSession().then(async ({ data }) => {
       this.usuario.set(data.session?.user ?? null);
       await this.cargarPerfil();
     });
 
-    // Ingresos y salidas posteriores.
+
     this.supabase.client.auth.onAuthStateChange((_evento, sesion) => {
       this.usuario.set(sesion?.user ?? null);
       this.cargarPerfil();

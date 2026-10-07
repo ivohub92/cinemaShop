@@ -52,9 +52,7 @@ create trigger auditoria_solo_lectura
   before update or delete on auditoria
   for each row execute function auditoria_inmutable();
 
--- ----------------------------------------------------------------------------
--- Trigger genérico para las tablas que gestiona el admin.
--- ----------------------------------------------------------------------------
+
 create or replace function auditar()
 returns trigger
 language plpgsql
@@ -149,9 +147,7 @@ create trigger perfiles_auditar
   when (old.rol is distinct from new.rol)
   execute function auditar();
 
--- ----------------------------------------------------------------------------
--- Órdenes: validación del QR (acceso y candy) y cancelaciones.
--- ----------------------------------------------------------------------------
+
 create or replace function auditar_orden()
 returns trigger
 language plpgsql

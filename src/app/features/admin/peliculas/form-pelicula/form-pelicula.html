@@ -16,10 +16,40 @@
     <input type="number" formControlName="duracionMin" min="1" max="400" />
   </label>
 
-  <label>
-    URL del póster
-    <input type="url" formControlName="posterUrl" placeholder="https://…" />
-  </label>
+  <fieldset class="poster">
+    <legend>Póster</legend>
+
+    <div class="poster__contenido">
+      <div class="poster__vista">
+        @if (formulario.controls.posterUrl.value) {
+          <img [src]="formulario.controls.posterUrl.value" alt="Vista previa del póster" />
+        } @else {
+          <span>Sin póster</span>
+        }
+      </div>
+
+      <div class="poster__opciones">
+        <label>
+          Pegá una URL
+          <input type="url" formControlName="posterUrl" placeholder="https://…" />
+        </label>
+
+        <label class="poster__subir">
+          O subí una imagen desde tu computadora
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            [disabled]="subiendoPoster()"
+            (change)="elegirPoster($event)"
+          />
+        </label>
+
+        <p class="ayuda">
+          {{ subiendoPoster() ? 'Subiendo la imagen…' : 'JPG, PNG o WebP de hasta 2 MB. Ideal vertical, 2:3 (por ejemplo 400 × 600).' }}
+        </p>
+      </div>
+    </div>
+  </fieldset>
 
   <label>
     Restricción de edad

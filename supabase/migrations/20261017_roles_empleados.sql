@@ -1,17 +1,4 @@
--- ============================================================================
--- Roles separados (RF-02, RF-06) y alta de empleados por el administrador.
--- - Cliente: compra, beneficios, reseñas, alertas, Mi cuenta, Mis películas.
--- - Empleado: solo la validación de QR. Admin: el panel y la validación.
--- - El personal (empleado y admin) no compra, no reseña y no activa alertas;
---   se controla acá, en la base, además de ocultarlo en la pantalla.
--- - El admin da de alta empleados con nombre, apellido, DNI y email. La cuenta
---   se crea con ese email; el trigger de alta le asigna el rol "empleado".
--- - Seguridad: un usuario ya NO puede editar su propia fila de perfiles. Antes
---   podía cambiarse el rol (hacerse admin) o la fecha de nacimiento llamando a
---   la API. Los cambios de rol pasan solo por funciones del admin.
--- ============================================================================
 
--- Perfiles ---------------------------------------------------------------------
 alter table perfiles add column if not exists dni text;
 create unique index if not exists perfiles_dni_unico on perfiles (dni) where dni is not null;
 
@@ -27,7 +14,6 @@ returns boolean language sql stable security definer set search_path = public as
   select exists (select 1 from perfiles where id = auth.uid() and rol = 'cliente');
 $$;
 
--- Empleados autorizados: el admin los carga antes de que exista la cuenta -------
 create table if not exists empleados_autorizados (
   email      text primary key check (email = lower(email)),
   nombre     text not null,
@@ -42,13 +28,12 @@ drop policy if exists "admin gestiona empleados autorizados" on empleados_autori
 create policy "admin gestiona empleados autorizados" on empleados_autorizados
   for all using (es_admin()) with check (es_admin());
 
--- Queda en la auditoría (la descripción toma el nombre).
+
 drop trigger if exists empleados_autorizados_auditar on empleados_autorizados;
 create trigger empleados_autorizados_auditar
   after insert or update or delete on empleados_autorizados
   for each row execute function auditar();
 
--- Alta de un perfil: empleado si fue autorizado; si no, cliente ----------------
 create or replace function crear_perfil()
 returns trigger language plpgsql security definer set search_path = public as $$
 declare
@@ -93,9 +78,7 @@ begin
 end;
 $$;
 
--- Alta de empleado (admin) -------------------------------------------------------
--- Devuelve 'pendiente' (falta crear la cuenta con ese email) o 'existente'
--- (ya había una cuenta con ese email y pasó a ser empleado).
+
 create or replace function alta_empleado(p_email text, p_nombre text, p_apellido text, p_dni text)
 returns text
 language plpgsql
@@ -150,7 +133,7 @@ begin
 end;
 $$;
 
--- Quitar el acceso de empleado (vuelve a ser una cuenta de cliente) -----------
+
 create or replace function quitar_empleado(p_perfil_id uuid)
 returns void
 language plpgsql
@@ -197,7 +180,7 @@ begin
 end;
 $$;
 
--- El personal no compra, no reseña y no activa alertas -------------------------
+
 create or replace function solo_clientes_compran()
 returns trigger
 language plpgsql

@@ -62,3 +62,47 @@ input[type='checkbox'] {
   font-size: 0.85rem;
   color: var(--color-texto-suave);
 }
+
+.poster {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+}
+
+.poster__contenido {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+// Vista previa con la proporción de un póster (2:3).
+.poster__vista {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+  background-color: var(--color-superficie);
+  border: 1px dashed var(--color-borde);
+  border-radius: 6px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.poster__opciones {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.poster__subir input[type='file'] {
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}

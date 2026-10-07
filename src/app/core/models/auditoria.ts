@@ -3,7 +3,7 @@ export interface EventoAuditoria {
   id: number;
   usuarioEmail: string | null;
   usuarioNombre: string | null;
-  usuarioRol: string | null;   // el que tenía al momento de la acción
+  usuarioRol: string | null;   
   accion: string;
   entidad: string;
   descripcion: string | null;

@@ -23,6 +23,7 @@ export class FormPelicula implements OnInit {
   readonly generosElegidos = signal<string[]>([]);
   readonly enviando = signal(false);
   readonly error = signal('');
+  readonly subiendoPoster = signal(false);
 
   readonly formulario = this.fb.nonNullable.group({
     titulo: ['', [Validators.required, Validators.minLength(2)]],
@@ -59,6 +60,26 @@ export class FormPelicula implements OnInit {
     this.generosElegidos.set(pelicula.generosIds);
   }
 
+  /** Sube la imagen elegida y pone su URL pública en el campo del póster. */
+  async elegirPoster(evento: Event): Promise<void> {
+    const entrada = evento.target as HTMLInputElement;
+    const archivo = entrada.files?.[0];
+    if (!archivo) return;
+
+    this.subiendoPoster.set(true);
+    this.error.set('');
+
+    try {
+      const url = await this.peliculasService.subirPoster(archivo);
+      this.formulario.controls.posterUrl.setValue(url);
+    } catch (e: any) {
+      this.error.set(e?.message ?? 'No pudimos subir el póster.');
+    } finally {
+      this.subiendoPoster.set(false);
+      entrada.value = '';   // permite volver a elegir el mismo archivo
+    }
+  }
+
   alternarGenero(id: string): void {
     this.generosElegidos.update((actuales) =>
       actuales.includes(id) ? actuales.filter((g) => g !== id) : [...actuales, id],
@@ -73,6 +94,11 @@ export class FormPelicula implements OnInit {
 
     if (!this.generosElegidos().length) {
       this.error.set('Elegí al menos un género.');
+      return;
+    }
+
+    if (this.subiendoPoster()) {
+      this.error.set('Esperá a que termine de subirse el póster.');
       return;
     }
 

@@ -71,7 +71,7 @@ export class SelectorFecha implements ControlValueAccessor {
     const anio = Number(this.anio());
     const cantidad = mes && anio ? new Date(anio, mes, 0).getDate() : 31;
 
-    // Prefijo 'YYYY-MM' del mes elegido, para comparar con los límites.
+
     const elegido = mes && anio ? `${anio}-${String(mes).padStart(2, '0')}` : '';
     const primero = elegido && this.limiteInferior().startsWith(elegido) ? Number(this.limiteInferior().slice(8)) : 1;
     const ultimo = elegido && this.maximo().startsWith(elegido) ? Number(this.maximo().slice(8)) : cantidad;
@@ -88,7 +88,7 @@ export class SelectorFecha implements ControlValueAccessor {
     if (parte === 'mes') this.mes.set(valor);
     if (parte === 'anio') this.anio.set(valor);
 
-    // Si al cambiar el año o el mes la parte elegida quedó fuera de los límites, se borra.
+
     if (this.mes() && !this.mesesDisponibles().includes(Number(this.mes()))) this.mes.set('');
     if (this.dia() && !this.dias().includes(Number(this.dia()))) this.dia.set('');
 

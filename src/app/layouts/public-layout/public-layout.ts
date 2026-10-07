@@ -33,7 +33,7 @@ export class PublicLayout {
 
   constructor() {
 
-    // Cupones y notificaciones son del cliente: el personal no los usa.
+
     effect(() => {
       if (this.esCliente()) {
         this.cuponesService.refrescarDisponibles();

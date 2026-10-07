@@ -60,7 +60,6 @@ export const routes: Routes = [
       import('./features/cuenta/mis-peliculas/mis-peliculas').then((m) => m.MisPeliculas),
   },
       {
-        // Dentro del layout público: el empleado tiene el header con "Salir".
         path: 'validacion',
         canMatch: [empleadoGuard],
         loadComponent: () =>
