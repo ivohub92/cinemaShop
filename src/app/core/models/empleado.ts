@@ -1,4 +1,3 @@
-/** Una persona del personal, para la pantalla de empleados del admin. */
 export interface MiembroPersonal {
   id: string;             
   email: string;

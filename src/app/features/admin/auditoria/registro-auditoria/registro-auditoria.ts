@@ -5,7 +5,7 @@ import { EventoAuditoria } from '../../../../core/models/auditoria';
 
 const POR_PAGINA = 50;
 
-/** RF-62: log de actividad. Solo lectura (RN-05): no hay acciones sobre los registros. */
+
 @Component({
   selector: 'app-registro-auditoria',
   imports: [DatePipe],
@@ -17,7 +17,6 @@ export class RegistroAuditoria implements OnInit {
 
   readonly registros = signal<EventoAuditoria[]>([]);
   readonly entidad = signal('');
-  /** Filtro por tipo de usuario que hizo la acción ('' = todos). */
   readonly rol = signal('');
 
   readonly roles: { valor: string; nombre: string }[] = [

@@ -61,7 +61,7 @@ export class FormPelicula implements OnInit {
     this.generosElegidos.set(pelicula.generosIds);
   }
 
-  /** Sube la imagen elegida y pone su URL pública en el campo del póster. */
+
   async elegirPoster(evento: Event): Promise<void> {
     const entrada = evento.target as HTMLInputElement;
     const archivo = entrada.files?.[0];

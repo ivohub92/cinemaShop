@@ -41,7 +41,7 @@ export class Ingreso {
       this.formulario.reset();
       this.ingresado.emit();
 
-      // El personal va directo a su pantalla; el cliente sigue donde estaba.
+
       if (perfil && perfil.rol !== 'cliente') {
         this.router.navigateByUrl(this.auth.inicioDe(perfil.rol));
       }

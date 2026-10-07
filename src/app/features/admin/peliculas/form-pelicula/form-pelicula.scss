@@ -78,7 +78,7 @@ input[type='checkbox'] {
   align-items: start;
 }
 
-// Vista previa con la proporción de un póster (2:3).
+
 .poster__vista {
   display: grid;
   place-items: center;
@@ -107,7 +107,6 @@ input[type='checkbox'] {
   font-size: 0.85rem;
   cursor: pointer;
 
-  // El botón nativo de "Elegir archivo", con el mismo aspecto que .boton--contorno.
   &::file-selector-button {
     margin-right: 0.75rem;
     padding: 0.45rem 1rem;
@@ -134,7 +133,7 @@ input[type='checkbox'] {
   }
 }
 
-// Que "Guardar" no se estire a todo el ancho de la grilla.
+
 .formulario > .boton {
   justify-self: start;
 }

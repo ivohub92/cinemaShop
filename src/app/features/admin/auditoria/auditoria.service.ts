@@ -2,12 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { SupabaseService } from '../../../core/supabase/supabase.service';
 import { EventoAuditoria } from '../../../core/models/auditoria';
 
-/** Log de actividad. Solo lectura: lo escriben los triggers de la base. */
+
 @Injectable({ providedIn: 'root' })
 export class AuditoriaService {
   private readonly supabase = inject(SupabaseService);
 
-  /** Página de registros, del más nuevo al más viejo. */
+
   async listar(desde: number, cantidad: number, entidad = '', rol = ''): Promise<EventoAuditoria[]> {
     let consulta = this.supabase.client
       .from('auditoria')

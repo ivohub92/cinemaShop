@@ -21,7 +21,6 @@ export class AuthService {
   readonly perfil = signal<Perfil | null>(null);
   readonly usuario = signal<User | null>(null);
 
-  /** RF-02: la app se comporta según el rol. Personal = empleado o admin. */
   readonly rol = computed<RolUsuario | null>(() => this.perfil()?.rol ?? null);
   readonly esCliente = computed(() => this.rol() === 'cliente');
   readonly esPersonal = computed(() => this.rol() === 'empleado' || this.rol() === 'admin');
@@ -88,7 +87,6 @@ export class AuthService {
     if (error) throw error;
   }
 
-  /** Devuelve el perfil ya cargado, para decidir a qué pantalla ir según el rol. */
   async ingresar(email: string, password: string): Promise<Perfil | null> {
     const { data, error } = await this.supabase.client.auth.signInWithPassword({ email, password });
     if (error) throw error;
@@ -98,7 +96,7 @@ export class AuthService {
     return this.perfil();
   }
 
-  /** Pantalla de inicio de cada rol. */
+
   inicioDe(rol: RolUsuario | null): string {
     if (rol === 'admin') return '/admin';
     if (rol === 'empleado') return '/validacion';

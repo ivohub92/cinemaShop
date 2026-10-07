@@ -79,10 +79,7 @@ export class PeliculasService {
     });
   }
 
-  /**
-   * Sube un póster desde la computadora al bucket "posters" de Supabase Storage
-   * y devuelve su URL pública, que se guarda en poster_url como un link pegado.
-   */
+
   async subirPoster(archivo: File): Promise<string> {
     const tipos = ['image/jpeg', 'image/png', 'image/webp'];
     if (!tipos.includes(archivo.type)) {
@@ -93,7 +90,7 @@ export class PeliculasService {
       throw new Error('El póster no puede pesar más de 2 MB.');
     }
 
-    // Nombre único: dos pósters con el mismo nombre de archivo no se pisan.
+
     const extension = archivo.name.split('.').pop()?.toLowerCase() || 'jpg';
     const ruta = `${crypto.randomUUID()}.${extension}`;
 

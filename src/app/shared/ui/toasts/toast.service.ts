@@ -8,7 +8,7 @@ export interface Toast {
   tipo: TipoToast;
 }
 
-/** Avisos flotantes de toda la app. Cualquier componente los muestra con mostrar(). */
+
 @Injectable({ providedIn: 'root' })
 export class ToastService {
   readonly toasts = signal<Toast[]>([]);

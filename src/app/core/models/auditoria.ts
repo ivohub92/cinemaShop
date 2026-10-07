@@ -1,4 +1,4 @@
-/** Un registro del log de actividad (RF-62, RN-05). */
+
 export interface EventoAuditoria {
   id: number;
   usuarioEmail: string | null;

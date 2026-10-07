@@ -1,7 +1,7 @@
 import { Component, computed, forwardRef, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-/** 'YYYY-MM-DD' de hoy en hora local (toISOString usaría UTC). */
+
 function hoy(): string {
   return new Date().toLocaleDateString('sv-SE');
 }
@@ -34,10 +34,9 @@ export class SelectorFecha implements ControlValueAccessor {
   protected readonly String = String;
 
 
-  /** Solo fechas de hoy en adelante (atajo de minimo = hoy). */
   readonly futuro = input(false);
 
-  /** Fecha mínima y máxima que se pueden elegir ('YYYY-MM-DD'). Vacío = sin límite. */
+
   readonly minimo = input('');
   readonly maximo = input('');
 
@@ -57,7 +56,7 @@ export class SelectorFecha implements ControlValueAccessor {
     return Array.from({ length: 100 }, (_, i) => ultimo - i);
   });
 
-  /** Meses del año elegido que caen dentro de los límites (1 = enero). */
+
   readonly mesesDisponibles = computed(() => {
     const anio = this.anio();
     let primero = 1, ultimo = 12;

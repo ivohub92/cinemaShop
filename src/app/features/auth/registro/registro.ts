@@ -9,7 +9,7 @@ import { EMAIL_COMPLETO } from '../../../shared/forms/validadores';
 const EDAD_MINIMA = 13;
 const EDAD_MAXIMA = 120;
 
-/** Edad cumplida a hoy a partir de 'YYYY-MM-DD'. */
+
 function edadDe(fecha: string): number {
   const [a, m, d] = fecha.split('-').map(Number);
   const hoy = new Date();
@@ -17,7 +17,7 @@ function edadDe(fecha: string): number {
   return hoy.getFullYear() - a - (cumplio ? 0 : 1);
 }
 
-/** Para registrarse hay que tener entre 13 y 120 años (la base controla lo mismo). */
+
 function edadValida(control: AbstractControl): ValidationErrors | null {
   if (!control.value) return null;
   const edad = edadDe(control.value);
@@ -38,7 +38,7 @@ export class Registro {
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
-  /** Tope del selector de fecha: no se puede nacer en el futuro. */
+
   readonly hoy = new Date().toLocaleDateString('sv-SE');
 
   readonly enviando = signal(false);
@@ -72,7 +72,7 @@ export class Registro {
       await this.auth.registrar(this.formulario.getRawValue());
       this.router.navigate(['/cartelera']);
     } catch (e: any) {
-      // Si la base rechaza el alta (por ejemplo, la edad), Supabase devuelve un mensaje genérico.
+
       const mensaje = e?.message?.includes('Database error')
         ? 'No pudimos crear tu cuenta: revisá la fecha de nacimiento y los días de vacaciones.'
         : (e?.message ?? 'No pudimos crear tu cuenta. Probá de nuevo.');
@@ -83,7 +83,7 @@ export class Registro {
     }
   }
 
-  /** Mensajes de lo que falta corregir: van al toast y debajo de cada campo. */
+
   errores(): string[] {
     const c = this.formulario.controls;
     const mensajes: string[] = [];
@@ -100,7 +100,7 @@ export class Registro {
     return mensajes;
   }
 
-  /** Bloquea el signo menos y la notación científica en el campo de vacaciones. */
+
   soloEnteros(evento: KeyboardEvent): void {
     if (['-', '+', 'e', 'E', '.', ','].includes(evento.key)) evento.preventDefault();
   }

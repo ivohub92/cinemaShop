@@ -57,7 +57,7 @@ export class GestionFunciones implements OnInit {
     return `${String(hora).padStart(2, '0')}:00`;
   });
 
-  /** 'YYYY-MM-DD' de hoy en hora local: las funciones solo se programan a futuro. */
+
   readonly hoy = new Date().toLocaleDateString('sv-SE');
 
   readonly formulario = this.fb.nonNullable.group({

@@ -5,10 +5,10 @@ import { MiembroPersonal } from '../../../../core/models/empleado';
 import { ToastService } from '../../../../shared/ui/toasts/toast.service';
 import { EMAIL_COMPLETO } from '../../../../shared/forms/validadores';
 
-/** Letras (con tildes y ñ), espacios, apóstrofo y guion: "María José", "D'Angelo", "Pérez-Gil". */
+
 const SOLO_LETRAS = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]+$/;
 
-/** DNI argentino: 7 u 8 números sin puntos, que no empiece con 0 (1.000.000 a 99.999.999). */
+
 function dniValido(control: AbstractControl): ValidationErrors | null {
   const dni = String(control.value ?? '');
   if (!dni) return null;
@@ -18,7 +18,6 @@ function dniValido(control: AbstractControl): ValidationErrors | null {
   return null;
 }
 
-/** RF-06: el admin crea las cuentas de empleado y les quita el acceso. */
 @Component({
   selector: 'app-gestion-empleados',
   imports: [ReactiveFormsModule],
@@ -59,7 +58,7 @@ export class GestionEmpleados implements OnInit {
     }
   }
 
-  /** El DNI ya es de otro empleado (activo o con alta pendiente). La base controla lo mismo. */
+
   private dniRepetido(control: AbstractControl): ValidationErrors | null {
     const dni = control.value;
     const email = this.formulario?.controls.email.value.trim().toLowerCase() ?? '';
@@ -67,7 +66,7 @@ export class GestionEmpleados implements OnInit {
     return dni && usado ? { dniRepetido: true } : null;
   }
 
-  /** Deja solo los números mientras se escribe o se pega ("30.111.222" → "30111222"). */
+
   limpiarDni(evento: Event): void {
     const entrada = evento.target as HTMLInputElement;
     const limpio = entrada.value.replace(/\D/g, '').slice(0, 8);
@@ -77,7 +76,7 @@ export class GestionEmpleados implements OnInit {
     }
   }
 
-  /** Mensaje del error del DNI, para debajo del campo y para el toast. */
+
   errorDni(): string {
     const dni = this.formulario.controls.dni;
     if (dni.hasError('required')) return 'Ingresá el DNI.';

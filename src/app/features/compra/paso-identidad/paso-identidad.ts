@@ -6,7 +6,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { SelectorFecha } from '../../../shared/forms/selector-fecha/selector-fecha';
 import { EMAIL_COMPLETO } from '../../../shared/forms/validadores';
 
-/** El email y su repetición tienen que coincidir (evita errores de tipeo). */
+
 function emailsIguales(grupo: AbstractControl): ValidationErrors | null {
   const email = String(grupo.get('email')?.value ?? '').trim().toLowerCase();
   const repetido = String(grupo.get('emailRepetido')?.value ?? '').trim().toLowerCase();
@@ -33,7 +33,7 @@ export class PasoIdentidad {
   readonly error = signal('');
   readonly enviando = signal(false);
 
-  /** Tope del selector de fecha: no se puede nacer en el futuro. */
+
   readonly hoy = new Date().toLocaleDateString('sv-SE');
 
   readonly formInvitado = this.fb.nonNullable.group(
@@ -68,7 +68,7 @@ export class PasoIdentidad {
       return;
     }
 
-    // Con una sesión abierta no se compra como invitado: la base usaría la cuenta.
+
     if (this.auth.usuario()) {
       this.error.set('Hay una sesión iniciada. Para comprar como invitado, cerrá la sesión primero.');
       return;

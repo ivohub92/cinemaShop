@@ -48,7 +48,7 @@ export class FuncionesService {
     for (const fecha of this.fechasDe(datos.desde, datos.hasta, datos.diasSemana)) {
       const inicio = new Date(`${fecha}T${datos.hora}:00`);
 
-      // Hoy, a un horario que ya pasó: ni se intenta (la base también lo rechaza).
+
       if (inicio.getTime() <= Date.now()) {
         conflictos.push(`${fecha}: ese horario ya pasó`);
         continue;
