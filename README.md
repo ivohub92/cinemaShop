@@ -1,5 +1,7 @@
 # cineShop
 
+Alumno; Ramunda Iván Emanuel
+
 PWA de venta de entradas para un complejo de cines: cartelera, compra con mapa de butacas en tiempo real, candy bar, beneficios para clientes registrados, validación con QR y un panel de administración con reportes y auditoría.
 
 Trabajo práctico final de Programación IV (UTN).
