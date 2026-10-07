@@ -1,10 +1,16 @@
 # cineShop
 
-PWA de venta de entradas para un complejo de cines: cartelera, compra con mapa de butacas en tiempo real, candy bar, beneficios para clientes registrados, validación con QR y un panel de administración con reportes y auditoría.
+Trabajo práctico final de Programación IV (UTN). Docente: Morelli Augusto - Equipo de cátedra: Ledesma Juan Pablo
 
-Trabajo práctico final de Programación IV (UTN).
+Alumno: Iván Ramunda
 
 **Demo:** https://cineshop-9a183.web.app
+
+
+PWA de venta de entradas para un complejo de cines: cartelera, compra con mapa de butacas en tiempo real, candy bar, beneficios para clientes registrados, validación con QR y un panel de administración con reportes y auditoría.
+
+
+
 
 ---
 
@@ -64,55 +70,6 @@ supabase/migrations/   migraciones SQL (en orden) y seed.sql con datos de demo
 supabase/limpiar_demo.sql   vacía los datos para armar la demo de cero
 ```
 
-## Cómo correrlo
-
-**Requisitos:** Node.js 22.22.3 o superior (o 24.15+) y una cuenta de Supabase.
-
-```bash
-git clone https://github.com/ivohub92/cinemaShop.git
-cd cinemaShop
-npm install
-npm start          # http://localhost:4200
-```
-
-La app ya apunta al proyecto de Supabase de la demo (`src/environments/`). La clave que figura ahí es la anónima, pública por diseño: la seguridad la da RLS. Para usar otro proyecto, reemplazá `supabaseUrl` y `supabaseAnonKey` en `environment.ts` y `environment.development.ts`.
-
-## Base de datos
-
-1. Crear un proyecto en Supabase.
-2. Correr las migraciones de `supabase/migrations/` **en orden alfabético** y después `seed.sql`. Desde el SQL Editor, de a un archivo, o con `psql` y la cadena de conexión del proyecto:
-
-   ```bash
-   for f in supabase/migrations/2026*.sql supabase/migrations/seed.sql; do
-     psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$f" || break
-   done
-   ```
-
-   Las migraciones activan `btree_gist` y `pg_cron`, agregan la tabla de notificaciones a Realtime y crean el bucket `posters` de Storage. Usan también `pgcrypto`, que Supabase trae activada en todos los proyectos.
-3. **Primer administrador:** en Supabase, *Authentication → Users → Add user* (con *Auto Confirm User*), y después en el SQL Editor:
-
-   ```sql
-   update perfiles set rol = 'admin', nombre = 'Nombre', apellido = 'Apellido'
-    where email = 'admin@ejemplo.com';
-   delete from cupones where tipo = 'bienvenida'
-    and usuario_id = (select id from perfiles where email = 'admin@ejemplo.com');
-   ```
-
-   Los **empleados** los crea el administrador desde la app (*Admin → Empleados*: nombre, apellido, DNI, email y contraseña inicial). Los **clientes** se registran solos.
-4. **Authentication → URL Configuration:** Site URL = la URL publicada; en Redirect URLs, esa URL y `http://localhost:4200`.
-
-El seed carga 3 salas (532 butacas cada una), 9 películas (en cartel, en preventa y próximas), funciones para los próximos 7 días, combos, un cupón para mayores de 50 y recompensas. Usa fechas relativas al día en que se corre y no duplica datos si se corre de nuevo.
-
-Para volver a armar la demo desde cero: correr `supabase/limpiar_demo.sql` (borra compras, catálogo y auditoría; conserva usuarios y roles) y después `seed.sql`.
-
-## Deploy
-
-```bash
-npm run build
-firebase deploy --only hosting
-```
-
-`firebase.json` publica `dist/tp-final-programacion/browser` y redirige todas las rutas a `index.html`.
 
 ## Decisiones principales
 
