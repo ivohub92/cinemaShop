@@ -62,8 +62,12 @@
 
   <label>
     Fecha de estreno
-    <app-selector-fecha formControlName="fechaEstreno" />
+    <app-selector-fecha formControlName="fechaEstreno" [minimo]="minimoEstreno()" />
   </label>
+
+  @if (formulario.controls.fechaEstreno.touched && formulario.controls.fechaEstreno.hasError('estrenoPasado')) {
+    <p class="error">La fecha de estreno no puede ser anterior a hoy.</p>
+  }
 
   <fieldset class="preventa">
     <legend>Preventa</legend>

@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, signal, input } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, inject, OnInit, signal, input } from '@angular/core';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PeliculasService } from '../../../peliculas/peliculas.service';
 import { SelectorFecha } from '../../../../shared/forms/selector-fecha/selector-fecha';
@@ -26,13 +26,24 @@ export class FormPelicula implements OnInit {
   readonly error = signal('');
   readonly subiendoPoster = signal(false);
 
+  readonly hoy = new Date().toLocaleDateString('sv-SE');
+
+  /** Fecha de estreno guardada, al editar. Si ya pasó, se puede conservar pero no elegir otra pasada. */
+  private readonly estrenoOriginal = signal('');
+
+  /** Desde hoy; al editar una película ya estrenada, desde su estreno para que el selector la muestre. */
+  readonly minimoEstreno = computed(() => {
+    const original = this.estrenoOriginal();
+    return original && original < this.hoy ? original : this.hoy;
+  });
+
   readonly formulario = this.fb.nonNullable.group({
     titulo: ['', [Validators.required, Validators.minLength(2)]],
     sinopsis: ['', Validators.required],
     duracionMin: [90, [Validators.required, Validators.min(1), Validators.max(400)]],
     posterUrl: [''],
     restriccionEdad: [0, Validators.required],
-    fechaEstreno: ['', Validators.required],
+    fechaEstreno: ['', [Validators.required, (c: AbstractControl) => this.estrenoValido(c)]],
 
     preventa: [false],
     precioPreventa: [5000, [Validators.min(0)]],
@@ -48,6 +59,7 @@ export class FormPelicula implements OnInit {
     if (!pelicula) return;
 
     this.editando.set(true);
+    this.estrenoOriginal.set(pelicula.fechaEstreno);
     this.formulario.patchValue({
       titulo: pelicula.titulo,
       sinopsis: pelicula.sinopsis,
@@ -61,6 +73,13 @@ export class FormPelicula implements OnInit {
     this.generosElegidos.set(pelicula.generosIds);
   }
 
+
+  /** Estreno de hoy en adelante. Al editar, se acepta la fecha que ya tenía aunque haya pasado. */
+  private estrenoValido(control: AbstractControl): ValidationErrors | null {
+    const fecha = control.value;
+    if (!fecha || fecha >= this.hoy || fecha === this.estrenoOriginal()) return null;
+    return { estrenoPasado: true };
+  }
 
   async elegirPoster(evento: Event): Promise<void> {
     const entrada = evento.target as HTMLInputElement;
