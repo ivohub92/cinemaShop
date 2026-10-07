@@ -4,8 +4,10 @@
   <label>
     Correo electrónico
     <input type="email" formControlName="email" autocomplete="email" />
-    @if (formulario.controls.email.touched && formulario.controls.email.invalid) {
-      <small class="error">Ingresá un correo válido.</small>
+    @if (formulario.controls.email.touched && formulario.controls.email.hasError('required')) {
+      <small class="error">Ingresá tu correo.</small>
+    } @else if (formulario.controls.email.touched && formulario.controls.email.hasError('pattern')) {
+      <small class="error">El correo no es válido. Tiene que ser como nombre&#64;dominio.com</small>
     }
   </label>
 

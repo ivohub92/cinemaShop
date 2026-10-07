@@ -1,8 +1,22 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { EmpleadosService } from '../empleados.service';
 import { MiembroPersonal } from '../../../../core/models/empleado';
 import { ToastService } from '../../../../shared/ui/toasts/toast.service';
+import { EMAIL_COMPLETO } from '../../../../shared/forms/validadores';
+
+/** Letras (con tildes y ñ), espacios, apóstrofo y guion: "María José", "D'Angelo", "Pérez-Gil". */
+const SOLO_LETRAS = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]+$/;
+
+/** DNI argentino: 7 u 8 números sin puntos, que no empiece con 0 (1.000.000 a 99.999.999). */
+function dniValido(control: AbstractControl): ValidationErrors | null {
+  const dni = String(control.value ?? '');
+  if (!dni) return null;
+  if (!/^\d+$/.test(dni)) return { dniFormato: true };
+  if (dni.length < 7 || dni.length > 8) return { dniLargo: true };
+  if (dni.startsWith('0')) return { dniCero: true };
+  return null;
+}
 
 /** RF-06: el admin crea las cuentas de empleado y les quita el acceso. */
 @Component({
@@ -23,10 +37,10 @@ export class GestionEmpleados implements OnInit {
   readonly soloEmpleados = computed(() => this.personal().filter((p) => p.rol === 'empleado'));
 
   readonly formulario = this.fb.nonNullable.group({
-    nombre: ['', [Validators.required, Validators.minLength(2)]],
-    apellido: ['', [Validators.required, Validators.minLength(2)]],
-    dni: ['', [Validators.required, Validators.pattern(/^\d{7,8}$/)]],
-    email: ['', [Validators.required, Validators.email]],
+    nombre: ['', [Validators.required, Validators.minLength(2), Validators.pattern(SOLO_LETRAS)]],
+    apellido: ['', [Validators.required, Validators.minLength(2), Validators.pattern(SOLO_LETRAS)]],
+    dni: ['', [Validators.required, dniValido, (c: AbstractControl) => this.dniRepetido(c)]],
+    email: ['', [Validators.required, Validators.pattern(EMAIL_COMPLETO)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
@@ -37,6 +51,7 @@ export class GestionEmpleados implements OnInit {
   private async cargar(): Promise<void> {
     try {
       this.personal.set(await this.empleados.listar());
+      this.formulario.controls.dni.updateValueAndValidity();
     } catch {
       this.toast.error('No pudimos cargar el personal.');
     } finally {
@@ -44,10 +59,39 @@ export class GestionEmpleados implements OnInit {
     }
   }
 
+  /** El DNI ya es de otro empleado (activo o con alta pendiente). La base controla lo mismo. */
+  private dniRepetido(control: AbstractControl): ValidationErrors | null {
+    const dni = control.value;
+    const email = this.formulario?.controls.email.value.trim().toLowerCase() ?? '';
+    const usado = this.personal().some((p) => p.dni === dni && p.email.toLowerCase() !== email);
+    return dni && usado ? { dniRepetido: true } : null;
+  }
+
+  /** Deja solo los números mientras se escribe o se pega ("30.111.222" → "30111222"). */
+  limpiarDni(evento: Event): void {
+    const entrada = evento.target as HTMLInputElement;
+    const limpio = entrada.value.replace(/\D/g, '').slice(0, 8);
+    if (limpio !== entrada.value) {
+      entrada.value = limpio;
+      this.formulario.controls.dni.setValue(limpio);
+    }
+  }
+
+  /** Mensaje del error del DNI, para debajo del campo y para el toast. */
+  errorDni(): string {
+    const dni = this.formulario.controls.dni;
+    if (dni.hasError('required')) return 'Ingresá el DNI.';
+    if (dni.hasError('dniFormato')) return 'El DNI lleva solo números, sin puntos ni espacios.';
+    if (dni.hasError('dniLargo')) return 'El DNI tiene que tener 7 u 8 números.';
+    if (dni.hasError('dniCero')) return 'El DNI no puede empezar con 0.';
+    if (dni.hasError('dniRepetido')) return 'Ya hay un empleado con ese DNI.';
+    return '';
+  }
+
   async crear(): Promise<void> {
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
-      this.toast.error('Revisá los datos del empleado.');
+      this.toast.error(this.errorDni() || 'Revisá los datos del empleado.');
       return;
     }
 

@@ -33,7 +33,17 @@
     <form [formGroup]="formIngreso" (ngSubmit)="ingresar()" class="formulario">
       <label>
         Correo electrónico
-        <input type="email" formControlName="email" autocomplete="email" />
+        <input
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          [class.invalido]="formIngreso.controls.email.touched && formIngreso.controls.email.invalid"
+        />
+        @if (formIngreso.controls.email.touched && formIngreso.controls.email.hasError('required')) {
+      <small class="error">Ingresá tu correo.</small>
+    } @else if (formIngreso.controls.email.touched && formIngreso.controls.email.hasError('pattern')) {
+      <small class="error">El correo no es válido. Tiene que ser como nombre&#64;dominio.com</small>
+    }
       </label>
 
       <label>
@@ -60,15 +70,50 @@
     <form [formGroup]="formInvitado" (ngSubmit)="continuarComoInvitado()" class="formulario">
       <label>
         Correo electrónico
-        <input type="email" formControlName="email" autocomplete="email" />
-        <small class="ayuda">Te enviamos las entradas a esta dirección.</small>
+        <input
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          [class.invalido]="formInvitado.controls.email.touched && formInvitado.controls.email.invalid"
+        />
+        @if (formInvitado.controls.email.touched && formInvitado.controls.email.hasError('required')) {
+          <small class="error">Ingresá tu correo: te enviamos las entradas ahí.</small>
+        } @else if (formInvitado.controls.email.touched && formInvitado.controls.email.hasError('pattern')) {
+          <small class="error">El correo no es válido. Tiene que ser como nombre&#64;dominio.com</small>
+        } @else {
+          <small class="ayuda">Te enviamos las entradas a esta dirección.</small>
+        }
+      </label>
+
+      <label>
+        Repetí el correo
+        <input
+          type="email"
+          formControlName="emailRepetido"
+          autocomplete="off"
+          (paste)="$event.preventDefault()"
+          [class.invalido]="formInvitado.controls.emailRepetido.touched && (formInvitado.controls.emailRepetido.invalid || formInvitado.hasError('emailsDistintos'))"
+        />
+        @if (formInvitado.controls.emailRepetido.touched && formInvitado.controls.emailRepetido.hasError('required')) {
+          <small class="error">Repetí el correo para confirmarlo.</small>
+        } @else if (formInvitado.controls.emailRepetido.touched && formInvitado.hasError('emailsDistintos')) {
+          <small class="error">Los correos no coinciden.</small>
+        }
       </label>
 
       <label>
         Fecha de nacimiento
         <app-selector-fecha formControlName="fechaNacimiento" [maximo]="hoy" />
-        <small class="ayuda">La necesitamos para verificar la clasificación de la película.</small>
+        @if (formInvitado.controls.fechaNacimiento.touched && formInvitado.controls.fechaNacimiento.invalid) {
+          <small class="error">Elegí tu fecha de nacimiento.</small>
+        } @else {
+          <small class="ayuda">La necesitamos para verificar la clasificación de la película.</small>
+        }
       </label>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
 
       <div class="acciones">
         <button type="submit" class="boton">Continuar</button>

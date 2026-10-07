@@ -1,9 +1,17 @@
 import { Component, inject, output, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CompraStore } from '../compra/compra.store';
 import { AuthService } from '../../../core/auth/auth.service';
 import { SelectorFecha } from '../../../shared/forms/selector-fecha/selector-fecha';
+import { EMAIL_COMPLETO } from '../../../shared/forms/validadores';
+
+/** El email y su repetición tienen que coincidir (evita errores de tipeo). */
+function emailsIguales(grupo: AbstractControl): ValidationErrors | null {
+  const email = String(grupo.get('email')?.value ?? '').trim().toLowerCase();
+  const repetido = String(grupo.get('emailRepetido')?.value ?? '').trim().toLowerCase();
+  return email && repetido && email !== repetido ? { emailsDistintos: true } : null;
+}
 
 @Component({
   selector: 'app-paso-identidad',
@@ -28,13 +36,17 @@ export class PasoIdentidad {
   /** Tope del selector de fecha: no se puede nacer en el futuro. */
   readonly hoy = new Date().toLocaleDateString('sv-SE');
 
-  readonly formInvitado = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    fechaNacimiento: ['', Validators.required],
-  });
+  readonly formInvitado = this.fb.nonNullable.group(
+    {
+      email: ['', [Validators.required, Validators.pattern(EMAIL_COMPLETO)]],
+      emailRepetido: ['', Validators.required],
+      fechaNacimiento: ['', Validators.required],
+    },
+    { validators: emailsIguales },
+  );
 
   readonly formIngreso = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.pattern(EMAIL_COMPLETO)]],
     password: ['', Validators.required],
   });
 
@@ -49,13 +61,21 @@ export class PasoIdentidad {
   }
 
   continuarComoInvitado(): void {
+    this.error.set('');
+
     if (this.formInvitado.invalid) {
       this.formInvitado.markAllAsTouched();
       return;
     }
 
+    // Con una sesión abierta no se compra como invitado: la base usaría la cuenta.
+    if (this.auth.usuario()) {
+      this.error.set('Hay una sesión iniciada. Para comprar como invitado, cerrá la sesión primero.');
+      return;
+    }
+
     const { email, fechaNacimiento } = this.formInvitado.getRawValue();
-    this.store.continuarComoInvitado(email, fechaNacimiento);
+    this.store.continuarComoInvitado(email.trim().toLowerCase(), fechaNacimiento);
     this.listo.emit();
   }
 

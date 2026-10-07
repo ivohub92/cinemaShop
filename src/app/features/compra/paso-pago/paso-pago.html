@@ -167,7 +167,4 @@
     {{ pagando() ? 'Procesando…' : aPagar() > 0 ? 'Pagar ' + (aPagar() | currency: 'ARS' : 'symbol-narrow') : 'Confirmar sin pago' }}
   </button>
 
-  <p class="nota">
-    El pago está simulado: este trabajo práctico no integra una pasarela real.
-  </p>
 }

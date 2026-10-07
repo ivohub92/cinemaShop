@@ -54,3 +54,7 @@ input {
   display: flex;
   gap: 0.75rem;
 }
+// Campo con error: borde rojo además del mensaje.
+input.invalido {
+  border-color: #e38b8b;
+}

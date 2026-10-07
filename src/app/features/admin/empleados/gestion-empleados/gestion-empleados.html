@@ -13,7 +13,7 @@
         Nombre
         <input type="text" formControlName="nombre" autocomplete="off" />
         @if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) {
-          <small class="error">Al menos 2 letras.</small>
+          <small class="error">Al menos 2 letras, sin números.</small>
         }
       </label>
 
@@ -21,25 +21,35 @@
         Apellido
         <input type="text" formControlName="apellido" autocomplete="off" />
         @if (formulario.controls.apellido.touched && formulario.controls.apellido.invalid) {
-          <small class="error">Al menos 2 letras.</small>
+          <small class="error">Al menos 2 letras, sin números.</small>
         }
       </label>
     </div>
 
     <label>
       DNI
-      <input type="text" formControlName="dni" inputmode="numeric" maxlength="8" placeholder="Sin puntos" autocomplete="off" />
-      @if (formulario.controls.dni.touched && formulario.controls.dni.invalid) {
-        <small class="error">7 u 8 números, sin puntos.</small>
+      <input
+        type="text"
+        formControlName="dni"
+        inputmode="numeric"
+        maxlength="10"
+        placeholder="Solo números, por ejemplo 30111222"
+        autocomplete="off"
+        (input)="limpiarDni($event)"
+      />
+      @if ((formulario.controls.dni.touched || formulario.controls.dni.dirty) && formulario.controls.dni.invalid) {
+        <small class="error">{{ errorDni() }}</small>
       }
     </label>
 
     <label>
       Email con el que ingresa
       <input type="email" formControlName="email" autocomplete="off" />
-      @if (formulario.controls.email.touched && formulario.controls.email.invalid) {
-        <small class="error">Ingresá un email válido.</small>
-      }
+      @if (formulario.controls.email.touched && formulario.controls.email.hasError('required')) {
+      <small class="error">Ingresá tu correo.</small>
+    } @else if (formulario.controls.email.touched && formulario.controls.email.hasError('pattern')) {
+      <small class="error">El correo no es válido. Tiene que ser como nombre&#64;dominio.com</small>
+    }
     </label>
 
     <label>

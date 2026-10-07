@@ -3,11 +3,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PeliculasService } from '../../../peliculas/peliculas.service';
 import { SelectorFecha } from '../../../../shared/forms/selector-fecha/selector-fecha';
+import { ImagenRespaldo } from '../../../../shared/directives/imagen-respaldo';
 
 
 @Component({
   selector: 'app-form-pelicula',
-  imports: [ReactiveFormsModule, SelectorFecha],
+  imports: [ReactiveFormsModule, SelectorFecha, ImagenRespaldo],
   templateUrl: './form-pelicula.html',
   styleUrl: './form-pelicula.scss',
 })

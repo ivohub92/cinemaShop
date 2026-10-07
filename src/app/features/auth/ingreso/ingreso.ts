@@ -2,6 +2,7 @@ import { Component, inject, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
+import { EMAIL_COMPLETO } from '../../../shared/forms/validadores';
 
 @Component({
   selector: 'app-ingreso',
@@ -21,7 +22,7 @@ export class Ingreso {
   readonly error = signal('');
 
   readonly formulario = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.pattern(EMAIL_COMPLETO)]],
     password: ['', Validators.required],
   });
 

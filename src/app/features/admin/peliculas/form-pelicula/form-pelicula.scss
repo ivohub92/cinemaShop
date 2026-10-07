@@ -105,4 +105,36 @@ input[type='checkbox'] {
 .poster__subir input[type='file'] {
   padding: 0.5rem;
   font-size: 0.85rem;
+  cursor: pointer;
+
+  // El botón nativo de "Elegir archivo", con el mismo aspecto que .boton--contorno.
+  &::file-selector-button {
+    margin-right: 0.75rem;
+    padding: 0.45rem 1rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--color-destacado);
+    background-color: transparent;
+    border: 1px solid var(--color-destacado);
+    border-radius: 6px;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+  }
+
+  &:not(:disabled)::file-selector-button:hover {
+    color: var(--color-fondo);
+    background-color: var(--color-destacado);
+  }
+
+  &:disabled::file-selector-button {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Que "Guardar" no se estire a todo el ancho de la grilla.
+.formulario > .boton {
+  justify-self: start;
 }

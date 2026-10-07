@@ -53,7 +53,15 @@ export class Compra implements OnInit {
       const usuario = this.auth.usuario();
       const comprador = this.store.comprador();
 
+      // Se cerró la sesión de quien compraba con su cuenta: vuelve a elegir identidad.
       if (!usuario && comprador?.usuarioId) {
+        this.store.reiniciar();
+        this.eligiendoCandy.set(false);
+      }
+
+      // Se inició una sesión a mitad de una compra como invitado (por ejemplo desde
+      // el header): la compra ya no es de invitado, se vuelve a elegir identidad.
+      if (usuario && comprador && !comprador.usuarioId) {
         this.store.reiniciar();
         this.eligiendoCandy.set(false);
       }
@@ -79,6 +87,9 @@ export class Compra implements OnInit {
     }
 
 
+    // Esperar el perfil: si la sesión guardada todavía no cargó, la compra no
+    // puede arrancar como si fuera de invitado.
+    await this.auth.perfilListo();
     this.store.tomarDeLaSesion();
     this.cargando.set(false);
   }

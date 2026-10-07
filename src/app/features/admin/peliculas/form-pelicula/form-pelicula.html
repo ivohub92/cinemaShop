@@ -1,4 +1,4 @@
-<h1>Nueva película</h1>
+<h1>{{ editando() ? 'Editar película' : 'Nueva película' }}</h1>
 
 <form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario">
   <label>
@@ -22,7 +22,7 @@
     <div class="poster__contenido">
       <div class="poster__vista">
         @if (formulario.controls.posterUrl.value) {
-          <img [src]="formulario.controls.posterUrl.value" alt="Vista previa del póster" />
+          <img [src]="formulario.controls.posterUrl.value" alt="Vista previa del póster" appImagenRespaldo />
         } @else {
           <span>Sin póster</span>
         }
@@ -105,7 +105,7 @@
     <p class="error">{{ error() }}</p>
   }
 
-  <button type="submit" [disabled]="enviando()">
-    {{ enviando() ? 'Guardando…' : 'Guardar película' }}
+  <button type="submit" class="boton" [disabled]="enviando() || subiendoPoster()">
+    {{ enviando() ? 'Guardando…' : (editando() ? 'Guardar cambios' : 'Guardar película') }}
   </button>
 </form>

@@ -1,17 +1,14 @@
-import { Directive, ElementRef, inject, input } from '@angular/core';
+import { Directive, effect, ElementRef, inject, input } from '@angular/core';
 
-const POSTER_RESPALDO =
-  'data:image/svg+xml;charset=utf-8,' +
-  encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600">
-      <rect width="400" height="600" fill="#271a45"/>
-      <rect x="24" y="24" width="352" height="552" fill="none" stroke="#3d2d66" stroke-width="2"/>
-      <text x="200" y="306" fill="#a99cc9" font-family="sans-serif" font-size="22"
-            text-anchor="middle">Poster no disponible</text>
-    </svg>`,
-  );
+/** Imagen de respaldo: archivo en public/, la sirve la app y la cachea el service worker. */
+export const POSTER_RESPALDO = 'img/poster-no-disponible.svg';
 
-
+/**
+ * Muestra una imagen de respaldo si la original no carga (link roto, sin
+ * conexión) o si no hay imagen (película sin póster). Se usa igual que un img
+ * común: <img [src]="url" appImagenRespaldo />. La directiva recibe el src y
+ * decide qué mostrar. Otra imagen de respaldo: appImagenRespaldo="otra.svg".
+ */
 @Directive({
   selector: 'img[appImagenRespaldo]',
   host: {
@@ -19,13 +16,28 @@ const POSTER_RESPALDO =
   },
 })
 export class ImagenRespaldo {
+  readonly src = input<string | null | undefined>('');
   readonly appImagenRespaldo = input<string>('');
 
   private readonly imagen = inject<ElementRef<HTMLImageElement>>(ElementRef);
   private respaldoAplicado = false;
 
-  usarRespaldo(): void {
+  constructor() {
+    // Cada vez que cambia la URL se intenta de nuevo; vacía = respaldo directo.
+    effect(() => {
+      const url = this.src();
+      this.respaldoAplicado = false;
 
+      if (url) {
+        this.imagen.nativeElement.src = url;
+      } else {
+        this.usarRespaldo();
+      }
+    });
+  }
+
+  usarRespaldo(): void {
+    // Una sola vez por URL: si también fallara el respaldo, no queda en un bucle de errores.
     if (this.respaldoAplicado) return;
     this.respaldoAplicado = true;
     this.imagen.nativeElement.src = this.appImagenRespaldo() || POSTER_RESPALDO;

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" role="img" aria-label="Póster no disponible">
+  <rect width="400" height="600" fill="#271a45"/>
+  <rect x="24" y="24" width="352" height="552" rx="12" fill="none" stroke="#3d2d66" stroke-width="2"/>
+  <!-- Claqueta -->
+  <g transform="translate(140 210)" fill="none" stroke="#a99cc9" stroke-width="6" stroke-linejoin="round">
+    <rect x="0" y="40" width="120" height="84" rx="6"/>
+    <path d="M0 40 L112 8 L120 34 L8 66"/>
+    <path d="M28 32 L40 58 M58 24 L70 50 M88 16 L100 42"/>
+  </g>
+  <!-- Texto en dos líneas y centrado: las tarjetas recortan los costados de la imagen. -->
+  <text x="200" y="376" fill="#e6e0f5" font-family="system-ui, sans-serif" font-size="24" font-weight="600" text-anchor="middle">Póster</text>
+  <text x="200" y="406" fill="#e6e0f5" font-family="system-ui, sans-serif" font-size="24" font-weight="600" text-anchor="middle">no disponible</text>
+  <text x="200" y="440" fill="#a99cc9" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle">cineShop</text>
+</svg>

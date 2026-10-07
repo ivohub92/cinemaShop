@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { SelectorFecha } from '../../../shared/forms/selector-fecha/selector-fecha';
 import { ToastService } from '../../../shared/ui/toasts/toast.service';
+import { EMAIL_COMPLETO } from '../../../shared/forms/validadores';
 
 const EDAD_MINIMA = 13;
 const EDAD_MAXIMA = 120;
@@ -46,7 +47,7 @@ export class Registro {
   readonly formulario = this.fb.nonNullable.group({
     nombre: ['', [Validators.required, Validators.minLength(2)]],
     apellido: ['', [Validators.required, Validators.minLength(2)]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.pattern(EMAIL_COMPLETO)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     fechaNacimiento: ['', [Validators.required, edadValida]],
     tipoSangre: ['', Validators.required],
